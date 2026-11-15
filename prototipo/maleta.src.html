@@ -157,7 +157,7 @@
     <div class="titulo-maleta" id="tituloMaleta"></div>
     <div class="estojo"><div class="grade" id="grade"></div></div>
     <div class="info-maleta" id="infoMaleta"></div>
-    <div class="dica"><b>Botão direito</b> num item mostra os detalhes. <kbd>Delete</kbd> tira o item selecionado. Arraste para mover. <kbd>R</kbd>, botão direito ou rodinha giram 90° enquanto arrasta. Solte uma erva em cima de outra para misturar, ou um anexo em cima da arma para equipar. Arraste para o baú ou para o armário para guardar ou devolver.</div>
+    <div class="dica"><b>Botão direito</b> num item mostra os detalhes. <kbd>Enter</kbd> usa a cura selecionada; <kbd>Delete</kbd> tira o item selecionado. Arraste para mover. <kbd>R</kbd>, botão direito ou rodinha giram 90° enquanto arrasta. Solte uma erva em cima de outra para misturar, ou um anexo em cima da arma para equipar. Arraste para o baú ou para o armário para guardar ou devolver.</div>
   </section>
 
   <aside class="lado">
@@ -616,7 +616,7 @@ function renderDetalhe() {
     acoes.push(`<button class="btn ouro" data-acao="atirar" ${o.carregado >= porDisparo(id) ? "" : "disabled title='Sem bala: recarregue'"}>${r.rajada ? "Disparar rajada" : "Atirar"}</button>`);
     acoes.push(`<button class="btn" data-acao="recarregar" ${o.carregado < capArma(id) ? "" : "disabled title='Já está cheia'"}>Recarregar</button>`);
   } else if (r.dano && r.dano !== "0" && /d/.test(r.dano)) acoes.push(`<button class="btn ouro" data-acao="rolarDano">Rolar dano</button>`);
-  if (naMaleta && ["cura", "arremessável", "munição especial"].includes(r.tipo)) acoes.push(`<button class="btn ouro" data-acao="usar">Usar</button>`);
+  if (naMaleta && usavel(id)) acoes.push(`<button class="btn ouro" data-acao="usar" title="Atalho: Enter com o item selecionado">Usar <kbd>Enter</kbd></button>`);
   if (naMaleta && rotsPermitidas(id).length > 1) acoes.push(`<button class="btn" data-acao="girar">Girar</button>`);
   if (naMaleta && podeBau()) acoes.push(`<button class="btn" data-acao="paraBau">Guardar no baú</button>`);
   if (naMaleta && armario(ui.armAberto) && (ehMestre() || armarios().length)) acoes.push(`<button class="btn" data-acao="devolver">Devolver ao armário</button>`);
@@ -733,19 +733,7 @@ function acao(nome, el) {
       if (x) aviso(`${ITENS[id].name}: ${x.total} de dano  [${x.dados.join(" + ")}${x.bonus ? (x.bonus > 0 ? " + " : " − ") + Math.abs(x.bonus) : ""}]`, "mix");
       break;
     }
-    case "usar":
-      if (o) {
-        const it = ITENS[o.id], r = it.rpg; let msg = `Usou ${it.name}.`;
-        if (r.tipo === "cura") {
-          const dv = S.dadoVida || "d8", x = rolarCura(r.cura, dv);
-          const quanto = x ? `curou ${x.total} PV (${r.cura}, ${dv}: ${x.texto})` : r.cura === "vida toda" ? "curou a vida toda" : "cura " + r.cura;
-          msg = `${it.name}: ${quanto}${r.efeitos ? " + " + r.efeitos.join(" + ").toLowerCase() : ""}.`;
-        }
-        else if (r.dano && /d/.test(r.dano)) msg = `${it.name}: ${rolar(r.dano).total} de dano (${r.area}).`;
-        for (const a of equipados(o)) delete a.equipadoEm;
-        S.maleta = S.maleta.filter(x => x !== o); ui.sel = null; aviso(msg, "mix");
-      }
-      break;
+    case "usar": if (o) usarItem(o); break;
   }
   salvar(); render();
 }
@@ -785,6 +773,22 @@ $("esvaziar").addEventListener("click", e => {
 });
 window.addEventListener("resize", () => renderGrade());
 
+/* ======================= USAR (botão no detalhe ou Enter) ======================= */
+const usavel = id => ["cura", "arremessável", "munição especial"].includes((ITENS[id].rpg || {}).tipo);
+function usarItem(o) {
+  const it = ITENS[o.id], r = it.rpg; let msg = `Usou ${it.name}.`;
+  if (r.tipo === "cura") {
+    const dv = S.dadoVida || "d8", x = rolarCura(r.cura, dv);
+    const quanto = x ? `curou ${x.total} PV (${r.cura}, ${dv}: ${x.texto})` : r.cura === "vida toda" ? "curou a vida toda" : "cura " + r.cura;
+    msg = `${it.name}: ${quanto}${r.efeitos ? " + " + r.efeitos.join(" + ").toLowerCase() : ""}.`;
+  }
+  else if (r.dano && /d/.test(r.dano)) msg = `${it.name}: ${rolar(r.dano).total} de dano (${r.area}).`;
+  for (const a of equipados(o)) delete a.equipadoEm;
+  S.maleta = S.maleta.filter(x => x !== o);
+  if (ui.sel === o.uid) ui.sel = null; if (ui.det === o.uid) ui.det = null;
+  aviso(msg, "mix");
+}
+
 /* ======================= DELETE: tirar o item selecionado ======================= */
 let modalUid = null;
 function abrirModalDelete(o) {
@@ -817,9 +821,11 @@ $("modal").addEventListener("click", ev => {
 });
 document.addEventListener("keydown", ev => {
   if (!$("modal").hidden) { if (ev.key === "Escape") { ev.preventDefault(); fecharModal(); } return; }
-  if (ev.key !== "Delete" || drag || ev.target.closest("input,select,textarea")) return;
+  if (drag || ev.target.closest("input,select,textarea,button")) return;
   const o = S.maleta.find(x => x.uid === ui.sel);
-  if (o) { ev.preventDefault(); abrirModalDelete(o); }
+  if (!o) return;
+  if (ev.key === "Delete") { ev.preventDefault(); abrirModalDelete(o); }
+  else if (ev.key === "Enter" && ITENS[o.id].rpg.tipo === "cura") { ev.preventDefault(); usarItem(o); salvar(); render(); }
 });
 
 /* ======================= ARRASTAR ======================= */
