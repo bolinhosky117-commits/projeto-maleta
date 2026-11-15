@@ -136,10 +136,10 @@
       "vazio": "bowgun_kara_32k"
     },
     "rocket-launcher": {
-      "atirar": "wep13_shot01"
+      "atacar": "wep13_shot01"
     },
     "rocket-launcher-special": {
-      "atirar": "wep13_shot01"
+      "atacar": "wep13_shot01"
     },
     "flash-grenade": {
       "atacar": "zeebo/flashbomb"
