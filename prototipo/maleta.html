@@ -920,7 +920,8 @@ document.addEventListener("keydown", ev => {
   const o = S.maleta.find(x => x.uid === ui.sel) || (podeBau() && S.bau.find(x => x.uid === ui.sel));
   if (!o) return;
   if (ev.key === "Delete") { ev.preventDefault(); abrirModalDelete(o); }
-  else if ((ev.key === " " || ev.key === "Enter") && ITENS[o.id].rpg.tipo === "cura" && S.maleta.includes(o)) { // Espaço (ou Enter) usa a cura ev.preventDefault(); usarItem(o); salvar(); render(); }
+  // Espaço (ou Enter) usa a cura selecionada
+  else if ((ev.key === " " || ev.key === "Enter") && ITENS[o.id].rpg.tipo === "cura" && S.maleta.includes(o)) { ev.preventDefault(); usarItem(o); salvar(); render(); }
 });
 
 /* Clicar num item, numa linha de lista ou na grade tira o foco do botão/seletor clicado antes,
