@@ -65,7 +65,7 @@
   .entrada.sel { outline: 2px solid var(--ouro); outline-offset: -2px; background: var(--painel2); }
   .estojo.bau { background: linear-gradient(#22201c, #171512); border-color: #3b352b; }
   .estojo { padding: 14px; border-radius: 14px; background: linear-gradient(#2b2219, #1d1711); border: 1px solid #4a3a28; box-shadow: 0 20px 50px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.06); max-width: 100%; overflow: auto; }
-  .grade { position: relative; touch-action: none; overflow: hidden; /* a sombra do item que não cabe não estica a maleta */
+  .grade { position: relative; touch-action: none;
     background-color: var(--celula);
     background-image: linear-gradient(var(--celula-linha) 1px, transparent 1px), linear-gradient(90deg, var(--celula-linha) 1px, transparent 1px);
     background-size: var(--C) var(--C); border: 1px solid var(--celula-linha); border-radius: 4px; }
@@ -1199,6 +1199,10 @@ function atualizarArraste() {
     Object.assign(pegada.style, { left: x * C + "px", top: y * C + "px", width: w * C + "px", height: h * C + "px" });
     pegada.classList.add(ok ? "ok" : "erro"); drag.alvo = ok ? { tipo: "por", x, y } : { tipo: "erro" };
   }
+  // a sombra não passa da borda da maleta (corta o pedaço de fora em vez de esticar a maleta)
+  const L = parseFloat(pegada.style.left), T = parseFloat(pegada.style.top);
+  const R = Math.min(L + parseFloat(pegada.style.width), S.cols * C), B = Math.min(T + parseFloat(pegada.style.height), S.rows * C);
+  Object.assign(pegada.style, { left: Math.max(0, L) + "px", top: Math.max(0, T) + "px", width: Math.max(0, R - Math.max(0, L)) + "px", height: Math.max(0, B - Math.max(0, T)) + "px" });
   $("grade").appendChild(pegada);
 }
 
