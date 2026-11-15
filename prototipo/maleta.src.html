@@ -200,7 +200,7 @@
     <div class="titulo-maleta" id="tituloMaleta"></div>
     <div class="estojo"><div class="grade" id="grade"></div></div>
     <div class="info-maleta" id="infoMaleta"></div>
-    <div class="dica"><b>Clique</b> num item para ver os detalhes; o <b>botão direito</b> abre o menu de ações. <kbd>Espaço</kbd> usa a cura selecionada; <kbd>Delete</kbd> tira o item selecionado. <kbd>Shift</kbd>+clique passa o item entre maleta e baú (e do armário direto para a maleta). Arraste para mover. <kbd>R</kbd> ou o botão direito giram enquanto arrasta. Solte uma erva em cima de outra para misturar, ou um anexo em cima da arma para equipar. Arraste para o baú (à direita) para guardar, ou para o armário para devolver.</div>
+    <div class="dica"><b>Clique</b> num item para ver os detalhes; o <b>botão direito</b> abre o menu de ações. <kbd>Espaço</kbd> usa a cura selecionada; <kbd>Delete</kbd> tira o item selecionado; <kbd>R</kbd> recarrega a arma selecionada. <kbd>Shift</kbd>+clique passa o item entre maleta e baú (e do armário direto para a maleta). Arraste para mover. <kbd>R</kbd> ou o botão direito giram enquanto arrasta. Solte uma erva em cima de outra para misturar, ou um anexo em cima da arma para equipar. Arraste para o baú (à direita) para guardar, ou para o armário para devolver.</div>
   </section>
 
   <aside class="lado">
@@ -750,7 +750,7 @@ function acoesDe(o, fonte) {
   const naMaleta = o && S.maleta.includes(o), noBau = o && S.bau.includes(o);
   if (naMaleta && ehArmaDeFogo(id)) {
     add("atirar", r.rajada ? "Disparar rajada" : "Atirar", { cls: "ouro", title: o.carregado >= porDisparo(id) ? "" : "Sem bala: recarregue" });
-    add("recarregar", "Recarregar", { off: o.carregado < capArma(id) ? "" : "Já está cheia" });
+    add("recarregar", "Recarregar", { tecla: "R", off: o.carregado < capArma(id) ? "" : "Já está cheia" });
   } else if (r.dano && r.dano !== "0" && /d/.test(r.dano)) add("rolarDano", "Rolar dano", { cls: "ouro", data: { id } });
   if (naMaleta && usavel(id)) add("usar", "Usar", { cls: "ouro", tecla: "Espaço", title: "Atalho: Espaço com o item selecionado" });
   if (naMaleta && rotsPermitidas(id).length > 1) add("girar", "Girar");
@@ -1095,6 +1095,12 @@ document.addEventListener("keydown", ev => {
   if (ev.key === "Delete") { ev.preventDefault(); abrirModalDelete(o); }
   // Espaço (ou Enter) usa a cura selecionada
   else if ((ev.key === " " || ev.key === "Enter") && ITENS[o.id].rpg.tipo === "cura" && S.maleta.includes(o)) { ev.preventDefault(); usarItem(o); salvar(); render(); }
+  // R (sem estar arrastando) recarrega a arma selecionada com a munição da maleta
+  else if ((ev.key === "r" || ev.key === "R") && !ev.ctrlKey && !ev.metaKey && S.maleta.includes(o) && ehArmaDeFogo(o.id)) {
+    ev.preventDefault();
+    const x = recarregar(S, o); if (!x.erro) tocar(o.id, "recarregar");
+    aviso(`${ITENS[o.id].name}: ${x.erro || x.ok}`, x.erro ? "erro" : "mix"); salvar(); render();
+  }
 });
 
 /* Clicar num item, numa linha de lista ou na grade tira o foco do botão/seletor clicado antes,
