@@ -31,6 +31,18 @@
   .rotulo { color: var(--suave); font-size: 13px; }
   main { display: grid; grid-template-columns: 260px minmax(0, 1fr) 300px; gap: 16px; padding: 16px 18px 40px; align-items: start; }
   @media (max-width: 1100px) { main { grid-template-columns: 1fr; } }
+  /* tela larga: a página não rola; cada coluna rola sozinha e a maleta fica sempre no lugar */
+  @media (min-width: 1101px) {
+    html, body { height: 100%; overflow: hidden; }
+    body { display: flex; flex-direction: column; }
+    header { flex: none; }
+    main { flex: 1; min-height: 0; grid-template-rows: minmax(0, 1fr); align-items: stretch; padding-bottom: 16px; }
+    main > * { min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: #3a444b transparent; }
+    main > aside.lado { align-content: start; padding-right: 2px; }
+    main > section.painel { align-self: start; max-height: 100%; }
+    .maleta-area { justify-content: safe center; }
+    .maleta-area .estojo { flex: none; }
+  }
   .painel { background: var(--painel); border: 1px solid var(--linha); border-radius: 10px; }
   .painel h2 { margin: 0; padding: 10px 12px; font: 600 15px/1.2 "Barlow Condensed", sans-serif; letter-spacing: .1em; text-transform: uppercase; border-bottom: 1px solid var(--linha); display: flex; justify-content: space-between; align-items: center; gap: 8px; }
   .painel h2 small { font: 500 12px Barlow, sans-serif; letter-spacing: 0; text-transform: none; color: var(--suave); }
@@ -577,7 +589,14 @@ function imgHTML(id, rot, cel) {
 function medirC() {
   const area = document.querySelector(".maleta-area");
   const livre = Math.max(280, area.clientWidth - 40);
-  C = Math.max(34, Math.min(64, Math.floor(livre / S.cols)));
+  let porAltura = 64;
+  if (matchMedia("(min-width: 1101px)").matches) {
+    // tela larga: a maleta inteira tem que caber na altura da coluna (a página não rola)
+    const estojo = area.querySelector(".estojo"), gap = parseFloat(getComputedStyle(area).rowGap) || 0;
+    const outros = [...area.children].filter(e => e !== estojo).reduce((t, e) => t + e.offsetHeight + gap, 0);
+    porAltura = Math.floor((area.clientHeight - outros - 32) / S.rows);
+  }
+  C = Math.max(34, Math.min(64, Math.floor(livre / S.cols), porAltura));
   document.documentElement.style.setProperty("--C", C + "px");
 }
 
@@ -1013,6 +1032,9 @@ $("esvaziar").addEventListener("click", e => {
   S.maleta = []; ui.sel = null; salvar(); render();
 });
 window.addEventListener("resize", () => renderGrade());
+// a altura do texto muda quando as fontes terminam de carregar: mede a maleta de novo
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => renderGrade());
+window.addEventListener("load", () => renderGrade());
 
 /* ======================= USAR (botão no detalhe ou Enter) ======================= */
 const usavel = id => ["cura", "arremessável", "munição especial"].includes((ITENS[id].rpg || {}).tipo);
