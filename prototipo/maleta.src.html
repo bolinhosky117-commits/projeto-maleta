@@ -161,7 +161,7 @@
     <div class="titulo-maleta" id="tituloMaleta"></div>
     <div class="estojo"><div class="grade" id="grade"></div></div>
     <div class="info-maleta" id="infoMaleta"></div>
-    <div class="dica"><b>Botão direito</b> num item mostra os detalhes. <kbd>Enter</kbd> usa a cura selecionada; <kbd>Delete</kbd> tira o item selecionado. <kbd>Shift</kbd>+clique passa o item entre maleta e baú. Arraste para mover. <kbd>R</kbd> ou o botão direito giram enquanto arrasta. Solte uma erva em cima de outra para misturar, ou um anexo em cima da arma para equipar. Arraste para o baú (à direita) para guardar, ou para o armário para devolver.</div>
+    <div class="dica"><b>Botão direito</b> num item mostra os detalhes. <kbd>Enter</kbd> usa a cura selecionada; <kbd>Delete</kbd> tira o item selecionado. <kbd>Shift</kbd>+clique passa o item entre maleta e baú (e do armário direto para a maleta). Arraste para mover. <kbd>R</kbd> ou o botão direito giram enquanto arrasta. Solte uma erva em cima de outra para misturar, ou um anexo em cima da arma para equipar. Arraste para o baú (à direita) para guardar, ou para o armário para devolver.</div>
   </section>
 
   <aside class="lado">
@@ -994,6 +994,13 @@ document.addEventListener("pointerup", ev => {
   if (fantasma) { fantasma.remove(); fantasma = null; }
   if (pegada) { pegada.remove(); pegada = null; }
   limparMarcasDrop();
+  if (!d.moveu && ev.shiftKey && (d.origem === "armario" || d.origem === "catalogo")) { // Shift + clique no armário/catálogo: direto para a maleta
+    if (d.origem === "armario") {
+      const a = armario(d.arm);
+      if (a && a.estoque.some(e => e.id === d.id) && porNaMaleta(d.id)) { estoqueTirar(a, d.id); aviso(`${ITENS[d.id].name} → maleta.`); }
+    } else if (ehMestre() && porNaMaleta(d.id)) aviso(`${ITENS[d.id].name} → maleta de ${S.nome}.`);
+    salvar(); return render();
+  }
   if (!d.moveu && ev.shiftKey && (d.origem === "maleta" || d.origem === "bau")) { // Shift + clique: troca entre maleta e baú
     if (d.origem === "maleta") {
       const o = S.maleta.find(x => x.uid === d.uid);

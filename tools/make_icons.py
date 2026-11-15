@@ -133,8 +133,9 @@ def main():
         W, H = cols * CELL, rows * CELL
         # preenche o retângulo: encaixa sem distorcer e depois estica cada lado até ESTICA_MAX para tirar as faixas vazias
         s = min((W - 2 * PAD) / w, (H - 2 * PAD) / h)
-        nw = min(W - 2 * PAD, w * s * ESTICA_MAX)
-        nh = min(H - 2 * PAD, h * s * ESTICA_MAX)
+        estica = it.get("esticaMax", ESTICA_MAX)  # um item pode esticar mais (ou menos) que o padrão
+        nw = min(W - 2 * PAD, w * s * estica)
+        nh = min(H - 2 * PAD, h * s * estica)
         im = im.resize((max(1, round(nw)), max(1, round(nh))), Image.LANCZOS)
         canvas = Image.new("RGBA", (W, H), (0, 0, 0, 0))
         canvas.alpha_composite(im, ((W - im.width) // 2, (H - im.height) // 2))

@@ -35,7 +35,7 @@ Abra `prototipo/maleta.html` com dois cliques (não precisa de servidor). No top
   arraste itens da maleta para lá e de lá para a maleta.
 - **Dado de vida** (o dado de cura do personagem): o mestre escolhe por jogador no topo; as ervas rolam esse dado ao usar.
 - **Botão direito** num item (na maleta, no armário, no catálogo ou no baú) abre os detalhes; o clique esquerdo só seleciona.
-- **Shift + clique** num item passa ele da maleta para o baú (ou do baú para a maleta).
+- **Shift + clique** num item passa ele da maleta para o baú (ou do baú para a maleta). No armário (ou no catálogo, para o mestre), manda 1 direto para a maleta.
 - **Enter** com uma cura selecionada usa o item (o botão Usar também fica nos detalhes do botão direito).
 - **Delete** no teclado com um item selecionado abre uma janela: "Mover para o baú" ou "Deletar" (Esc cancela).
 - Na maleta: arrastar, girar (R ou botão direito durante o arrasto; facas em 4 posições, o resto deitado ou em pé), misturar ervas, equipar anexos,

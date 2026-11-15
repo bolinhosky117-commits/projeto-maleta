@@ -509,13 +509,13 @@
         1
       ],
       "forceHorizontal": false,
-      "status": "2×1 como as outras munições; desenho com duas caixas lado a lado",
+      "status": "2×1 como as outras munições; desenho um pouco esticado na largura",
       "description": "Cartuchos de espingarda.",
       "tamanhoJogo": [
         2,
         1
       ],
-      "duplicar": true
+      "esticaMax": 1.4
     },
     {
       "id": "submachine-gun-ammo",
