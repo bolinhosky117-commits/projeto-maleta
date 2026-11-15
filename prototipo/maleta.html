@@ -163,7 +163,7 @@
     <div class="titulo-maleta" id="tituloBau" style="margin-top:14px"></div>
     <div class="estojo bau" id="estojoBau"><div class="grade" id="gradeBau"></div></div>
     <div class="vazio" id="bauTrancado" hidden>🔒 Sem baú nesta cena. Ele aparece quando o mestre colocar um.</div>
-    <div class="dica"><b>Botão direito</b> num item mostra os detalhes. <kbd>Enter</kbd> usa a cura selecionada; <kbd>Delete</kbd> tira o item selecionado. Arraste para mover. <kbd>R</kbd> ou o botão direito giram enquanto arrasta. Solte uma erva em cima de outra para misturar, ou um anexo em cima da arma para equipar. Arraste entre a maleta e o baú (logo abaixo), ou para o armário para devolver.</div>
+    <div class="dica"><b>Botão direito</b> num item mostra os detalhes. <kbd>Enter</kbd> usa a cura selecionada; <kbd>Delete</kbd> tira o item selecionado. <kbd>Shift</kbd>+clique passa o item entre maleta e baú. Arraste para mover. <kbd>R</kbd> ou o botão direito giram enquanto arrasta. Solte uma erva em cima de outra para misturar, ou um anexo em cima da arma para equipar. Arraste entre a maleta e o baú (logo abaixo), ou para o armário para devolver.</div>
   </section>
 
   <aside class="lado">
@@ -987,6 +987,18 @@ document.addEventListener("pointerup", ev => {
   if (fantasma) { fantasma.remove(); fantasma = null; }
   if (pegada) { pegada.remove(); pegada = null; }
   limparMarcasDrop();
+  if (!d.moveu && ev.shiftKey && (d.origem === "maleta" || d.origem === "bau")) { // Shift + clique: troca entre maleta e baú
+    if (d.origem === "maleta") {
+      const o = S.maleta.find(x => x.uid === d.uid);
+      if (!podeBau()) aviso("Sem baú nesta cena.", "erro");
+      else if (o) { paraBau(o); aviso(`${ITENS[o.id].name} → baú.`); }
+    } else {
+      const b = S.bau.find(x => x.uid === d.uid);
+      if (b && porNaMaleta(b.id, b.uid, b.anexos, estadoDe(b))) { S.bau = S.bau.filter(x => x !== b); aviso(`${ITENS[b.id].name} → maleta.`); }
+    }
+    if (ui.det === d.uid) ui.det = null;
+    salvar(); return render();
+  }
   if (!d.moveu) { // foi um clique
     // clique esquerdo só seleciona; os detalhes abrem com o botão direito
     if (d.origem === "maleta" || (d.origem === "bau" && S.bau.some(x => x.uid === d.uid && x.x !== undefined))) { ui.sel = d.uid; if (ui.det && ui.det !== d.uid) ui.det = null; ui.selFonte = null; }
