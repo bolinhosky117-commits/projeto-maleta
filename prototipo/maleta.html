@@ -173,7 +173,7 @@
     <div class="titulo-maleta" id="tituloMaleta"></div>
     <div class="estojo"><div class="grade" id="grade"></div></div>
     <div class="info-maleta" id="infoMaleta"></div>
-    <div class="dica"><b>Botão direito</b> num item mostra os detalhes. <kbd>Enter</kbd> usa a cura selecionada; <kbd>Delete</kbd> tira o item selecionado. <kbd>Shift</kbd>+clique passa o item entre maleta e baú (e do armário direto para a maleta). Arraste para mover. <kbd>R</kbd> ou o botão direito giram enquanto arrasta. Solte uma erva em cima de outra para misturar, ou um anexo em cima da arma para equipar. Arraste para o baú (à direita) para guardar, ou para o armário para devolver.</div>
+    <div class="dica"><b>Botão direito</b> num item mostra os detalhes. <kbd>Espaço</kbd> usa a cura selecionada; <kbd>Delete</kbd> tira o item selecionado. <kbd>Shift</kbd>+clique passa o item entre maleta e baú (e do armário direto para a maleta). Arraste para mover. <kbd>R</kbd> ou o botão direito giram enquanto arrasta. Solte uma erva em cima de outra para misturar, ou um anexo em cima da arma para equipar. Arraste para o baú (à direita) para guardar, ou para o armário para devolver.</div>
   </section>
 
   <aside class="lado">
@@ -698,7 +698,7 @@ function renderDetalhe() {
     acoes.push(`<button class="btn ouro" data-acao="atirar" ${o.carregado >= porDisparo(id) ? "" : "disabled title='Sem bala: recarregue'"}>${r.rajada ? "Disparar rajada" : "Atirar"}</button>`);
     acoes.push(`<button class="btn" data-acao="recarregar" ${o.carregado < capArma(id) ? "" : "disabled title='Já está cheia'"}>Recarregar</button>`);
   } else if (r.dano && r.dano !== "0" && /d/.test(r.dano)) acoes.push(`<button class="btn ouro" data-acao="rolarDano">Rolar dano</button>`);
-  if (naMaleta && usavel(id)) acoes.push(`<button class="btn ouro" data-acao="usar" title="Atalho: Enter com o item selecionado">Usar <kbd>Enter</kbd></button>`);
+  if (naMaleta && usavel(id)) acoes.push(`<button class="btn ouro" data-acao="usar" title="Atalho: Espaço com o item selecionado">Usar <kbd>Espaço</kbd></button>`);
   if (naMaleta && rotsPermitidas(id).length > 1) acoes.push(`<button class="btn" data-acao="girar">Girar</button>`);
   if (naMaleta && podeBau()) acoes.push(`<button class="btn" data-acao="paraBau">Guardar no baú</button>`);
   if (naMaleta && armario(ui.armAberto) && (ehMestre() || armarios().length)) acoes.push(`<button class="btn" data-acao="devolver">Devolver ao armário</button>`);
@@ -920,7 +920,7 @@ document.addEventListener("keydown", ev => {
   const o = S.maleta.find(x => x.uid === ui.sel) || (podeBau() && S.bau.find(x => x.uid === ui.sel));
   if (!o) return;
   if (ev.key === "Delete") { ev.preventDefault(); abrirModalDelete(o); }
-  else if (ev.key === "Enter" && ITENS[o.id].rpg.tipo === "cura" && S.maleta.includes(o)) { ev.preventDefault(); usarItem(o); salvar(); render(); }
+  else if ((ev.key === " " || ev.key === "Enter") && ITENS[o.id].rpg.tipo === "cura" && S.maleta.includes(o)) { // Espaço (ou Enter) usa a cura ev.preventDefault(); usarItem(o); salvar(); render(); }
 });
 
 /* Clicar num item, numa linha de lista ou na grade tira o foco do botão/seletor clicado antes,
