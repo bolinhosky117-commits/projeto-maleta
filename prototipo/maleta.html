@@ -132,6 +132,9 @@
   .lista::-webkit-scrollbar-thumb, .estojo::-webkit-scrollbar-thumb { background: #353f46; border-radius: 8px; border: 2px solid var(--painel); }
   .lista::-webkit-scrollbar-thumb:hover, .estojo::-webkit-scrollbar-thumb:hover { background: #4f5c64; }
   .lista::-webkit-scrollbar-corner { background: transparent; }
+  .ferramentas-bau { display: flex; gap: 6px; padding: 8px 10px 2px; }
+  .ferramentas-bau input { flex: 1; min-width: 0; padding: 5px 8px; }
+  .ferramentas-bau select { padding: 5px 6px; max-width: 48%; }
   .destino { padding: 8px 10px 0; }
   .destino select { padding: 3px 6px; margin-left: 4px; }
   .mais { display: inline-block; background: var(--ouro); color: #1d1600; border-radius: 4px; padding: 0 5px; }
@@ -455,7 +458,7 @@ for (const J of G.jogadores) {
 for (const o of G.cena) if (o.estoque) o.estoque = o.estoque.filter(e => ITENS[e.id]);
 function salvar() { try { localStorage.setItem(CHAVE, JSON.stringify(G)); } catch (e) {} }
 
-const ui = { quem: "mestre", ver: G.jogadores[0].id, sel: null, selFonte: null, aba: "Pistolas", busca: "", armAberto: null };
+const ui = { quem: "mestre", ver: G.jogadores[0].id, sel: null, selFonte: null, aba: "Pistolas", busca: "", armAberto: null, buscaBau: "", ordemBau: "chegada" };
 let S;
 function sync() {
   if (ui.quem !== "mestre" && !G.jogadores.some(j => j.id === ui.quem)) ui.quem = "mestre";
@@ -627,14 +630,38 @@ function renderCena() {
     </div>`).join("") || `<div class="vazio">Cena vazia. Ponha um armário ou um baú.</div>`}`;
 }
 
+// ajudantes para ordenar o baú
+const pesoConsumo = o => ({ "cura": 0, "munição": 1, "arremessável": 2, "munição especial": 2, "anexo": 4 })[(ITENS[o.id].rpg || {}).tipo] ?? 3;
+const ordemGrupo = id => Object.keys(GRUPOS).indexOf(grupoDe(id));
+function danoMedio(id) {
+  const m = /^(\d+)d(\d+)([+-]\d+)?$/.exec(((ITENS[id].rpg || {}).dano || "").trim());
+  return m ? +m[1] * (+m[2] + 1) / 2 + +(m[3] || 0) : -1;
+}
 function renderBau() {
   const titulo = `<h2>Baú ${ehMestre() ? "de " + esc(S.nome) : ""} <small>${S.bau.length ? S.bau.length + " itens" : ""}</small></h2>`;
   if (!podeBau()) { $("bau").innerHTML = titulo + `<div class="vazio">🔒 Sem baú nesta cena. Ele aparece quando o mestre colocar um.</div>`; return; }
-  $("bau").innerHTML = titulo + `<ul class="lista">${S.bau.map(o => entradaHTML(o.id, { origem: "bau", uid: o.uid,
+  const ORDENS = {
+    chegada: ["Ordem de chegada", null],
+    consumiveis: ["Consumíveis primeiro", (a, b) => pesoConsumo(a) - pesoConsumo(b)],
+    maiores: ["Maiores primeiro", (a, b) => ITENS[b.id].slots - ITENS[a.id].slots],
+    menores: ["Menores primeiro", (a, b) => ITENS[a.id].slots - ITENS[b.id].slots],
+    tipo: ["Por tipo", (a, b) => ordemGrupo(a.id) - ordemGrupo(b.id)],
+    nome: ["Nome (A–Z)", (a, b) => ITENS[a.id].name.localeCompare(ITENS[b.id].name)],
+    dano: ["Mais dano primeiro", (a, b) => danoMedio(b.id) - danoMedio(a.id)],
+  };
+  const termo = ui.buscaBau.trim().toLowerCase();
+  let itens = S.bau.filter(o => !termo || ITENS[o.id].name.toLowerCase().includes(termo) || grupoDe(o.id).toLowerCase().includes(termo));
+  const ord = (ORDENS[ui.ordemBau] || ORDENS.chegada)[1];
+  if (ord) itens = itens.slice().sort((a, b) => ord(a, b) || ITENS[a.id].name.localeCompare(ITENS[b.id].name));
+  const ferramentas = S.bau.length ? `<div class="ferramentas-bau">
+      <input id="buscaBau" type="text" placeholder="Procurar no baú…" value="${esc(ui.buscaBau)}">
+      <select id="ordemBau" title="Ordenar">${Object.entries(ORDENS).map(([k, [n]]) => `<option value="${k}"${ui.ordemBau === k ? " selected" : ""}>${n}</option>`).join("")}</select>
+    </div>` : "";
+  $("bau").innerHTML = titulo + ferramentas + `<ul class="lista">${itens.map(o => entradaHTML(o.id, { origem: "bau", uid: o.uid,
     extra: ((o.anexos || []).length ? " · + " + o.anexos.map(a => esc(ITENS[a].name)).join(", ") : "")
       + (o.balas !== undefined ? ` · ${o.balas} balas` : "") + (o.carregado !== undefined ? ` · ${o.carregado}/${capArma(o.id)} carregada` : ""),
     botoes: `<button class="btn mini" data-acao="tirarBau" data-uid="${o.uid}" title="Levar para a maleta">→</button>` })).join("")
-    || `<li class="vazio">Baú vazio. Arraste itens da maleta para cá.</li>`}</ul>`;
+    || `<li class="vazio">${S.bau.length ? "Nada no baú com esse nome." : "Baú vazio. Arraste itens da maleta para cá."}</li>`}</ul>`;
   if (ui.sel) { const el = $("bau").querySelector(`.entrada[data-uid="${ui.sel}"]`); if (el) el.classList.add("sel"); }
 }
 
@@ -704,13 +731,13 @@ function renderDetalhe() {
 
 function render() {
   sync();
-  const foco = document.activeElement && document.activeElement.id, pos = foco === "busca" ? document.activeElement.selectionStart : null;
+  const foco = document.activeElement && document.activeElement.id, pos = (foco === "busca" || foco === "buscaBau") ? document.activeElement.selectionStart : null;
   // guarda onde cada lista estava rolada, para não voltar ao topo depois de redesenhar
   const rolagem = {};
   document.querySelectorAll(".lista").forEach((el, i) => { rolagem[(el.closest("section") || {}).id + ":" + (el.dataset.dropArm || i)] = el.scrollTop; });
   renderTopo(); renderGrade(); renderBau(); renderEsquerda(); renderCena(); renderDetalhe();
   document.querySelectorAll(".lista").forEach((el, i) => { const k = (el.closest("section") || {}).id + ":" + (el.dataset.dropArm || i); if (rolagem[k]) el.scrollTop = rolagem[k]; });
-  if (foco === "busca") { const b = $("busca"); if (b) { b.focus(); b.setSelectionRange(pos, pos); } }
+  if (foco === "busca" || foco === "buscaBau") { const b = $(foco); if (b) { b.focus(); b.setSelectionRange(pos, pos); } }
 }
 
 /* ======================= AÇÕES ======================= */
@@ -804,7 +831,11 @@ document.addEventListener("click", ev => {
   // clique num quadradinho vazio da maleta: tira a seleção
   if (ev.target.id === "grade" && (ui.sel || ui.selFonte || ui.det)) { ui.sel = null; ui.det = null; ui.selFonte = null; render(); }
 });
-document.addEventListener("input", e => { if (e.target.id === "busca") { ui.busca = e.target.value; render(); } });
+document.addEventListener("input", e => {
+  if (e.target.id === "busca") { ui.busca = e.target.value; render(); }
+  if (e.target.id === "buscaBau") { ui.buscaBau = e.target.value; render(); }
+});
+document.addEventListener("change", e => { if (e.target.id === "ordemBau") { ui.ordemBau = e.target.value; render(); } });
 $("quem").addEventListener("change", e => { ui.quem = e.target.value; ui.sel = null; ui.det = null; ui.selFonte = null; render(); });
 document.addEventListener("change", e => { if (e.target.id === "destinoArm") { ui.armAberto = e.target.value; render(); } });
 $("verJog").addEventListener("change", e => { ui.ver = e.target.value; ui.sel = null; ui.det = null; render(); });
