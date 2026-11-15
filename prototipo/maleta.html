@@ -571,7 +571,7 @@ function renderGrade() {
   medirC(); limparVinculos();
   $("tituloMaleta").textContent = ehMestre() ? `Maleta de ${S.nome}` : `Sua maleta (${S.nome})`;
   const g = $("grade");
-  g.style.width = S.cols * C + "px"; g.style.height = S.rows * C + "px";
+  g.style.width = S.cols * C + 2 + "px"; g.style.height = S.rows * C + 2 + "px"; // +2: a borda de 1px fica por fora das células
   g.innerHTML = S.maleta.map(o => {
     const [w, h] = medida(o.id, o.rot);
     return `<div class="item${ui.sel === o.uid ? " sel" : ehPar(o) ? " par" : ""}${drag && drag.uid === o.uid && drag.moveu ? " arrastando" : ""}" data-uid="${o.uid}" title="${esc(ITENS[o.id].name)}"
