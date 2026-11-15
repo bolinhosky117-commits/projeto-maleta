@@ -173,7 +173,7 @@
     <div class="titulo-maleta" id="tituloMaleta"></div>
     <div class="estojo"><div class="grade" id="grade"></div></div>
     <div class="info-maleta" id="infoMaleta"></div>
-    <div class="dica"><b>Botão direito</b> num item mostra os detalhes. <kbd>Espaço</kbd> usa a cura selecionada; <kbd>Delete</kbd> tira o item selecionado. <kbd>Shift</kbd>+clique passa o item entre maleta e baú (e do armário direto para a maleta). Arraste para mover. <kbd>R</kbd> ou o botão direito giram enquanto arrasta. Solte uma erva em cima de outra para misturar, ou um anexo em cima da arma para equipar. Arraste para o baú (à direita) para guardar, ou para o armário para devolver.</div>
+    <div class="dica"><b>Clique</b> (esquerdo ou direito) num item mostra os detalhes. <kbd>Espaço</kbd> usa a cura selecionada; <kbd>Delete</kbd> tira o item selecionado. <kbd>Shift</kbd>+clique passa o item entre maleta e baú (e do armário direto para a maleta). Arraste para mover. <kbd>R</kbd> ou o botão direito giram enquanto arrasta. Solte uma erva em cima de outra para misturar, ou um anexo em cima da arma para equipar. Arraste para o baú (à direita) para guardar, ou para o armário para devolver.</div>
   </section>
 
   <aside class="lado">
@@ -669,7 +669,7 @@ function renderDetalhe() {
   const o = S.maleta.find(x => x.uid === ui.det) || S.bau.find(x => x.uid === ui.det);
   const fonte = !o ? ui.selFonte : null;
   const id = o ? o.id : fonte && fonte.id;
-  if (!id || !ITENS[id]) { $("detalhe").innerHTML = `<h2>Item</h2><div class="vazio">Clique com o <b>botão direito</b> num item para ver os detalhes.</div>`; return; }
+  if (!id || !ITENS[id]) { $("detalhe").innerHTML = `<h2>Item</h2><div class="vazio">Clique num item para ver os detalhes.</div>`; return; }
   const it = ITENS[id], r = it.rpg || {};
   const linhas = [];
   const add = (k, v) => { if (v !== undefined && v !== null && v !== "" && v !== "0") linhas.push(`<dt>${k}</dt><dd>${esc(v)}</dd>`); };
@@ -1067,8 +1067,9 @@ document.addEventListener("pointerup", ev => {
     salvar(); return render();
   }
   if (!d.moveu) { // foi um clique
-    // clique esquerdo só seleciona; os detalhes abrem com o botão direito
-    if (d.origem === "maleta" || d.origem === "bau") { ui.sel = d.uid; if (ui.det && ui.det !== d.uid) ui.det = null; ui.selFonte = null; }
+    // clique esquerdo seleciona e abre os detalhes (o botão direito faz o mesmo)
+    if (d.origem === "maleta" || d.origem === "bau") { ui.sel = ui.det = d.uid; ui.selFonte = null; }
+    else if (d.origem === "armario" || d.origem === "catalogo") { ui.det = null; ui.selFonte = { origem: d.origem, id: d.id, arm: d.arm || null }; }
     return render();
   }
   const o = d.origem === "maleta" ? S.maleta.find(x => x.uid === d.uid) : null;
