@@ -228,7 +228,7 @@ function ctxAudio() {
     const C = window.AudioContext || window.webkitAudioContext; if (!C) return null;
     audioCtx = new C(); saida = audioCtx.createGain(); saida.gain.value = volume / 100;
     // limitador: rajadas somam vários tiros, isto segura o pico para não estourar
-    const lim = audioCtx.createDynamicsCompressor(); lim.threshold.value = -12; lim.ratio.value = 12; lim.attack.value = 0.002; lim.release.value = 0.15;
+    const lim = audioCtx.createDynamicsCompressor(); lim.threshold.value = -10; lim.ratio.value = 8; lim.knee.value = 6; lim.attack.value = 0.002; lim.release.value = 0.15;
     saida.connect(lim).connect(audioCtx.destination);
   }
   if (audioCtx.state === "suspended") audioCtx.resume();
@@ -241,16 +241,20 @@ function carregarSom(nome) {
 // procura o som: da arma/item → do tipo do item (faca, cura...) → padrão
 const somDe = (id, acao) => (SONS.mapa.armas[id] || {})[acao] || ((SONS.mapa.tipos || {})[ITENS[id] && ITENS[id].rpg.tipo] || {})[acao] || SONS.mapa.padrao[acao] || null;
 // toca o som da ação; numa rajada, repete o tiro "vezes" vezes no ritmo da arma
+// "som" no sons.json é um nome ou uma lista [{som, em, ganho}] tocada em sequência (ex.: bazuca = disparo + explosão)
 async function tocar(id, acao, vezes = 1, nomeFixo) {
-  const nome = nomeFixo || somDe(id, acao);
-  if (!somLigado || !nome || !SONS.arquivos[nome] || !ctxAudio()) return;
-  const b = await carregarSom(nome); if (!b) return;
-  const c = audioCtx, passo = (SONS.mapa.armas[id] || {}).cadencia || 0.09, t0 = c.currentTime + 0.01;
-  for (let i = 0; i < vezes; i++) {
+  const v = nomeFixo || somDe(id, acao);
+  if (!somLigado || !v || !ctxAudio()) return;
+  const partes = (Array.isArray(v) ? v : [{ som: v }]).filter(p => SONS.arquivos[p.som]);
+  const bufs = await Promise.all(partes.map(p => carregarSom(p.som)));
+  const arma = SONS.mapa.armas[id] || {}, c = audioCtx, passo = arma.cadencia || 0.09, t0 = c.currentTime + 0.01;
+  const base = Math.pow(10, (arma.ganho || 0) / 20);   // "ganho" (dB) da arma: ajuste fino de volume
+  for (let i = 0; i < vezes; i++) partes.forEach((p, k) => {
+    if (!bufs[k]) return;
     const src = c.createBufferSource(), g = c.createGain();
-    src.buffer = b; g.gain.value = i ? 0.6 : 1;
-    src.connect(g).connect(saida); src.start(t0 + i * passo);
-  }
+    src.buffer = bufs[k]; g.gain.value = base * Math.pow(10, (p.ganho || 0) / 20) * (i ? 0.6 : 1);
+    src.connect(g).connect(saida); src.start(t0 + i * passo + (p.em || 0));
+  });
 }
 // sons da própria maleta: pegar, soltar, girar, bloqueado, equipar, descartar, misturar, juntar, bau
 let ultimoTique = 0;

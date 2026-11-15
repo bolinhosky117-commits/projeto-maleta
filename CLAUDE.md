@@ -30,7 +30,7 @@ O protótipo é HTML/JS puro; a stack do sistema final ainda não foi definida �
   `data/sons.json` (`armas`: atirar/recarregar/vazio/atacar e `cadencia` da rajada, com a tabela wepNN → arma; `tipos`: faca, granada, cura;
   `maleta`: pegar, deslocar (tique a cada casa no arrasto), soltar, girar, bloqueado, equipar, descartar, misturar, juntar, bau),
   `python tools/make_sounds.py` gera `assets/sounds/*.ogg` (junta os pares L/R em estéreo, corta o silêncio inicial; precisa do ffmpeg).
-  O `build_prototipo.py` embute os sons. No protótipo: Atirar toca o tiro (repetido na rajada), Recarregar toca a recarga, sem bala faz o clique vazio; botão "Som" e o controle de Volume no topo (padrão 50%). O volume de cada tipo de som é igualado no make_sounds.py (`ALVO_DB`: tiro mais alto, recarga e clique vazio mais baixos).
+  O `build_prototipo.py` embute os sons. No protótipo: Atirar toca o tiro (repetido na rajada), Recarregar toca a recarga, sem bala faz o clique vazio; botão "Som" e o controle de Volume no topo (padrão 50%). O volume é igualado no make_sounds.py: tiros pela "fantasia" da arma (`ALVO_LUFS`: pistola contida, espingarda/magnum/rifle encorpados, bazuca e granada no topo, submetralhadora mais baixa por causa da rajada) e os outros sons por `ALVO_DB`. `ganho` (dB) por arma no sons.json para ajuste fino (Riot Gun -4); um som pode ser lista em sequência (bazuca = disparo + explosão).
 - `extras/inventario-mochila-bau/` — pacote anterior do Ez (Catálogo, Armário, Mochila por espaços, Baú). A maleta em grade
   substitui a mochila de lá; o resto da ideia já está no protótipo da maleta.
 
