@@ -123,6 +123,15 @@
   .btn.deletar { background: #8a2a20; border-color: #a83a2e; color: #fff; font-weight: 600; }
   #esquerda.sobre-apagar { outline: 2px dashed var(--erro); outline-offset: -4px; background: rgba(208,86,74,.08); }
   #esquerda.sobre-apagar h2::after { content: "Soltar aqui apaga o item"; color: var(--erro); font: 600 12px Barlow, sans-serif; letter-spacing: 0; text-transform: none; }
+  .abas, .painel h2, .destino, .titulo-maleta, .info-maleta { user-select: none; }
+  body.arrastando-algo { user-select: none; cursor: grabbing; }
+  /* barras de rolagem discretas, no tom do painel */
+  .lista, .estojo { scrollbar-width: thin; scrollbar-color: #3a444b transparent; }
+  .lista::-webkit-scrollbar, .estojo::-webkit-scrollbar { width: 8px; height: 8px; }
+  .lista::-webkit-scrollbar-track, .estojo::-webkit-scrollbar-track { background: transparent; margin: 6px 0; }
+  .lista::-webkit-scrollbar-thumb, .estojo::-webkit-scrollbar-thumb { background: #353f46; border-radius: 8px; border: 2px solid var(--painel); }
+  .lista::-webkit-scrollbar-thumb:hover, .estojo::-webkit-scrollbar-thumb:hover { background: #4f5c64; }
+  .lista::-webkit-scrollbar-corner { background: transparent; }
   .destino { padding: 8px 10px 0; }
   .destino select { padding: 3px 6px; margin-left: 4px; }
   .mais { display: inline-block; background: var(--ouro); color: #1d1600; border-radius: 4px; padding: 0 5px; }
@@ -446,7 +455,7 @@ for (const J of G.jogadores) {
 for (const o of G.cena) if (o.estoque) o.estoque = o.estoque.filter(e => ITENS[e.id]);
 function salvar() { try { localStorage.setItem(CHAVE, JSON.stringify(G)); } catch (e) {} }
 
-const ui = { quem: "mestre", ver: G.jogadores[0].id, sel: null, selFonte: null, aba: "Armas", busca: "", armAberto: null };
+const ui = { quem: "mestre", ver: G.jogadores[0].id, sel: null, selFonte: null, aba: "Pistolas", busca: "", armAberto: null };
 let S;
 function sync() {
   if (ui.quem !== "mestre" && !G.jogadores.some(j => j.id === ui.quem)) ui.quem = "mestre";
@@ -483,13 +492,19 @@ const esc = t => String(t ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": 
 let C = 56;
 
 const GRUPOS = {
-  "Armas": ["faca", "pistola", "submetralhadora", "rifle", "espingarda", "magnum", "especial"],
+  "Facas": ["faca"],
+  "Pistolas": ["pistola"],
+  "Submetralhadoras": ["submetralhadora"],
+  "Espingardas": ["espingarda"],
+  "Rifles": ["rifle"],
+  "Magnums": ["magnum"],
+  "Especiais": ["especial"],
   "Explosivos": ["arremessável", "munição especial"],
   "Munição": ["munição"],
   "Anexos": ["anexo"],
   "Cura": ["cura"],
 };
-const grupoDe = id => Object.keys(GRUPOS).find(g => GRUPOS[g].includes((ITENS[id].rpg || {}).tipo)) || "Armas";
+const grupoDe = id => Object.keys(GRUPOS).find(g => GRUPOS[g].includes((ITENS[id].rpg || {}).tipo)) || "Especiais";
 
 let avisoT;
 function aviso(msg, tipo = "") { const a = $("aviso"); a.textContent = msg; a.className = tipo; a.style.display = "block"; clearTimeout(avisoT); avisoT = setTimeout(() => a.style.display = "none", 3200); }
@@ -690,7 +705,11 @@ function renderDetalhe() {
 function render() {
   sync();
   const foco = document.activeElement && document.activeElement.id, pos = foco === "busca" ? document.activeElement.selectionStart : null;
+  // guarda onde cada lista estava rolada, para não voltar ao topo depois de redesenhar
+  const rolagem = {};
+  document.querySelectorAll(".lista").forEach((el, i) => { rolagem[(el.closest("section") || {}).id + ":" + (el.dataset.dropArm || i)] = el.scrollTop; });
   renderTopo(); renderGrade(); renderBau(); renderEsquerda(); renderCena(); renderDetalhe();
+  document.querySelectorAll(".lista").forEach((el, i) => { const k = (el.closest("section") || {}).id + ":" + (el.dataset.dropArm || i); if (rolagem[k]) el.scrollTop = rolagem[k]; });
   if (foco === "busca") { const b = $("busca"); if (b) { b.focus(); b.setSelectionRange(pos, pos); } }
 }
 
@@ -907,6 +926,7 @@ document.addEventListener("pointermove", ev => {
     if (Math.hypot(ev.clientX - drag.x0, ev.clientY - drag.y0) < 6) return;
     drag.moveu = true; if (drag.origem === "maleta" || drag.origem === "bau") ui.sel = drag.uid;
     fantasma = document.createElement("div"); fantasma.className = "fantasma"; document.body.appendChild(fantasma);
+    document.body.classList.add("arrastando-algo"); const sel = window.getSelection && window.getSelection(); if (sel) sel.removeAllRanges();
     renderGrade(); renderBau();
   }
   drag.cx = ev.clientX; drag.cy = ev.clientY;
@@ -991,6 +1011,7 @@ document.addEventListener("contextmenu", ev => {
 document.addEventListener("pointerup", ev => {
   if (!drag) return;
   const d = drag; drag = null;
+  document.body.classList.remove("arrastando-algo");
   if (fantasma) { fantasma.remove(); fantasma = null; }
   if (pegada) { pegada.remove(); pegada = null; }
   limparMarcasDrop();
