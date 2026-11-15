@@ -24,7 +24,7 @@
     "bloqueado": "maleta/attache_block",
     "equipar": "maleta/attache_equip",
     "descartar": "maleta/attache_discard",
-    "misturar": "zeebo/itemget_fixeq2",
+    "misturar": "maleta/attache_select2",
     "juntar": "itens/ammo",
     "bau": "maleta/attache_move",
     "deslocar": "maleta/attache_moveGrid"
