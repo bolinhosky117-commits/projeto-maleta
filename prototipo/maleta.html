@@ -112,6 +112,18 @@
   .qtd-ctrl { display: flex; align-items: center; gap: 3px; }
   .qtd-ctrl b { min-width: 22px; text-align: center; font: 600 14px "Barlow Condensed", sans-serif; color: var(--ouro); }
   select:disabled { opacity: .5; }
+  /* menu do botão direito */
+  .ctx { position: fixed; z-index: 90; min-width: 200px; max-width: 280px; max-height: calc(100vh - 16px); overflow-y: auto; background: var(--painel2); border: 1px solid #3a4650; border-radius: 8px; padding: 4px; box-shadow: 0 12px 32px rgba(0,0,0,.6); }
+  .ctx[hidden] { display: none; }
+  .ctx-titulo { display: flex; align-items: center; gap: 8px; padding: 6px 8px 7px; font: 600 14px/1.2 "Barlow Condensed", sans-serif; letter-spacing: .04em; color: var(--suave); border-bottom: 1px solid var(--linha); margin-bottom: 4px; }
+  .ctx-titulo img { width: 34px; height: 22px; object-fit: contain; }
+  .ctx-item { display: flex; width: 100%; align-items: center; gap: 8px; justify-content: space-between; text-align: left; background: none; border: 0; border-radius: 5px; padding: 6px 10px; color: var(--texto); font: inherit; cursor: pointer; }
+  .ctx-item:hover:not(:disabled), .ctx-item:focus-visible { background: #2a343b; outline: none; }
+  .ctx-item.ouro { color: var(--ouro); font-weight: 600; }
+  .ctx-item.perigo { color: #f0a497; }
+  .ctx-item:disabled { opacity: .45; cursor: not-allowed; }
+  .ctx-item small { color: var(--suave); font-size: 11px; }
+  .ctx-sep { height: 1px; background: var(--linha); margin: 4px 6px; }
   .modal-fundo { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: flex; align-items: center; justify-content: center; z-index: 80; padding: 16px; }
   .modal-fundo[hidden] { display: none; }
   .modal { background: var(--painel); border: 1px solid var(--linha); border-radius: 12px; padding: 18px; width: min(380px, 100%); box-shadow: 0 20px 60px rgba(0,0,0,.6); }
@@ -173,7 +185,7 @@
     <div class="titulo-maleta" id="tituloMaleta"></div>
     <div class="estojo"><div class="grade" id="grade"></div></div>
     <div class="info-maleta" id="infoMaleta"></div>
-    <div class="dica"><b>Botão direito</b> num item mostra os detalhes. <kbd>Espaço</kbd> usa a cura selecionada; <kbd>Delete</kbd> tira o item selecionado. <kbd>Shift</kbd>+clique passa o item entre maleta e baú (e do armário direto para a maleta). Arraste para mover. <kbd>R</kbd> ou o botão direito giram enquanto arrasta. Solte uma erva em cima de outra para misturar, ou um anexo em cima da arma para equipar. Arraste para o baú (à direita) para guardar, ou para o armário para devolver.</div>
+    <div class="dica"><b>Clique</b> num item para ver os detalhes; o <b>botão direito</b> abre o menu de ações. <kbd>Espaço</kbd> usa a cura selecionada; <kbd>Delete</kbd> tira o item selecionado. <kbd>Shift</kbd>+clique passa o item entre maleta e baú (e do armário direto para a maleta). Arraste para mover. <kbd>R</kbd> ou o botão direito giram enquanto arrasta. Solte uma erva em cima de outra para misturar, ou um anexo em cima da arma para equipar. Arraste para o baú (à direita) para guardar, ou para o armário para devolver.</div>
   </section>
 
   <aside class="lado">
@@ -184,6 +196,7 @@
 </main>
 <div id="aviso" role="status"></div>
 <div id="modal" class="modal-fundo" hidden></div>
+<div id="ctx" class="ctx" role="menu" hidden></div>
 
 <script>
 /* ======================= DADOS (gerados por tools/build_prototipo.py) ======================= */
@@ -665,11 +678,93 @@ function renderBau() {
   if (ui.sel) { const el = $("bau").querySelector(`.entrada[data-uid="${ui.sel}"]`); if (el) el.classList.add("sel"); }
 }
 
+/* Todas as ações possíveis com um item: o = item da maleta/baú; fonte = entrada do catálogo/armário.
+   Usada no painel de detalhes (botões) e no menu do botão direito. */
+function acoesDe(o, fonte) {
+  const id = o ? o.id : fonte && fonte.id;
+  if (!id || !ITENS[id]) return [];
+  const r = ITENS[id].rpg || {}, L = [];
+  const add = (acao, rotulo, extra = {}) => L.push({ acao, rotulo, ...extra });
+  const naMaleta = o && S.maleta.includes(o), noBau = o && S.bau.includes(o);
+  if (naMaleta && ehArmaDeFogo(id)) {
+    add("atirar", r.rajada ? "Disparar rajada" : "Atirar", { cls: "ouro", off: o.carregado >= porDisparo(id) ? "" : "Sem bala: recarregue" });
+    add("recarregar", "Recarregar", { off: o.carregado < capArma(id) ? "" : "Já está cheia" });
+  } else if (r.dano && r.dano !== "0" && /d/.test(r.dano)) add("rolarDano", "Rolar dano", { cls: "ouro", data: { id } });
+  if (naMaleta && usavel(id)) add("usar", "Usar", { cls: "ouro", tecla: "Espaço", title: "Atalho: Espaço com o item selecionado" });
+  if (naMaleta && rotsPermitidas(id).length > 1) add("girar", "Girar");
+  if (naMaleta && podeBau()) add("paraBau", "Guardar no baú");
+  if (naMaleta && armario(ui.armAberto) && (ehMestre() || armarios().length)) add("devolver", "Devolver ao armário");
+  if (noBau) add("tirarBau", "Levar para a maleta", { data: { uid: o.uid } });
+  if (fonte && fonte.origem === "catalogo") {
+    add("addArmario", "Pôr no armário", { data: { id }, off: armario(ui.armAberto) ? "" : "Nenhum armário na cena" });
+    add("addMaleta", `Dar para ${S.nome}`, { data: { id } });
+  }
+  if (fonte && fonte.origem === "armario") add("pegar", "Pegar", { cls: "ouro", data: { id, arm: fonte.arm } });
+  if (o) add("descartar", "Descartar", { cls: "perigo" });
+  return L;
+}
+// Anexos ligados ao item (só no menu; no painel eles aparecem em "Anexos equipados").
+function desequiparDe(o) {
+  if (!o || !S.maleta.includes(o)) return [];
+  if (ACEITA[o.id]) return equipados(o).map(a => ({ acao: "desequipar", rotulo: `Desequipar ${ITENS[a.id].name}`, data: { uid: a.uid } }));
+  const arma = ehAnexo(o.id) && S.maleta.find(x => x.uid === o.equipadoEm);
+  return arma ? [{ acao: "desequipar", rotulo: `Desequipar da ${ITENS[arma.id].name}`, data: { uid: o.uid } }] : [];
+}
+// Uma ação vira botão: no painel (.btn) ou no menu (.ctx-item, com o motivo quando está desligada).
+function botaoAcao(a, alvo, menu) {
+  const data = Object.entries(a.data || {}).map(([k, v]) => ` data-${k}="${esc(v)}"`).join("") + (alvo ? ` data-alvo="${esc(alvo)}"` : "");
+  const tit = a.off || a.title;
+  return `<button class="${menu ? "ctx-item" : "btn"} ${a.cls || ""}" data-acao="${a.acao}"${data}${a.off ? " disabled" : ""}${tit ? ` title="${esc(tit)}"` : ""}${menu ? ' role="menuitem"' : ""}>`
+    + `<span>${esc(a.rotulo)}</span>${menu && a.off ? `<small>${esc(a.off)}</small>` : a.tecla ? ` <kbd>${a.tecla}</kbd>` : ""}</button>`;
+}
+
+/* ======================= MENU DO BOTÃO DIREITO ======================= */
+function abrirMenu(x, y, o, fonte) {
+  const id = o ? o.id : fonte.id, it = ITENS[id];
+  const todas = acoesDe(o, fonte);
+  const det = { acao: "detalhes", rotulo: "Ver detalhes", data: o ? {} : { origem: fonte.origem, id, arm: fonte.arm || "" } };
+  const grupos = [[det], todas.filter(a => a.acao !== "descartar"), desequiparDe(o), todas.filter(a => a.acao === "descartar")].filter(g => g.length);
+  const m = $("ctx");
+  m.innerHTML = `<div class="ctx-titulo"><img src="${it.icon}" alt=""><span>${esc(it.name)}</span></div>`
+    + grupos.map(g => g.map(a => botaoAcao(a, o ? o.uid : "", true)).join("")).join('<div class="ctx-sep"></div>');
+  m.hidden = false; m.style.left = "0px"; m.style.top = "0px";
+  // não deixa sair da tela: vira para a esquerda/para cima quando não cabe
+  const w = m.offsetWidth, h = m.offsetHeight, M = 8;
+  let left = x, top = y;
+  if (left + w > innerWidth - M) left = x - w;
+  if (top + h > innerHeight - M) top = innerHeight - h - M;
+  m.style.left = Math.max(M, left) + "px"; m.style.top = Math.max(M, top) + "px";
+  const prim = m.querySelector("button:not(:disabled)"); if (prim) prim.focus({ preventScroll: true });
+}
+const menuAberto = () => !$("ctx").hidden;
+function fecharMenu() { const m = $("ctx"); if (m.hidden) return; m.hidden = true; m.innerHTML = ""; }
+// fecha clicando fora, rolando a página, redimensionando ou saindo da janela
+document.addEventListener("pointerdown", ev => { if (menuAberto() && !ev.target.closest("#ctx")) fecharMenu(); }, true);
+document.addEventListener("scroll", ev => { if (menuAberto() && !(ev.target.closest && ev.target.closest("#ctx"))) fecharMenu(); }, true);
+document.addEventListener("wheel", ev => { if (menuAberto() && !ev.target.closest("#ctx")) fecharMenu(); }, { capture: true, passive: true });
+window.addEventListener("resize", fecharMenu);
+window.addEventListener("blur", fecharMenu);
+// Esc fecha; setas andam pelas opções; Enter/Espaço escolhem (botão focado)
+document.addEventListener("keydown", ev => {
+  if (!menuAberto()) return;
+  if (ev.key === "Escape") { ev.preventDefault(); ev.stopImmediatePropagation(); fecharMenu(); return; }
+  if (ev.key === "ArrowDown" || ev.key === "ArrowUp" || ev.key === "Home" || ev.key === "End") {
+    ev.preventDefault(); ev.stopImmediatePropagation();
+    const bs = [...$("ctx").querySelectorAll("button:not(:disabled)")]; if (!bs.length) return;
+    const i = bs.indexOf(document.activeElement);
+    const n = ev.key === "Home" ? 0 : ev.key === "End" ? bs.length - 1 : ev.key === "ArrowDown" ? (i + 1) % bs.length : (i - 1 + bs.length) % bs.length;
+    bs[n].focus();
+    return;
+  }
+  if (ev.key === "Tab") { ev.preventDefault(); return; }
+  if (!ev.target.closest("#ctx")) { ev.stopImmediatePropagation(); fecharMenu(); }
+}, true);
+
 function renderDetalhe() {
   const o = S.maleta.find(x => x.uid === ui.det) || S.bau.find(x => x.uid === ui.det);
   const fonte = !o ? ui.selFonte : null;
   const id = o ? o.id : fonte && fonte.id;
-  if (!id || !ITENS[id]) { $("detalhe").innerHTML = `<h2>Item</h2><div class="vazio">Clique com o <b>botão direito</b> num item para ver os detalhes.</div>`; return; }
+  if (!id || !ITENS[id]) { $("detalhe").innerHTML = `<h2>Item</h2><div class="vazio">Clique num item para ver os detalhes. O <b>botão direito</b> abre o menu com as ações.</div>`; return; }
   const it = ITENS[id], r = it.rpg || {};
   const linhas = [];
   const add = (k, v) => { if (v !== undefined && v !== null && v !== "" && v !== "0") linhas.push(`<dt>${k}</dt><dd>${esc(v)}</dd>`); };
@@ -692,20 +787,8 @@ function renderDetalhe() {
   add("Modificador", r.modificador);
   add("Aceita", ACEITA[id] && ACEITA[id].map(x => ITENS[x].name).join(", "));
   const tags = (r.tags || []).map(t => `<span class="tag">${esc(t)}</span>`).join("");
-  const acoes = [];
+  const acoes = acoesDe(o, fonte).map(a => botaoAcao(a));
   const naMaleta = o && S.maleta.includes(o), noBau = o && S.bau.includes(o);
-  if (naMaleta && ehArmaDeFogo(id)) {
-    acoes.push(`<button class="btn ouro" data-acao="atirar" ${o.carregado >= porDisparo(id) ? "" : "disabled title='Sem bala: recarregue'"}>${r.rajada ? "Disparar rajada" : "Atirar"}</button>`);
-    acoes.push(`<button class="btn" data-acao="recarregar" ${o.carregado < capArma(id) ? "" : "disabled title='Já está cheia'"}>Recarregar</button>`);
-  } else if (r.dano && r.dano !== "0" && /d/.test(r.dano)) acoes.push(`<button class="btn ouro" data-acao="rolarDano">Rolar dano</button>`);
-  if (naMaleta && usavel(id)) acoes.push(`<button class="btn ouro" data-acao="usar" title="Atalho: Espaço com o item selecionado">Usar <kbd>Espaço</kbd></button>`);
-  if (naMaleta && rotsPermitidas(id).length > 1) acoes.push(`<button class="btn" data-acao="girar">Girar</button>`);
-  if (naMaleta && podeBau()) acoes.push(`<button class="btn" data-acao="paraBau">Guardar no baú</button>`);
-  if (naMaleta && armario(ui.armAberto) && (ehMestre() || armarios().length)) acoes.push(`<button class="btn" data-acao="devolver">Devolver ao armário</button>`);
-  if (noBau) acoes.push(`<button class="btn" data-acao="tirarBau" data-uid="${o.uid}">Levar para a maleta</button>`);
-  if (fonte && fonte.origem === "catalogo") acoes.push(`<button class="btn" data-acao="addArmario" data-id="${id}" ${armario(ui.armAberto) ? "" : "disabled"}>Pôr no armário</button>`, `<button class="btn" data-acao="addMaleta" data-id="${id}">Dar para ${esc(S.nome)}</button>`);
-  if (fonte && fonte.origem === "armario") acoes.push(`<button class="btn ouro" data-acao="pegar" data-id="${id}" data-arm="${fonte.arm}">Pegar</button>`);
-  if (o) acoes.push(`<button class="btn perigo" data-acao="descartar">Descartar</button>`);
   let vinculo = "";
   if (naMaleta && ACEITA[id]) {
     const eq = equipados(o);
@@ -730,6 +813,7 @@ function renderDetalhe() {
 }
 
 function render() {
+  fecharMenu();
   sync();
   const foco = document.activeElement && document.activeElement.id, pos = (foco === "busca" || foco === "buscaBau") ? document.activeElement.selectionStart : null;
   // guarda onde cada lista estava rolada, para não voltar ao topo depois de redesenhar
@@ -759,7 +843,9 @@ function devolver(o, arm) {
 }
 
 function acao(nome, el) {
-  const o = S.maleta.find(x => x.uid === ui.det) || S.bau.find(x => x.uid === ui.det);
+  // do menu: age no item clicado com o botão direito (data-alvo); do painel: no item dos detalhes
+  const doMenu = !!el.closest("#ctx"), alvoUid = doMenu ? el.dataset.alvo : ui.det;
+  const o = alvoUid ? S.maleta.find(x => x.uid === alvoUid) || S.bau.find(x => x.uid === alvoUid) : null;
   const arm = armario(ui.armAberto);
   if (nome !== "removerObj") ui.confirmar = null;
   switch (nome) {
@@ -770,6 +856,10 @@ function acao(nome, el) {
       if (a && a.estoque.some(e => e.id === el.dataset.id) && porNaMaleta(el.dataset.id)) { estoqueTirar(a, el.dataset.id); ui.selFonte = null; }
       break;
     }
+    case "detalhes":
+      if (o) { ui.sel = ui.det = o.uid; ui.selFonte = null; }
+      else { ui.det = null; ui.selFonte = { origem: el.dataset.origem, id: el.dataset.id, arm: el.dataset.arm || null }; }
+      break;
     case "abrirArm": ui.armAberto = el.dataset.uid; break;
     case "novoArmario": { const n = armarios().length + 1; const a = { uid: novoUid(), tipo: "armario", nome: n === 1 ? "Armário de armas" : "Armário " + n, estoque: [] }; G.cena.push(a); ui.armAberto = a.uid; break; }
     case "novoBau": if (!bauNaCena()) G.cena.push({ uid: novoUid(), tipo: "bau", nome: "Baú" }); break;
@@ -798,7 +888,7 @@ function acao(nome, el) {
       if (o) {
         const eq = S.maleta.includes(o) ? equipados(o) : [];
         for (const a of eq) delete a.equipadoEm;
-        S.maleta = S.maleta.filter(x => x !== o); S.bau = S.bau.filter(x => x !== o); ui.sel = null;
+        S.maleta = S.maleta.filter(x => x !== o); S.bau = S.bau.filter(x => x !== o); ui.sel = null; if (ui.det === o.uid) ui.det = null;
         for (const a of (o.anexos || [])) S.bau.push({ uid: novoUid(), id: a, anexos: [] });
         aviso(`${ITENS[o.id].name} descartado.${eq.length ? " Os anexos ficaram na maleta, desequipados." : ""}`);
       }
@@ -816,7 +906,7 @@ function acao(nome, el) {
       break;
     case "recarregar": if (o) { const x = recarregar(S, o); aviso(x.erro || x.ok, x.erro ? "erro" : "mix"); } break;
     case "rolarDano": {
-      const id = o ? o.id : ui.selFonte && ui.selFonte.id, r = ITENS[id].rpg, x = rolar(r.dano);
+      const id = o ? o.id : el.dataset.id || (ui.selFonte && ui.selFonte.id), r = ITENS[id].rpg, x = rolar(r.dano);
       if (x) aviso(`${ITENS[id].name}: ${x.total} de dano  [${x.dados.join(" + ")}${x.bonus ? (x.bonus > 0 ? " + " : " − ") + Math.abs(x.bonus) : ""}]`, "mix");
       break;
     }
@@ -1028,16 +1118,21 @@ function girarArraste() {
   atualizarArraste();
 }
 document.addEventListener("keydown", ev => { if ((ev.key === "r" || ev.key === "R") && drag && drag.moveu) { ev.preventDefault(); girarArraste(); } });
-// Botão direito: enquanto arrasta, gira; fora disso, abre os detalhes do item clicado.
+// Botão direito: enquanto arrasta, gira; fora disso, abre o menu de ações do item clicado.
 document.addEventListener("contextmenu", ev => {
   if (drag && drag.moveu) { ev.preventDefault(); girarArraste(); return; }
+  if (ev.target.closest("#ctx")) { ev.preventDefault(); return; }
   const item = ev.target.closest(".item"), ent = ev.target.closest(".entrada");
-  if (!item && !ent) return;
+  if (!item && !ent) { fecharMenu(); return; }
   ev.preventDefault();
-  if (item) { ui.sel = ui.det = item.dataset.uid; ui.selFonte = null; }
-  else if (ent.dataset.origem === "bau") { ui.det = ent.dataset.uid; ui.selFonte = null; }
-  else { ui.det = null; ui.selFonte = { origem: ent.dataset.origem, id: ent.dataset.id, arm: ent.dataset.arm || null }; }
+  let o = null, fonte = null;
+  if (item) o = S.maleta.find(x => x.uid === item.dataset.uid);
+  else if (ent.dataset.origem === "bau") o = S.bau.find(x => x.uid === ent.dataset.uid);
+  else fonte = { origem: ent.dataset.origem, id: ent.dataset.id, arm: ent.dataset.arm || null };
+  if (!o && !fonte) return;
+  if (o) ui.sel = o.uid;   // seleciona (Delete e Espaço continuam valendo), mas não mexe no painel de detalhes
   render();
+  abrirMenu(ev.clientX, ev.clientY, o, fonte);
 });
 
 document.addEventListener("pointerup", ev => {
@@ -1067,8 +1162,9 @@ document.addEventListener("pointerup", ev => {
     salvar(); return render();
   }
   if (!d.moveu) { // foi um clique
-    // clique esquerdo só seleciona; os detalhes abrem com o botão direito
-    if (d.origem === "maleta" || d.origem === "bau") { ui.sel = d.uid; if (ui.det && ui.det !== d.uid) ui.det = null; ui.selFonte = null; }
+    // clique esquerdo seleciona e abre os detalhes no painel da direita (o botão direito abre o menu)
+    if (d.origem === "maleta" || d.origem === "bau") { ui.sel = ui.det = d.uid; ui.selFonte = null; }
+    else { ui.sel = null; ui.det = null; ui.selFonte = { origem: d.origem, id: d.id, arm: d.arm || null }; }
     return render();
   }
   const o = d.origem === "maleta" ? S.maleta.find(x => x.uid === d.uid) : null;
