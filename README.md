@@ -32,6 +32,7 @@ Abra `prototipo/maleta.html` com dois cliques (não precisa de servidor). No top
 - **Jogador:** vê só a própria maleta e o que está **na cena**. Pega itens do armário (arrastando ou no +), devolve arrastando de volta.
   O baú é de cada jogador (só os itens dele) e só abre se o mestre tiver posto um Baú na cena.
 - **Dado de vida** (o dado de cura do personagem): o mestre escolhe por jogador no topo; as ervas rolam esse dado ao usar.
+- **Botão direito** num item (na maleta, no armário, no catálogo ou no baú) abre os detalhes; o clique esquerdo só seleciona.
 - Na maleta: arrastar, girar (R; facas em 4 posições, o resto deitado ou em pé), misturar ervas, equipar anexos,
   atirar e recarregar (munição contada em balas; juntar caixas soltando uma na outra), usar itens e organizar.
 

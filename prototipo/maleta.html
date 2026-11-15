@@ -148,7 +148,7 @@
     <div class="titulo-maleta" id="tituloMaleta"></div>
     <div class="estojo"><div class="grade" id="grade"></div></div>
     <div class="info-maleta" id="infoMaleta"></div>
-    <div class="dica">Arraste para mover. <kbd>R</kbd>, botão direito ou rodinha giram 90° enquanto arrasta. Solte uma erva em cima de outra para misturar, ou um anexo em cima da arma para equipar. Arraste para o baú ou para o armário para guardar ou devolver.</div>
+    <div class="dica"><b>Botão direito</b> num item mostra os detalhes. Arraste para mover. <kbd>R</kbd>, botão direito ou rodinha giram 90° enquanto arrasta. Solte uma erva em cima de outra para misturar, ou um anexo em cima da arma para equipar. Arraste para o baú ou para o armário para guardar ou devolver.</div>
   </section>
 
   <aside class="lado">
@@ -574,10 +574,10 @@ function renderBau() {
 }
 
 function renderDetalhe() {
-  const o = S.maleta.find(x => x.uid === ui.sel) || S.bau.find(x => x.uid === ui.sel);
+  const o = S.maleta.find(x => x.uid === ui.det) || S.bau.find(x => x.uid === ui.det);
   const fonte = !o ? ui.selFonte : null;
   const id = o ? o.id : fonte && fonte.id;
-  if (!id || !ITENS[id]) { $("detalhe").innerHTML = `<h2>Item</h2><div class="vazio">Clique num item para ver os detalhes.</div>`; return; }
+  if (!id || !ITENS[id]) { $("detalhe").innerHTML = `<h2>Item</h2><div class="vazio">Clique com o <b>botão direito</b> num item para ver os detalhes.</div>`; return; }
   const it = ITENS[id], r = it.rpg || {};
   const linhas = [];
   const add = (k, v) => { if (v !== undefined && v !== null && v !== "" && v !== "0") linhas.push(`<dt>${k}</dt><dd>${esc(v)}</dd>`); };
@@ -649,7 +649,9 @@ function porNaMaleta(id, uid, anexos, estado) {
   const l = achaLugar(S, id);
   if (!l) { aviso(`Não cabe: ${ITENS[id].name} precisa de ${ITENS[id].cols}×${ITENS[id].rows}. Tente "Organizar".`, "erro"); return false; }
   const o = prepararItem({ uid: uid || novoUid(), id, ...l, ...(estado || {}) });
-  S.maleta.push(o); voltarAnexos(o, anexos); ui.sel = o.uid; ui.selFonte = null; return true;
+  S.maleta.push(o); voltarAnexos(o, anexos); ui.sel = o.uid;
+  if (ui.selFonte || ui.det) ui.det = o.uid; // se os detalhes estavam abertos, passam a mostrar o item que entrou
+  ui.selFonte = null; return true;
 }
 // Devolver um item da maleta ao armário (a arma deixa os anexos na maleta, desequipados).
 function devolver(o, arm) {
@@ -660,7 +662,7 @@ function devolver(o, arm) {
 }
 
 function acao(nome, el) {
-  const o = S.maleta.find(x => x.uid === ui.sel) || S.bau.find(x => x.uid === ui.sel);
+  const o = S.maleta.find(x => x.uid === ui.det) || S.bau.find(x => x.uid === ui.det);
   const arm = armario(ui.armAberto);
   if (nome !== "removerObj") ui.confirmar = null;
   switch (nome) {
@@ -742,12 +744,12 @@ document.addEventListener("click", ev => {
   const b = ev.target.closest("[data-acao]"); if (b) { ev.stopPropagation(); if (!b.disabled) acao(b.dataset.acao, b); return; }
   const a = ev.target.closest("[data-aba]"); if (a) { ui.aba = a.dataset.aba; ui.busca = ""; render(); return; }
   // clique num quadradinho vazio da maleta: tira a seleção
-  if (ev.target.id === "grade" && (ui.sel || ui.selFonte)) { ui.sel = null; ui.selFonte = null; render(); }
+  if (ev.target.id === "grade" && (ui.sel || ui.selFonte || ui.det)) { ui.sel = null; ui.det = null; ui.selFonte = null; render(); }
 });
 document.addEventListener("input", e => { if (e.target.id === "busca") { ui.busca = e.target.value; render(); } });
-$("quem").addEventListener("change", e => { ui.quem = e.target.value; ui.sel = null; ui.selFonte = null; render(); });
+$("quem").addEventListener("change", e => { ui.quem = e.target.value; ui.sel = null; ui.det = null; ui.selFonte = null; render(); });
 document.addEventListener("change", e => { if (e.target.id === "destinoArm") { ui.armAberto = e.target.value; render(); } });
-$("verJog").addEventListener("change", e => { ui.ver = e.target.value; ui.sel = null; render(); });
+$("verJog").addEventListener("change", e => { ui.ver = e.target.value; ui.sel = null; ui.det = null; render(); });
 $("dadoVida").addEventListener("change", e => { S.dadoVida = e.target.value; salvar(); render(); });
 $("tamanho").addEventListener("change", e => {
   S.tam = e.target.value; [S.cols, S.rows] = TAMANHOS[S.tam];
@@ -862,7 +864,17 @@ function girarArraste() {
   atualizarArraste();
 }
 document.addEventListener("keydown", ev => { if ((ev.key === "r" || ev.key === "R") && drag && drag.moveu) { ev.preventDefault(); girarArraste(); } });
-document.addEventListener("contextmenu", ev => { if (drag && drag.moveu) { ev.preventDefault(); girarArraste(); } });
+// Botão direito: enquanto arrasta, gira; fora disso, abre os detalhes do item clicado.
+document.addEventListener("contextmenu", ev => {
+  if (drag && drag.moveu) { ev.preventDefault(); girarArraste(); return; }
+  const item = ev.target.closest(".item"), ent = ev.target.closest(".entrada");
+  if (!item && !ent) return;
+  ev.preventDefault();
+  if (item) { ui.sel = ui.det = item.dataset.uid; ui.selFonte = null; }
+  else if (ent.dataset.origem === "bau") { ui.det = ent.dataset.uid; ui.selFonte = null; }
+  else { ui.det = null; ui.selFonte = { origem: ent.dataset.origem, id: ent.dataset.id, arm: ent.dataset.arm || null }; }
+  render();
+});
 document.addEventListener("wheel", ev => { if (drag && drag.moveu) { ev.preventDefault(); girarArraste(); } }, { passive: false });
 
 document.addEventListener("pointerup", ev => {
@@ -872,8 +884,8 @@ document.addEventListener("pointerup", ev => {
   if (pegada) { pegada.remove(); pegada = null; }
   limparMarcasDrop();
   if (!d.moveu) { // foi um clique
-    if (d.origem === "maleta" || d.origem === "bau") { ui.sel = d.uid; ui.selFonte = null; }
-    else { ui.sel = null; ui.selFonte = { origem: d.origem, id: d.id, arm: d.arm }; }
+    // clique esquerdo só seleciona; os detalhes abrem com o botão direito
+    if (d.origem === "maleta") { ui.sel = d.uid; if (ui.det && ui.det !== d.uid) ui.det = null; ui.selFonte = null; }
     return render();
   }
   const o = d.origem === "maleta" ? S.maleta.find(x => x.uid === d.uid) : null;
