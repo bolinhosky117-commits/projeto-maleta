@@ -42,6 +42,9 @@ Abra `prototipo/maleta.html` com dois cliques (não precisa de servidor). No top
 - Na maleta: arrastar, girar (R ou botão direito durante o arrasto; facas em 4 posições, o resto deitado ou em pé), misturar ervas, equipar anexos,
   atirar e recarregar (munição contada em balas; caixas do mesmo tipo se juntam soltando uma na outra, sozinhas quando
   uma caixa entra na maleta e ao clicar em Organizar), usar itens e organizar.
+- **Sons**: atirar, rajada, recarregar e o clique de arma vazia usam os sons do RE4 (2005). O botão **Som** no topo liga/desliga.
+  Para trocar um som, mude o nome em `data/sons.json` (os arquivos ficam em `source-sounds/wep/`) e rode
+  `python tools/make_sounds.py` e depois `python tools/build_prototipo.py`.
 
 O código fica em `prototipo/maleta.src.html`; depois de mexer nele ou nos itens, rode `python tools/build_prototipo.py`
 (ele embute o `items.json` e os ícones e gera o `maleta.html`).

@@ -174,6 +174,7 @@
         <option value="13x9">13 × 9 (máxima)</option>
       </select>
     </label>
+    <button class="btn" id="som" title="Liga ou desliga os sons das armas">Som: ligado</button>
     <button class="btn" id="organizar">Organizar</button>
     <button class="btn perigo" id="esvaziar">Esvaziar maleta</button>
   </div>
@@ -202,6 +203,36 @@
 <script>
 /* ======================= DADOS (gerados por tools/build_prototipo.py) ======================= */
 const DADOS = __DADOS__;
+
+/* ======================= SONS (data/sons.json + assets/sounds, embutidos pelo build) ======================= */
+const SONS = DADOS.sons || { mapa: { armas: {}, padrao: {} }, arquivos: {} };
+let somLigado = (() => { try { return localStorage.getItem("maleta-som") !== "0"; } catch (e) { return true; } })();
+let audioCtx = null;
+const buffers = {};
+function ctxAudio() {
+  if (!audioCtx) { const C = window.AudioContext || window.webkitAudioContext; if (!C) return null; audioCtx = new C(); }
+  if (audioCtx.state === "suspended") audioCtx.resume();
+  return audioCtx;
+}
+function carregarSom(nome) {
+  if (!buffers[nome]) buffers[nome] = fetch(SONS.arquivos[nome]).then(r => r.arrayBuffer()).then(b => ctxAudio().decodeAudioData(b)).catch(() => null);
+  return buffers[nome];
+}
+const somDe = (id, acao) => (SONS.mapa.armas[id] || {})[acao] || SONS.mapa.padrao[acao] || null;
+// toca o som da ação; numa rajada, repete o tiro "vezes" vezes no ritmo da arma
+async function tocar(id, acao, vezes = 1) {
+  const nome = somDe(id, acao);
+  if (!somLigado || !nome || !SONS.arquivos[nome] || !ctxAudio()) return;
+  const b = await carregarSom(nome); if (!b) return;
+  const c = audioCtx, passo = (SONS.mapa.armas[id] || {}).cadencia || 0.09, t0 = c.currentTime + 0.01;
+  for (let i = 0; i < vezes; i++) {
+    const src = c.createBufferSource(), g = c.createGain();
+    src.buffer = b; g.gain.value = i ? 0.8 : 1;
+    src.connect(g).connect(c.destination); src.start(t0 + i * passo);
+  }
+}
+// o navegador só libera o áudio depois do primeiro clique: aí já prepara todos os sons
+document.addEventListener("pointerdown", () => { if (somLigado && ctxAudio()) Object.keys(SONS.arquivos).forEach(carregarSom); }, { once: true, capture: true });
 
 /* ======================= REGRAS DA MALETA ======================= */
 const ITENS = Object.fromEntries(DADOS.items.map(i => [i.id, i]));
@@ -688,7 +719,7 @@ function acoesDe(o, fonte) {
   const add = (acao, rotulo, extra = {}) => L.push({ acao, rotulo, ...extra });
   const naMaleta = o && S.maleta.includes(o), noBau = o && S.bau.includes(o);
   if (naMaleta && ehArmaDeFogo(id)) {
-    add("atirar", r.rajada ? "Disparar rajada" : "Atirar", { cls: "ouro", off: o.carregado >= porDisparo(id) ? "" : "Sem bala: recarregue" });
+    add("atirar", r.rajada ? "Disparar rajada" : "Atirar", { cls: "ouro", title: o.carregado >= porDisparo(id) ? "" : "Sem bala: recarregue" });
     add("recarregar", "Recarregar", { off: o.carregado < capArma(id) ? "" : "Já está cheia" });
   } else if (r.dano && r.dano !== "0" && /d/.test(r.dano)) add("rolarDano", "Rolar dano", { cls: "ouro", data: { id } });
   if (naMaleta && usavel(id)) add("usar", "Usar", { cls: "ouro", tecla: "Espaço", title: "Atalho: Espaço com o item selecionado" });
@@ -900,12 +931,14 @@ function acao(nome, el) {
       break;
     }
     case "atirar":
-      if (o && o.carregado >= porDisparo(o.id)) {
+      if (o && o.carregado < porDisparo(o.id)) { tocar(o.id, "vazio"); aviso(`${ITENS[o.id].name}: sem bala. Recarregue.`, "erro"); }
+      else if (o) {
+        tocar(o.id, "atirar", porDisparo(o.id));
         o.carregado -= porDisparo(o.id); const r = ITENS[o.id].rpg, x = rolar(r.dano);
         aviso(`${ITENS[o.id].name}: ${x.total} de dano [${x.dados.join(" + ")}${x.bonus ? " + " + x.bonus : ""}]. Restam ${o.carregado}/${capArma(o.id)}.`, "mix");
       }
       break;
-    case "recarregar": if (o) { const x = recarregar(S, o); aviso(x.erro || x.ok, x.erro ? "erro" : "mix"); } break;
+    case "recarregar": if (o) { const x = recarregar(S, o); if (!x.erro) tocar(o.id, "recarregar"); aviso(x.erro || x.ok, x.erro ? "erro" : "mix"); } break;
     case "rolarDano": {
       const id = o ? o.id : el.dataset.id || (ui.selFonte && ui.selFonte.id), r = ITENS[id].rpg, x = rolar(r.dano);
       if (x) aviso(`${ITENS[id].name}: ${x.total} de dano  [${x.dados.join(" + ")}${x.bonus ? (x.bonus > 0 ? " + " : " − ") + Math.abs(x.bonus) : ""}]`, "mix");
@@ -939,6 +972,12 @@ $("tamanho").addEventListener("change", e => {
   if (fora.length) aviso(`${fora.length} item(ns) reposicionado(s); o que não coube foi para o baú.`);
   salvar(); render();
 });
+function mostrarSom() { $("som").textContent = somLigado ? "Som: ligado" : "Som: desligado"; }
+$("som").addEventListener("click", () => {
+  somLigado = !somLigado; try { localStorage.setItem("maleta-som", somLigado ? "1" : "0"); } catch (e) {}
+  mostrarSom(); if (somLigado) Object.keys(SONS.arquivos).forEach(carregarSom);
+});
+mostrarSom();
 $("organizar").addEventListener("click", () => {
   juntarTodasCaixas(S);
   const sobrou = organizar(S);

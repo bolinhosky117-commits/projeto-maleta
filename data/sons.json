@@ -1,0 +1,28 @@
+{
+  "_comentario": "Sons das armas. Os arquivos vêm de source-sounds/wep/ (RE4 2005, The Sounds Resource; Capcom, uso só entre os amigos). Cada valor é o nome do arquivo sem .ogg; pares -L/-R viram um arquivo estéreo. 'padrao' vale para qualquer arma sem som próprio. Códigos do jogo: wep01 Punisher, wep02 Handgun, wep03 Red9, wep04 Blacktail, wep05 Broken Butterfly, wep06 Killer7, wep07 Shotgun, wep08 Striker, wep09 rifle de ferrolho, wep10 rifle semiautomático, wep11 TMP, wep12 Chicago Typewriter, wep13 lança-foguete, wep15 Handcannon, wep17 Matilda.",
+  "padrao": { "vazio": "handgun_kara" },
+  "armas": {
+    "sg-09-r":            { "atirar": "try_0609_01b", "recarregar": "02_reload_03", "vazio": "handgun_kara" },
+    "punisher":           { "atirar": "try_0609_01b", "recarregar": "01_reload_16", "vazio": "handgun_kara" },
+    "red9":               { "atirar": "wep03_shot_10_32", "recarregar": "03_reload_16", "vazio": "handgun_kara" },
+    "blacktail":          { "atirar": "wep4_shot0930a", "recarregar": "04_reload02_16", "vazio": "fn57_kara_16" },
+    "matilda":            { "atirar": "wep4_shot0930a", "recarregar": "wep17_reload", "vazio": "handgun_kara", "cadencia": 0.07 },
+    "sentinel-nine":      { "atirar": "try_0609_01b", "recarregar": "02_reload_03", "vazio": "handgun_kara" },
+    "broken-butterfly":   { "atirar": "wep05_shot", "recarregar": "05_reload", "vazio": "05_kara" },
+    "killer7":            { "atirar": "wep06_shot", "recarregar": "wep06_reload_c", "vazio": "wep06_kara" },
+    "handcannon":         { "atirar": "wep15_shot5", "recarregar": "wep15_reload_16", "vazio": "05_kara" },
+    "tmp":                { "atirar": "Mg_shot_5", "recarregar": "11_reload_a", "vazio": "11_kara_16", "cadencia": 0.06 },
+    "le-5":               { "atirar": "wep11_sl_shot_st", "recarregar": "11_reload_a", "vazio": "11_kara_16", "cadencia": 0.07 },
+    "chicago-sweeper":    { "atirar": "wep12_shotst", "recarregar": "wep12_reload_16", "vazio": "wep12_kara_16", "cadencia": 0.065 },
+    "w-870":              { "atirar": "wep07_shot0930", "recarregar": "07_reload_16", "vazio": "07_kara2_16" },
+    "riot-gun":           { "atirar": "wep48_shot", "recarregar": "sg_reload_s", "vazio": "wep48_kara2" },
+    "striker":            { "atirar": "wep08_shotst2", "recarregar": "wep08_reload", "vazio": "wep08_kara_16" },
+    "skull-shaker":       { "atirar": "wep07_shot0930", "recarregar": "07_reload_16", "vazio": "07_kara2_16" },
+    "sr-m1903":           { "atirar": "sniper_shotd_28", "recarregar": "09_reload", "vazio": "09_kara_16" },
+    "stingray":           { "atirar": "sniper_so_shot_28", "recarregar": "wep10_reload", "vazio": "09_kara_16" },
+    "cqbr-assault-rifle": { "atirar": "wep6_shot_s", "recarregar": "wep10_reload", "vazio": "09_kara_16", "cadencia": 0.08 },
+    "bolt-thrower":       { "atirar": "bowgun_ahot_32k", "recarregar": "bowgun_setup_22k", "vazio": "bowgun_kara_32k" },
+    "rocket-launcher":    { "atirar": "wep13_shot01" },
+    "rocket-launcher-special": { "atirar": "wep13_shot01" }
+  }
+}

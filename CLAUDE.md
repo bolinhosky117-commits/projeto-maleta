@@ -25,6 +25,10 @@ O protótipo é HTML/JS puro; a stack do sistema final ainda não foi definida �
 - `tools/make_icons.py` — regenera `assets/` a partir de `data/` + `source-images/` (Python: pillow, numpy, scipy).
 - `prototipo/maleta.src.html` — protótipo (HTML/CSS/JS, sem framework). `python tools/build_prototipo.py` gera
   `prototipo/maleta.html` com o `items.json` e os ícones embutidos. Não edite o `maleta.html` à mão.
+- **Sons das armas**: `source-sounds/wep/` (originais do RE4 2005, pacote "Weapons" do The Sounds Resource — não mexer),
+  `data/sons.json` (qual som cada arma usa: `atirar`, `recarregar`, `vazio`, `cadencia` da rajada; tem a tabela wepNN → arma),
+  `python tools/make_sounds.py` gera `assets/sounds/*.ogg` (junta os pares L/R em estéreo, corta o silêncio inicial; precisa do ffmpeg).
+  O `build_prototipo.py` embute os sons. No protótipo: Atirar toca o tiro (repetido na rajada), Recarregar toca a recarga, sem bala faz o clique vazio; botão "Som" no topo liga/desliga.
 - `extras/inventario-mochila-bau/` — pacote anterior do Ez (Catálogo, Armário, Mochila por espaços, Baú). A maleta em grade
   substitui a mochila de lá; o resto da ideia já está no protótipo da maleta.
 
@@ -54,7 +58,7 @@ O protótipo é HTML/JS puro; a stack do sistema final ainda não foi definida �
   Exceção: `recovery/red-herb.png` é a erva verde recolorida de vermelho (mesmo modelo das três ervas); a foto original ficou em `source-images/recovery/_original/`.
   `weaponry/biosensor-scope.png` foi trocada por uma foto melhor mandada pelo Ez (fundo branco, `fundoLimite` 120); a antiga ficou em `source-images/weaponry/_original/`.
 - Tamanhos incertos (ver `docs/verificacao-tamanhos.md`): Striker (2x5 vs 2x4), consumíveis sem fonte do remake, Bolts (suposição).
-- As imagens são da Capcom; uso só entre os amigos. Se o projeto for publicado, trocar por arte própria.
+- As imagens e os sons são da Capcom; uso só entre os amigos. Se o projeto for publicado, trocar por arte própria.
 
 ## Referências do jogo
 
