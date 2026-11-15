@@ -116,6 +116,13 @@ def main():
             im = im.rotate(ang, resample=Image.BICUBIC, expand=True)
             rotated = round(float(ang), 1)
         im = im.crop(im.getbbox())
+        if it.get("duplicar"):  # desenho "gordinho" num espaço comprido: duas unidades lado a lado, a de trás um pouco por baixo
+            w0, h0 = im.size
+            passo = round(w0 * it.get("duplicarPasso", 0.78))
+            dupla = Image.new("RGBA", (passo + w0, h0), (0, 0, 0, 0))
+            dupla.alpha_composite(im, (passo, 0))
+            dupla.alpha_composite(im, (0, 0))
+            im = dupla
         w, h = im.size
         if long_c == short_c:
             cols = rows = long_c

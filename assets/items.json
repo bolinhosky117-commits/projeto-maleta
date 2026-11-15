@@ -898,10 +898,10 @@
       "name": "Shotgun Shells",
       "file": "icons/shotgun-shells.png",
       "category": "weaponry",
-      "cols": 1,
+      "cols": 2,
       "rows": 1,
-      "slots": 1,
-      "sizeStatus": "ajustado ao ícone (menos espaço vazio)",
+      "slots": 2,
+      "sizeStatus": "2×1 como as outras munições; desenho com duas caixas lado a lado",
       "rotatedDeg": 0.0,
       "description": "Cartuchos de espingarda.",
       "rpg": {

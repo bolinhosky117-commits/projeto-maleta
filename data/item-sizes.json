@@ -505,16 +505,17 @@
       "name": "Shotgun Shells",
       "category": "weaponry",
       "size": [
-        1,
+        2,
         1
       ],
       "forceHorizontal": false,
-      "status": "ajustado ao ícone (menos espaço vazio)",
+      "status": "2×1 como as outras munições; desenho com duas caixas lado a lado",
       "description": "Cartuchos de espingarda.",
       "tamanhoJogo": [
         2,
         1
-      ]
+      ],
+      "duplicar": true
     },
     {
       "id": "submachine-gun-ammo",
