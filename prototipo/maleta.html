@@ -828,6 +828,14 @@ document.addEventListener("keydown", ev => {
   else if (ev.key === "Enter" && ITENS[o.id].rpg.tipo === "cura") { ev.preventDefault(); usarItem(o); salvar(); render(); }
 });
 
+/* Clicar num item, numa linha de lista ou na grade tira o foco do botão/seletor clicado antes,
+   para Enter e Delete valerem para o item selecionado (e não apertarem o botão de novo). */
+document.addEventListener("pointerdown", ev => {
+  if (ev.target.closest(".item, .entrada, #grade") && !ev.target.closest("[data-acao], input, select")) {
+    const f = document.activeElement; if (f && f !== document.body && f.blur) f.blur();
+  }
+}, true);
+
 /* ======================= ARRASTAR ======================= */
 let drag = null, fantasma = null, pegada = null;
 
