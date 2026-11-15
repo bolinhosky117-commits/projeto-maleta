@@ -120,6 +120,8 @@
   .modal .foto img { max-width: 90%; max-height: 90%; }
   .modal .acoes { justify-content: flex-end; }
   .btn.deletar { background: #8a2a20; border-color: #a83a2e; color: #fff; font-weight: 600; }
+  #esquerda.sobre-apagar { outline: 2px dashed var(--erro); outline-offset: -4px; background: rgba(208,86,74,.08); }
+  #esquerda.sobre-apagar h2::after { content: "Soltar aqui apaga o item"; color: var(--erro); font: 600 12px Barlow, sans-serif; letter-spacing: 0; text-transform: none; }
   .destino { padding: 8px 10px 0; }
   .destino select { padding: 3px 6px; margin-left: 4px; }
   .mais { display: inline-block; background: var(--ouro); color: #1d1600; border-radius: 4px; padding: 0 5px; }
@@ -895,7 +897,7 @@ document.addEventListener("pointermove", ev => {
   atualizarArraste();
 });
 
-function limparMarcasDrop() { document.querySelectorAll(".sobre").forEach(e => e.classList.remove("sobre")); }
+function limparMarcasDrop() { document.querySelectorAll(".sobre, .sobre-apagar").forEach(e => e.classList.remove("sobre", "sobre-apagar")); }
 
 function atualizarArraste() {
   const [w, h] = medida(drag.id, drag.rot);
@@ -905,6 +907,9 @@ function atualizarArraste() {
   // Baú ou armário embaixo do cursor?
   limparMarcasDrop();
   const sobEl = document.elementFromPoint(drag.cx, drag.cy);
+  // mestre soltando um item da maleta ou do baú em cima do catálogo: apaga o item
+  drag.noCatalogo = ehMestre() && (drag.origem === "maleta" || drag.origem === "bau") && !!(sobEl && sobEl.closest("#esquerda"));
+  if (drag.noCatalogo) { $("esquerda").classList.add("sobre-apagar"); if (pegada) { pegada.remove(); pegada = null; } drag.alvo = null; return; }
   const armEl = sobEl && sobEl.closest("[data-drop-arm]");
   drag.noArm = armEl && !(drag.origem === "armario" && drag.arm === armEl.dataset.dropArm) ? armEl.dataset.dropArm : null;
   if (drag.noArm) armEl.classList.add("sobre");
@@ -988,7 +993,12 @@ document.addEventListener("pointerup", ev => {
     return render();
   }
   const o = d.origem === "maleta" ? S.maleta.find(x => x.uid === d.uid) : null;
-  if (d.noArm) { // soltou num armário: devolve (ou, do catálogo, abastece)
+  if (d.noCatalogo) { // mestre arrastou para o catálogo: apaga
+    if (o) { for (const a of equipados(o)) delete a.equipadoEm; S.maleta = S.maleta.filter(x => x !== o); }
+    else S.bau = S.bau.filter(x => x.uid !== d.uid);
+    if (ui.sel === d.uid) ui.sel = null; if (ui.det === d.uid) ui.det = null;
+    aviso(`${ITENS[d.id].name} apagado.`);
+  } else if (d.noArm) { // soltou num armário: devolve (ou, do catálogo, abastece)
     const arm = armario(d.noArm);
     if (o) devolver(o, arm);
     else if (d.origem === "catalogo") { estoqueAdd(arm, d.id, 1); aviso(`+1 ${ITENS[d.id].name} no ${arm.nome}.`); }

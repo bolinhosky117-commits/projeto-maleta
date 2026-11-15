@@ -28,7 +28,8 @@ Abra `prototipo/maleta.html` com dois cliques (não precisa de servidor). No top
 
 - **Mestre:** vê o **Catálogo** com todos os itens. O **+** de cada item põe 1 no armário aberto; a seta dá o item direto para a maleta
   do jogador escolhido em "Maleta de". No painel **Cena**, coloca e tira objetos: **Armários** (com estoque que ele define: −, +, ∞, ✕)
-  e o **Baú**. Também é o único que muda o tamanho da maleta.
+  e o **Baú**. Também é o único que muda o tamanho da maleta. Arrastar um item da maleta ou do baú para cima do
+  **Catálogo** apaga o item (o painel fica vermelho para avisar).
 - **Jogador:** vê só a própria maleta e o que está **na cena**. Pega itens do armário (arrastando ou no +), devolve arrastando de volta.
   O baú é de cada jogador (só os itens dele) e só abre se o mestre tiver posto um Baú na cena. Ele aparece como uma
   **segunda grade logo abaixo da maleta** (mesma largura, cresce conforme enche): arraste itens direto entre as duas.

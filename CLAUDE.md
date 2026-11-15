@@ -37,7 +37,7 @@ O protótipo é HTML/JS puro; a stack do sistema final ainda não foi definida �
 - Organizar testa vários jeitos e fica com o que deixa a área livre com menos cantos (e menos itens em pé).
 - **Catálogo** (todos os itens) é só do mestre. **Armário** e **Baú** são objetos que o mestre põe na cena. O mestre define
   quais itens e quantos ficam em cada armário (quantidade ou ∞). O baú é por jogador (cada um só vê os próprios itens) e só
-  abre se houver um Baú na cena. Só o mestre muda o tamanho da maleta.
+  abre se houver um Baú na cena. Só o mestre muda o tamanho da maleta. O mestre apaga um item arrastando-o da maleta/baú para o Catálogo.
 - **Anexos** não fundem nem saem da grade: ficam equipados na arma compatível (`equipadoEm` = uid da arma), com marquinha
   da mesma cor nos dois. 1 mira + 1 coronha por arma. Modificador de acerto: a definir pelo mestre.
 - Ervas (proposta do mestre; "dado de vida" = o dado de cura do personagem, `dadoVida` por jogador no protótipo): verde 1 dado de vida, vermelha ½ + tira a dor, amarela ½ + pulso de adrenalina; misturas somam; 3 ervas = vida toda. **Ovos fora.** Spray de primeiros socorros é raro.
