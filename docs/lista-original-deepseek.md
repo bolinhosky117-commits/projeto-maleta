@@ -104,7 +104,7 @@ O layout já está limpo, sem conversas e pronto para impressão.
 
 | Item | Tamanho | Descrição |
 | :--- | :--- | :--- |
-| **Facas equipáveis** | **3** (1x3) | Usadas para combate corpo a corpo, defesa/parry e finalizações; possuem durabilidade. |
+| **Facas equipáveis** | **3** (1x3) | Usadas para combate corpo a corpo, defesa/parry e finalizações. |
 
 ---
 

@@ -31,6 +31,7 @@ Abra `prototipo/maleta.html` com dois cliques (não precisa de servidor). No top
   e o **Baú**. Também é o único que muda o tamanho da maleta.
 - **Jogador:** vê só a própria maleta e o que está **na cena**. Pega itens do armário (arrastando ou no +), devolve arrastando de volta.
   O baú é de cada jogador (só os itens dele) e só abre se o mestre tiver posto um Baú na cena.
+- **Dado de vida** (o dado de cura do personagem): o mestre escolhe por jogador no topo; as ervas rolam esse dado ao usar.
 - Na maleta: arrastar, girar (R; facas em 4 posições, o resto deitado ou em pé), misturar ervas, equipar anexos,
   atirar e recarregar (munição contada em balas; juntar caixas soltando uma na outra), usar itens e organizar.
 
@@ -81,6 +82,6 @@ Para mudar o tamanho do quadradinho, edite `cellSize` no mesmo arquivo.
 
 ## Próximos passos
 
-- **Mestre:** decidir como fica o acerto de cada arma (`precisaoJogo` ajuda), o modificador de cada anexo e o que é "dado de vida" e "adrenalina" nas regras dele.
+- **Mestre:** decidir como fica o acerto de cada arma (`precisaoJogo` ajuda), o modificador de cada anexo e o que o "pulso de adrenalina" faz nas regras dele.
 - **Levar para o site:** guardar maleta, baú e armários no banco; cada jogador vê só a própria tela; mestre controla a cena.
 - Conferir no jogo os tamanhos marcados como incertos (ver `docs/verificacao-tamanhos.md`): Striker, consumíveis e Bolts.

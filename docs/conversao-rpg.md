@@ -58,7 +58,8 @@ Proposta do Ez para levar os itens da maleta para o RPG do amigo. Os números fi
 
 ## Cura (proposta do mestre)
 
-A cura usa o **dado de vida** do sistema do mestre (ou 10 PV, se preferir um número fixo).
+A cura usa o **dado de vida**: o dado que o personagem usa para curar (no protótipo, o mestre escolhe por jogador, de d4 a d12).
+½ dado = rola o dado e divide por 2, arredondando para cima.
 Cada erva soma: **verde = 1 dado de vida**, **vermelha = ½ dado + tira a dor**, **amarela = ½ dado + pulso de adrenalina**.
 Mistura de 3 ervas cura a vida toda e mantém os efeitos das ervas que tem.
 

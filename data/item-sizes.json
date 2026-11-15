@@ -543,7 +543,8 @@
       ],
       "forceHorizontal": false,
       "status": "lista do usuario (sem fonte do remake encontrada)",
-      "description": "Spray de primeiros socorros. Cura a vida toda na hora. Item raro."
+      "description": "Spray de primeiros socorros. Cura a vida toda na hora. Item raro.",
+      "endireitar": true
     },
     {
       "id": "green-herb",

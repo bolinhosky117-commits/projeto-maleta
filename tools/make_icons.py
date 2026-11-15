@@ -107,7 +107,12 @@ def main():
         ang, elong = main_axis(im)
         rotated = 0.0
         # itens compridos, facas e os marcados com "endireitar" no data/ vêm inclinados na foto: endireita
-        if ((long_c / short_c >= 3 or "knife" in slug) and elong > 4 or it.get("endireitar")) and abs(ang) > 3:
+        if it.get("endireitar"):  # gira até o eixo mais próximo (fica em pé ou deitado, o que estiver mais perto)
+            resto = ang - 90 * round(ang / 90)
+            if abs(resto) > 3:
+                im = im.rotate(resto, resample=Image.BICUBIC, expand=True)
+                rotated = round(float(resto), 1)
+        elif (long_c / short_c >= 3 or "knife" in slug) and elong > 4 and abs(ang) > 3:
             im = im.rotate(ang, resample=Image.BICUBIC, expand=True)
             rotated = round(float(ang), 1)
         im = im.crop(im.getbbox())
