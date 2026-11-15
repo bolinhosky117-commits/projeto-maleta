@@ -253,7 +253,12 @@ async function tocar(id, acao, vezes = 1, nomeFixo) {
   }
 }
 // sons da própria maleta: pegar, soltar, girar, bloqueado, equipar, descartar, misturar, juntar, bau
-const somMaleta = acao => { const n = (SONS.mapa.maleta || {})[acao]; if (n) tocar(null, acao, 1, n); };
+let ultimoTique = 0;
+const somMaleta = acao => {
+  const n = (SONS.mapa.maleta || {})[acao]; if (!n) return;
+  if (acao === "deslocar") { const t = performance.now(); if (t - ultimoTique < 45) return; ultimoTique = t; }  // não metralha o tique
+  tocar(null, acao, 1, n);
+};
 // o navegador só libera o áudio depois do primeiro clique: aí já prepara todos os sons
 document.addEventListener("pointerdown", () => { if (somLigado && ctxAudio()) Object.keys(SONS.arquivos).forEach(carregarSom); }, { once: true, capture: true });
 
@@ -1170,6 +1175,9 @@ function atualizarArraste() {
   const dentro = drag.cx >= g.left && drag.cx < g.right && drag.cy >= g.top && drag.cy < g.bottom;
   if (!dentro) return;
   const cx = Math.floor((drag.cx - g.left) / C), cy = Math.floor((drag.cy - g.top) / C);
+  // som de deslocar: um tique a cada quadradinho que o item atravessa
+  const casa = cx + "," + cy;
+  if (drag.casa !== casa) { if (drag.casa !== undefined) somMaleta("deslocar"); drag.casa = casa; }
   const sob = quemEsta(S, cx, cy);
   pegada = document.createElement("div"); pegada.className = "pegada";
   const st = sob && sob.uid !== drag.uid && ehAnexo(drag.id) ? podeEquipar(drag.id, sob, drag.uid) : "nao";

@@ -24,7 +24,7 @@ import numpy as np
 FILTRO = "silenceremove=start_periods=1:start_threshold=-50dB"
 # volume de cada tipo de som: o trecho mais forte (janela de 50 ms) fica neste nível, em dB.
 # Assim todos os tiros soam parecidos entre si, e a recarga e o clique vazio ficam abaixo do tiro.
-ALVO_DB = {"atirar": -16.0, "atacar": -16.0, "recarregar": -24.0, "vazio": -26.0, "usar": -24.0, "maleta": -27.0}
+ALVO_DB = {"atirar": -16.0, "atacar": -16.0, "recarregar": -24.0, "vazio": -26.0, "usar": -24.0, "maleta": -27.0, "tique": -32.0}
 TETO_DB = -3.0   # nenhum pico passa disto (evita estourar)
 
 
@@ -34,7 +34,10 @@ def tabelas(cfg):
 
 
 def tipo_de(nome, cfg):
-    if nome in cfg.get("maleta", {}).values():
+    m = cfg.get("maleta", {})
+    if nome == m.get("deslocar"):
+        return "tique"
+    if nome in m.values():
         return "maleta"
     for sons in tabelas(cfg):
         for acao, v in sons.items():

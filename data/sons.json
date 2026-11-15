@@ -19,14 +19,15 @@
   },
   "maleta": {
     "pegar": "maleta/attache_lift",
-    "soltar": "maleta/attache_putdown",
+    "soltar": "maleta/attache_select",
     "girar": "maleta/attache_rotate",
     "bloqueado": "maleta/attache_block",
     "equipar": "maleta/attache_equip",
     "descartar": "maleta/attache_discard",
     "misturar": "zeebo/itemget_fixeq2",
     "juntar": "itens/ammo",
-    "bau": "maleta/attache_move"
+    "bau": "maleta/attache_move",
+    "deslocar": "maleta/attache_moveGrid"
   },
   "armas": {
     "sg-09-r": {

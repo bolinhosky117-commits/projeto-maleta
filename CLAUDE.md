@@ -28,7 +28,7 @@ O protótipo é HTML/JS puro; a stack do sistema final ainda não foi definida �
 - **Sons**: `source-sounds/` (originais, não mexer): `wep/` (armas, RE4 2005), `maleta/` (Attache Case & UI, RE4 Ultimate HD),
   `itens/` (Pickup and Radio, RE4 UHD), `zeebo/` (faca e granadas, RE4 Zeebo Edition) — todos do The Sounds Resource.
   `data/sons.json` (`armas`: atirar/recarregar/vazio/atacar e `cadencia` da rajada, com a tabela wepNN → arma; `tipos`: faca, granada, cura;
-  `maleta`: pegar, soltar, girar, bloqueado, equipar, descartar, misturar, juntar, bau),
+  `maleta`: pegar, deslocar (tique a cada casa no arrasto), soltar, girar, bloqueado, equipar, descartar, misturar, juntar, bau),
   `python tools/make_sounds.py` gera `assets/sounds/*.ogg` (junta os pares L/R em estéreo, corta o silêncio inicial; precisa do ffmpeg).
   O `build_prototipo.py` embute os sons. No protótipo: Atirar toca o tiro (repetido na rajada), Recarregar toca a recarga, sem bala faz o clique vazio; botão "Som" e o controle de Volume no topo (padrão 50%). O volume de cada tipo de som é igualado no make_sounds.py (`ALVO_DB`: tiro mais alto, recarga e clique vazio mais baixos).
 - `extras/inventario-mochila-bau/` — pacote anterior do Ez (Catálogo, Armário, Mochila por espaços, Baú). A maleta em grade
