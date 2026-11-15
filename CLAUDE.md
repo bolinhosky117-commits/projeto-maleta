@@ -50,6 +50,7 @@ O protótipo é HTML/JS puro; a stack do sistema final ainda não foi definida �
 - Não edite nada em `assets/` à mão: altere `data/` ou o script e rode `python tools/make_icons.py`
   (e depois `python tools/build_prototipo.py` para atualizar o protótipo).
 - `source-images/` são os originais — não sobrescrever.
+  Exceção: `recovery/red-herb.png` é a erva verde recolorida de vermelho (mesmo modelo das três ervas); a foto original ficou em `source-images/recovery/_original/`.
 - Tamanhos incertos (ver `docs/verificacao-tamanhos.md`): Striker (2x5 vs 2x4), consumíveis sem fonte do remake, Bolts (suposição).
 - As imagens são da Capcom; uso só entre os amigos. Se o projeto for publicado, trocar por arte própria.
 
