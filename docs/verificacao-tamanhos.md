@@ -54,6 +54,7 @@ caso queiram voltar.
 | Skull Shaker | 5×1 | 5×2 (era 3×1; ganhou 2 linhas para parecer espingarda) |
 | Killer7 | 3×2 | 2×2 |
 | Scope | 2×1 | 1×1 |
+| Biosensor Scope | 2×2 | 2×1 (foto nova, fundo branco) |
 | Shotgun Shells | 2×1 | 2×1 (padrão das munições; desenho esticado um pouco na largura, `esticaMax` 1.4) |
 
 Também foram endireitados (estavam inclinados na foto): as três granadas, os virotes e os frascos de erva misturada.

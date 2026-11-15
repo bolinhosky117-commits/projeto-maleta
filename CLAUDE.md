@@ -44,7 +44,7 @@ O protótipo é HTML/JS puro; a stack do sistema final ainda não foi definida �
 - Facas **não quebram** (sem durabilidade).
 - O **baú** é uma lista no painel da direita (a versão em grade embaixo da maleta foi testada e descartada). Arrasta-se entre maleta e baú; Shift + clique troca o item de lugar. Girar só com R (ou botão direito durante o arrasto); a rodinha do mouse não gira.
 - 15/11: clique esquerdo num item abre os detalhes no painel da direita; botão direito abre um menu de contexto com todas as ações do item (`acoesDe()` alimenta os dois).
-- 15/11: itens com muito espaço vazio foram ajustados ao desenho (CQBR, LE 5, Killer7, Scope diminuíram; Shotgun Shells ficou 2×1 com `esticaMax` 1.4 (desenho esticado um pouco mais que o padrão); SR M1903 virou 8×2 e Skull Shaker 5×2, com 2 linhas, para continuarem parecendo armas grandes). O tamanho do jogo fica em `tamanhoJogo`. Ver `docs/verificacao-tamanhos.md`.
+- 15/11: itens com muito espaço vazio foram ajustados ao desenho (CQBR, LE 5, Killer7, Scope e Biosensor Scope (2×1) diminuíram; Shotgun Shells ficou 2×1 com `esticaMax` 1.4 (desenho esticado um pouco mais que o padrão); SR M1903 virou 8×2 e Skull Shaker 5×2, com 2 linhas, para continuarem parecendo armas grandes). O tamanho do jogo fica em `tamanhoJogo`. Ver `docs/verificacao-tamanhos.md`.
 
 ## Regras
 

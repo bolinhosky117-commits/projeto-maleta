@@ -433,12 +433,16 @@
       "category": "weaponry",
       "size": [
         2,
-        2
+        1
       ],
-      "forceHorizontal": false,
-      "status": "lista do usuario, confere com Namu/Game8",
+      "forceHorizontal": true,
+      "status": "diminuído a pedido do Ez (jogo 2x2)",
       "description": "Mira especial que mostra os parasitas dentro dos inimigos e revela pontos fracos.",
-      "fundoLimite": 120
+      "fundoLimite": 120,
+      "tamanhoJogo": [
+        2,
+        2
+      ]
     },
     {
       "id": "laser-sight",

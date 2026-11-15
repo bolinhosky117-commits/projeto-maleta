@@ -773,9 +773,9 @@
       "file": "icons/biosensor-scope.png",
       "category": "weaponry",
       "cols": 2,
-      "rows": 2,
-      "slots": 4,
-      "sizeStatus": "lista do usuario, confere com Namu/Game8",
+      "rows": 1,
+      "slots": 2,
+      "sizeStatus": "diminuído a pedido do Ez (jogo 2x2)",
       "rotatedDeg": 0.0,
       "description": "Mira especial que mostra os parasitas dentro dos inimigos e revela pontos fracos.",
       "rpg": {
