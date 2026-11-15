@@ -206,7 +206,7 @@
 const DADOS = __DADOS__;
 
 /* ======================= SONS (data/sons.json + assets/sounds, embutidos pelo build) ======================= */
-const SONS = DADOS.sons || { mapa: { armas: {}, padrao: {} }, arquivos: {} };
+const SONS = DADOS.sons || { mapa: { armas: {}, tipos: {}, maleta: {}, padrao: {} }, arquivos: {} };
 let somLigado = (() => { try { return localStorage.getItem("maleta-som") !== "0"; } catch (e) { return true; } })();
 let volume = (() => { try { const v = localStorage.getItem("maleta-volume"); return v === null ? 50 : +v; } catch (e) { return 50; } })();
 let audioCtx = null, saida = null;
@@ -226,10 +226,11 @@ function carregarSom(nome) {
   if (!buffers[nome]) buffers[nome] = fetch(SONS.arquivos[nome]).then(r => r.arrayBuffer()).then(b => ctxAudio().decodeAudioData(b)).catch(() => null);
   return buffers[nome];
 }
-const somDe = (id, acao) => (SONS.mapa.armas[id] || {})[acao] || SONS.mapa.padrao[acao] || null;
+// procura o som: da arma/item → do tipo do item (faca, cura...) → padrão
+const somDe = (id, acao) => (SONS.mapa.armas[id] || {})[acao] || ((SONS.mapa.tipos || {})[ITENS[id] && ITENS[id].rpg.tipo] || {})[acao] || SONS.mapa.padrao[acao] || null;
 // toca o som da ação; numa rajada, repete o tiro "vezes" vezes no ritmo da arma
-async function tocar(id, acao, vezes = 1) {
-  const nome = somDe(id, acao);
+async function tocar(id, acao, vezes = 1, nomeFixo) {
+  const nome = nomeFixo || somDe(id, acao);
   if (!somLigado || !nome || !SONS.arquivos[nome] || !ctxAudio()) return;
   const b = await carregarSom(nome); if (!b) return;
   const c = audioCtx, passo = (SONS.mapa.armas[id] || {}).cadencia || 0.09, t0 = c.currentTime + 0.01;
@@ -239,6 +240,8 @@ async function tocar(id, acao, vezes = 1) {
     src.connect(g).connect(saida); src.start(t0 + i * passo);
   }
 }
+// sons da própria maleta: pegar, soltar, girar, bloqueado, equipar, descartar, misturar, juntar, bau
+const somMaleta = acao => { const n = (SONS.mapa.maleta || {})[acao]; if (n) tocar(null, acao, 1, n); };
 // o navegador só libera o áudio depois do primeiro clique: aí já prepara todos os sons
 document.addEventListener("pointerdown", () => { if (somLigado && ctxAudio()) Object.keys(SONS.arquivos).forEach(carregarSom); }, { once: true, capture: true });
 
@@ -912,20 +915,21 @@ function acao(nome, el) {
     case "estTirar": if (arm) arm.estoque = arm.estoque.filter(x => x.id !== el.dataset.id); break;
     case "tirarBau": {
       const b = S.bau.find(x => x.uid === el.dataset.uid);
-      if (b && porNaMaleta(b.id, b.uid, b.anexos, estadoDe(b))) S.bau = S.bau.filter(x => x !== b);
+      if (b && porNaMaleta(b.id, b.uid, b.anexos, estadoDe(b))) { S.bau = S.bau.filter(x => x !== b); somMaleta("soltar"); }
       break;
     }
     case "girar":
       if (o) {
         const p = rotsPermitidas(o.id), i = p.indexOf(o.rot);
         const nr = [...p.slice(i + 1), ...p.slice(0, i)].find(r => cabe(S, o.id, r, o.x, o.y, [o.uid]));
-        if (nr !== undefined) o.rot = nr; else aviso("Sem espaço para girar aqui. Arraste e aperte R enquanto arrasta.", "erro");
+        if (nr !== undefined) { o.rot = nr; somMaleta("girar"); } else { somMaleta("bloqueado"); aviso("Sem espaço para girar aqui. Arraste e aperte R enquanto arrasta.", "erro"); }
       }
       break;
-    case "paraBau": if (o && podeBau()) { paraBau(o); aviso(`${ITENS[o.id].name} guardado no baú.`); } break;
+    case "paraBau": if (o && podeBau()) { paraBau(o); somMaleta("bau"); aviso(`${ITENS[o.id].name} guardado no baú.`); } break;
     case "devolver": if (o && arm) devolver(o, arm); break;
     case "descartar":
       if (o) {
+        somMaleta("descartar");
         const eq = S.maleta.includes(o) ? equipados(o) : [];
         for (const a of eq) delete a.equipadoEm;
         S.maleta = S.maleta.filter(x => x !== o); S.bau = S.bau.filter(x => x !== o); ui.sel = null; if (ui.det === o.uid) ui.det = null;
@@ -949,6 +953,7 @@ function acao(nome, el) {
     case "recarregar": if (o) { const x = recarregar(S, o); if (!x.erro) tocar(o.id, "recarregar"); aviso(x.erro || x.ok, x.erro ? "erro" : "mix"); } break;
     case "rolarDano": {
       const id = o ? o.id : el.dataset.id || (ui.selFonte && ui.selFonte.id), r = ITENS[id].rpg, x = rolar(r.dano);
+      tocar(id, "atacar");
       if (x) aviso(`${ITENS[id].name}: ${x.total} de dano  [${x.dados.join(" + ")}${x.bonus ? (x.bonus > 0 ? " + " : " − ") + Math.abs(x.bonus) : ""}]`, "mix");
       break;
     }
@@ -1013,6 +1018,7 @@ window.addEventListener("resize", () => renderGrade());
 const usavel = id => ["cura", "arremessável", "munição especial"].includes((ITENS[id].rpg || {}).tipo);
 function usarItem(o) {
   const it = ITENS[o.id], r = it.rpg; let msg = `Usou ${it.name}.`;
+  tocar(o.id, "usar");
   if (r.tipo === "cura") {
     const dv = S.dadoVida || "d8", x = rolarCura(r.cura, dv);
     const quanto = x ? `curou ${x.total} PV (${r.cura}, ${dv}: ${x.texto})` : r.cura === "vida toda" ? "curou a vida toda" : "cura " + r.cura;
@@ -1049,9 +1055,10 @@ $("modal").addEventListener("click", ev => {
   if (!b) { if (ev.target === $("modal")) fecharModal(); return; }
   const o = S.maleta.find(x => x.uid === modalUid) || S.bau.find(x => x.uid === modalUid);
   const noBau = o && S.bau.includes(o);
-  if (o && b.dataset.modal === "bau" && podeBau()) { paraBau(o); aviso(`${ITENS[o.id].name} movido para o baú.`); }
+  if (o && b.dataset.modal === "bau" && podeBau()) { paraBau(o); somMaleta("bau"); aviso(`${ITENS[o.id].name} movido para o baú.`); }
   if (o && b.dataset.modal === "maleta" && porNaMaleta(o.id, o.uid, o.anexos, estadoDe(o))) { S.bau = S.bau.filter(x => x !== o); aviso(`${ITENS[o.id].name} movido para a maleta.`); }
   if (o && b.dataset.modal === "deletar") {
+    somMaleta("descartar");
     if (!noBau) for (const a of equipados(o)) delete a.equipadoEm;
     S.maleta = S.maleta.filter(x => x !== o); S.bau = S.bau.filter(x => x !== o); aviso(`${ITENS[o.id].name} deletado.`);
   }
@@ -1100,7 +1107,7 @@ document.addEventListener("pointermove", ev => {
   if (!drag) return;
   if (!drag.moveu) {
     if (Math.hypot(ev.clientX - drag.x0, ev.clientY - drag.y0) < 6) return;
-    drag.moveu = true; if (drag.origem === "maleta" || drag.origem === "bau") ui.sel = drag.uid;
+    drag.moveu = true; somMaleta("pegar"); if (drag.origem === "maleta" || drag.origem === "bau") ui.sel = drag.uid;
     fantasma = document.createElement("div"); fantasma.className = "fantasma"; document.body.appendChild(fantasma);
     document.body.classList.add("arrastando-algo"); const sel = window.getSelection && window.getSelection(); if (sel) sel.removeAllRanges();
     renderGrade(); renderBau();
@@ -1169,6 +1176,7 @@ function girarArraste() {
     [drag.gx, drag.gy] = [h - 1 - drag.gy, drag.gx];
     drag.rot = (drag.rot + 1) % 4;
   }
+  somMaleta("girar");
   atualizarArraste();
 }
 document.addEventListener("keydown", ev => { if ((ev.key === "r" || ev.key === "R") && drag && drag.moveu) { ev.preventDefault(); girarArraste(); } });
@@ -1199,7 +1207,7 @@ document.addEventListener("pointerup", ev => {
   if (!d.moveu && ev.shiftKey && (d.origem === "armario" || d.origem === "catalogo")) { // Shift + clique no armário/catálogo: direto para a maleta
     if (d.origem === "armario") {
       const a = armario(d.arm);
-      if (a && a.estoque.some(e => e.id === d.id) && porNaMaleta(d.id)) { estoqueTirar(a, d.id); aviso(`${ITENS[d.id].name} → maleta.`); }
+      if (a && a.estoque.some(e => e.id === d.id) && porNaMaleta(d.id)) { estoqueTirar(a, d.id); somMaleta("soltar"); aviso(`${ITENS[d.id].name} → maleta.`); }
     } else if (ehMestre() && porNaMaleta(d.id)) aviso(`${ITENS[d.id].name} → maleta de ${S.nome}.`);
     salvar(); return render();
   }
@@ -1207,10 +1215,10 @@ document.addEventListener("pointerup", ev => {
     if (d.origem === "maleta") {
       const o = S.maleta.find(x => x.uid === d.uid);
       if (!podeBau()) aviso("Sem baú nesta cena.", "erro");
-      else if (o) { paraBau(o); aviso(`${ITENS[o.id].name} → baú.`); }
+      else if (o) { paraBau(o); somMaleta("bau"); aviso(`${ITENS[o.id].name} → baú.`); }
     } else {
       const b = S.bau.find(x => x.uid === d.uid);
-      if (b && porNaMaleta(b.id, b.uid, b.anexos, estadoDe(b))) { S.bau = S.bau.filter(x => x !== b); aviso(`${ITENS[b.id].name} → maleta.`); }
+      if (b && porNaMaleta(b.id, b.uid, b.anexos, estadoDe(b))) { S.bau = S.bau.filter(x => x !== b); somMaleta("soltar"); aviso(`${ITENS[b.id].name} → maleta.`); }
     }
     if (ui.det === d.uid) ui.det = null;
     salvar(); return render();
@@ -1226,14 +1234,16 @@ document.addEventListener("pointerup", ev => {
     if (o) { for (const a of equipados(o)) delete a.equipadoEm; S.maleta = S.maleta.filter(x => x !== o); }
     else S.bau = S.bau.filter(x => x.uid !== d.uid);
     if (ui.sel === d.uid) ui.sel = null; if (ui.det === d.uid) ui.det = null;
-    aviso(`${ITENS[d.id].name} apagado.`);
+    aviso(`${ITENS[d.id].name} apagado.`); somMaleta("descartar");
   } else if (d.noArm) { // soltou num armário: devolve (ou, do catálogo, abastece)
+    somMaleta("soltar");
     const arm = armario(d.noArm);
     if (o) devolver(o, arm);
     else if (d.origem === "catalogo") { estoqueAdd(arm, d.id, 1); aviso(`+1 ${ITENS[d.id].name} no ${arm.nome}.`); }
     else if (d.origem === "bau") { consumir(d); estoqueAdd(arm, d.id, 1); aviso(`${ITENS[d.id].name} devolvido ao ${arm.nome}.`); }
     else if (d.origem === "armario") { consumir(d); estoqueAdd(arm, d.id, 1); }
   } else if (d.noBau) {
+    somMaleta("bau");
     if (o) { paraBau(o); aviso(`${ITENS[o.id].name} guardado no baú.`); }
     else { consumir(d); S.bau.push(prepararItem({ uid: novoUid(), id: d.id, anexos: [] })); aviso(`${ITENS[d.id].name} guardado no baú.`); }
   } else if (d.alvo && d.alvo.tipo === "equipar") {
@@ -1244,14 +1254,15 @@ document.addEventListener("pointerup", ev => {
       if (!l) { aviso(`Sem espaço na maleta para o ${ITENS[d.id].name}.`, "erro"); salvar(); return render(); }
       anexo = { uid: d.origem === "bau" ? d.uid : novoUid(), id: d.id, ...l }; S.maleta.push(anexo); consumir(d);
     }
-    anexo.equipadoEm = arma.uid; ui.sel = arma.uid;
+    anexo.equipadoEm = arma.uid; ui.sel = arma.uid; somMaleta("equipar");
     aviso(`${ITENS[d.id].name} equipado na ${ITENS[arma.id].name}.`, "mix");
   } else if (d.alvo && d.alvo.tipo === "ocupado") {
+    somMaleta("bloqueado");
     aviso(`A ${ITENS[d.alvo.sob.id].name} já tem uma ${tipoAnexo(d.id)}. Remova a outra primeiro.`, "erro");
   } else if (d.alvo && d.alvo.tipo === "juntar") {
     let origem = o;
     if (!origem) { origem = prepararItem({ id: d.id }); if (d.origem === "bau") { const b = S.bau.find(x => x.uid === d.uid); if (b) origem.balas = b.balas ?? origem.balas; } }
-    const n = juntarCaixas(origem, d.alvo.sob);
+    const n = juntarCaixas(origem, d.alvo.sob); somMaleta("juntar");
     if (o && o.balas <= 0) S.maleta = S.maleta.filter(x => x !== o);
     if (!o) { if (origem.balas <= 0) consumir(d); else { const l = achaLugar(S, d.id); if (l) { S.maleta.push({ uid: novoUid(), id: d.id, ...l, balas: origem.balas }); consumir(d); } else if (d.origem === "bau") { const b = S.bau.find(x => x.uid === d.uid); if (b) b.balas = origem.balas; } } }
     ui.sel = d.alvo.sob.uid; aviso(`Juntou ${n} na caixa (${d.alvo.sob.balas}/${ITENS[d.id].rpg.balasPorCaixa}).`, "mix");
@@ -1259,9 +1270,10 @@ document.addEventListener("pointerup", ev => {
     const antes = ITENS[d.alvo.sob.id].name;
     if (o) S.maleta = S.maleta.filter(x => x !== o);
     const res = misturar(S, d.id, d.alvo.sob);
-    if (res) { if (!o) consumir(d); ui.sel = d.alvo.sob.uid; aviso(`${ITENS[d.id].name} + ${antes} = ${ITENS[res].name}`, "mix"); }
+    if (res) { somMaleta("misturar"); if (!o) consumir(d); ui.sel = d.alvo.sob.uid; aviso(`${ITENS[d.id].name} + ${antes} = ${ITENS[res].name}`, "mix"); }
     else { if (o) S.maleta.push(o); aviso("Sem espaço para a mistura.", "erro"); }
   } else if (d.alvo && d.alvo.tipo === "por") {
+    somMaleta("soltar");
     if (o) Object.assign(o, { x: d.alvo.x, y: d.alvo.y, rot: d.rot });
     else {
       const doBau = d.origem === "bau" ? S.bau.find(x => x.uid === d.uid) : null;
@@ -1269,7 +1281,7 @@ document.addEventListener("pointerup", ev => {
       S.maleta.push(n); consumir(d); if (doBau) voltarAnexos(n, doBau.anexos); ui.sel = n.uid; ui.selFonte = null;
       if (absorverCaixa(S, n) && !S.maleta.includes(n)) { ui.sel = null; aviso(`${ITENS[d.id].name}: balas juntadas na caixa que já estava na maleta.`, "mix"); }
     }
-  } else if (d.alvo && d.alvo.tipo === "erro") aviso("Não cabe aí.", "erro");
+  } else if (d.alvo && d.alvo.tipo === "erro") { somMaleta("bloqueado"); aviso("Não cabe aí.", "erro"); }
   else if (!d.alvo && (o || d.origem === "bau")) {
     // soltou fora da maleta (sem alvo): pergunta se move ou deleta
     const b = o || S.bau.find(x => x.uid === d.uid);

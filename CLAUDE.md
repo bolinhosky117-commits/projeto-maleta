@@ -25,8 +25,10 @@ O protótipo é HTML/JS puro; a stack do sistema final ainda não foi definida �
 - `tools/make_icons.py` — regenera `assets/` a partir de `data/` + `source-images/` (Python: pillow, numpy, scipy).
 - `prototipo/maleta.src.html` — protótipo (HTML/CSS/JS, sem framework). `python tools/build_prototipo.py` gera
   `prototipo/maleta.html` com o `items.json` e os ícones embutidos. Não edite o `maleta.html` à mão.
-- **Sons das armas**: `source-sounds/wep/` (originais do RE4 2005, pacote "Weapons" do The Sounds Resource — não mexer),
-  `data/sons.json` (qual som cada arma usa: `atirar`, `recarregar`, `vazio`, `cadencia` da rajada; tem a tabela wepNN → arma),
+- **Sons**: `source-sounds/` (originais, não mexer): `wep/` (armas, RE4 2005), `maleta/` (Attache Case & UI, RE4 Ultimate HD),
+  `itens/` (Pickup and Radio, RE4 UHD), `zeebo/` (faca e granadas, RE4 Zeebo Edition) — todos do The Sounds Resource.
+  `data/sons.json` (`armas`: atirar/recarregar/vazio/atacar e `cadencia` da rajada, com a tabela wepNN → arma; `tipos`: faca, granada, cura;
+  `maleta`: pegar, soltar, girar, bloqueado, equipar, descartar, misturar, juntar, bau),
   `python tools/make_sounds.py` gera `assets/sounds/*.ogg` (junta os pares L/R em estéreo, corta o silêncio inicial; precisa do ffmpeg).
   O `build_prototipo.py` embute os sons. No protótipo: Atirar toca o tiro (repetido na rajada), Recarregar toca a recarga, sem bala faz o clique vazio; botão "Som" e o controle de Volume no topo (padrão 50%). O volume de cada tipo de som é igualado no make_sounds.py (`ALVO_DB`: tiro mais alto, recarga e clique vazio mais baixos).
 - `extras/inventario-mochila-bau/` — pacote anterior do Ez (Catálogo, Armário, Mochila por espaços, Baú). A maleta em grade

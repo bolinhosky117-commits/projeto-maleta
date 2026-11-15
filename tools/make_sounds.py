@@ -4,8 +4,8 @@ Prepara os sons das armas para o protótipo.
 Uso (na raiz do projeto):
     python tools/make_sounds.py
 
-Lê:   data/sons.json + source-sounds/wep/*.ogg (originais, não mexer)
-Gera: assets/sounds/<nome>.ogg  — pares "-L"/"-R" (ou ".L"/".R") viram um arquivo estéreo,
+Lê:   data/sons.json + source-sounds/<pasta>/*.ogg|wav (originais, não mexer)
+Gera: assets/sounds/<pasta>__<nome>.ogg  — pares "-L"/"-R" (ou ".L"/".R") viram um arquivo estéreo,
       o silêncio do começo é cortado (para o tiro não sair atrasado) e o volume é igualado por tipo
       (ALVO_DB: tiros iguais entre si; recarga e clique vazio mais baixos).
 Precisa do ffmpeg instalado.
@@ -15,7 +15,7 @@ import os
 import subprocess
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SRC = os.path.join(ROOT, "source-sounds", "wep")
+SRC = os.path.join(ROOT, "source-sounds")
 OUT = os.path.join(ROOT, "assets", "sounds")
 
 import numpy as np
@@ -24,12 +24,19 @@ import numpy as np
 FILTRO = "silenceremove=start_periods=1:start_threshold=-50dB"
 # volume de cada tipo de som: o trecho mais forte (janela de 50 ms) fica neste nível, em dB.
 # Assim todos os tiros soam parecidos entre si, e a recarga e o clique vazio ficam abaixo do tiro.
-ALVO_DB = {"atirar": -16.0, "recarregar": -24.0, "vazio": -26.0}
+ALVO_DB = {"atirar": -16.0, "atacar": -16.0, "recarregar": -24.0, "vazio": -26.0, "usar": -24.0, "maleta": -27.0}
 TETO_DB = -3.0   # nenhum pico passa disto (evita estourar)
 
 
+def tabelas(cfg):
+    """Todas as tabelas {acao: nome} do sons.json."""
+    return list(cfg["armas"].values()) + list(cfg.get("tipos", {}).values()) + [cfg.get("padrao", {})]
+
+
 def tipo_de(nome, cfg):
-    for sons in list(cfg["armas"].values()) + [cfg.get("padrao", {})]:
+    if nome in cfg.get("maleta", {}).values():
+        return "maleta"
+    for sons in tabelas(cfg):
         for acao, v in sons.items():
             if v == nome and acao in ALVO_DB:
                 return acao
@@ -51,19 +58,25 @@ def ganho_db(arquivo, alvo):
 
 
 def nomes_usados(cfg):
-    usados = set(cfg.get("padrao", {}).values())
-    for sons in cfg["armas"].values():
+    usados = set(cfg.get("maleta", {}).values())
+    for sons in tabelas(cfg):
         usados.update(v for k, v in sons.items() if isinstance(v, str))
     return sorted(usados)
 
 
 def fontes(nome):
-    for e, d in (("-L", "-R"), (".L", ".R")):
-        l, r = os.path.join(SRC, nome + e + ".ogg"), os.path.join(SRC, nome + d + ".ogg")
-        if os.path.exists(l) and os.path.exists(r):
-            return [l, r]
-    p = os.path.join(SRC, nome + ".ogg")
-    return [p] if os.path.exists(p) else []
+    """'nome' é pasta/arquivo sem extensão; sem pasta, procura em wep/."""
+    if "/" not in nome:
+        nome = "wep/" + nome
+    base = os.path.join(SRC, *nome.split("/"))
+    for ext in (".ogg", ".wav"):
+        for e, d in (("-L", "-R"), (".L", ".R")):
+            l, r = base + e + ext, base + d + ext
+            if os.path.exists(l) and os.path.exists(r):
+                return [l, r]
+        if os.path.exists(base + ext):
+            return [base + ext]
+    return []
 
 
 def main():
@@ -85,7 +98,7 @@ def main():
         subprocess.run(cmd + ["-filter_complex", filtro, tmp], check=True)
         g = ganho_db(tmp, ALVO_DB[tipo_de(nome, cfg)])
         subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", tmp, "-af", f"volume={g:.2f}dB",
-                        "-c:a", "libvorbis", "-q:a", "3", os.path.join(OUT, nome + ".ogg")], check=True)
+                        "-c:a", "libvorbis", "-q:a", "3", os.path.join(OUT, nome.replace("/", "__") + ".ogg")], check=True)
         os.remove(tmp)
     total = sum(os.path.getsize(os.path.join(OUT, f)) for f in os.listdir(OUT))
     print(f"{len(os.listdir(OUT))} sons em assets/sounds ({total // 1024} KB)")

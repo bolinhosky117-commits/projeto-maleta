@@ -32,8 +32,8 @@ def main():
         for f in sorted(os.listdir(pasta)):
             if f.endswith(".ogg"):
                 raw = open(os.path.join(pasta, f), "rb").read()
-                arquivos[f[:-4]] = "data:audio/ogg;base64," + base64.b64encode(raw).decode()
-    data["sons"] = {"mapa": {"padrao": mapa.get("padrao", {}), "armas": mapa["armas"]}, "arquivos": arquivos}
+                arquivos[f[:-4].replace("__", "/")] = "data:audio/ogg;base64," + base64.b64encode(raw).decode()
+    data["sons"] = {"mapa": {k: mapa.get(k, {}) for k in ("padrao", "tipos", "maleta", "armas")}, "arquivos": arquivos}
     payload = json.dumps(data, ensure_ascii=False).replace("</", "<\\/")
     html = open(SRC, encoding="utf-8").read().replace("__DADOS__", payload)
     open(OUT, "w", encoding="utf-8").write(html)
