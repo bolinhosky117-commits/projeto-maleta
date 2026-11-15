@@ -1,0 +1,1236 @@
+{
+  "cellSize": 64,
+  "items": [
+    {
+      "id": "combat-knife",
+      "name": "Combat Knife",
+      "file": "icons/combat-knife.png",
+      "category": "weaponry",
+      "cols": 3,
+      "rows": 1,
+      "slots": 3,
+      "sizeStatus": "Game8/Namu",
+      "rotatedDeg": -44.9,
+      "description": "Faca padrão do Leon. Serve para aparar golpes, finalizar inimigos caídos e escapar de agarrões.",
+      "rpg": {
+        "tipo": "faca",
+        "dano": "1d6",
+        "tags": [
+          "aparar"
+        ]
+      }
+    },
+    {
+      "id": "kitchen-knife",
+      "name": "Kitchen Knife",
+      "file": "icons/kitchen-knife.png",
+      "category": "weaponry",
+      "cols": 2,
+      "rows": 1,
+      "slots": 2,
+      "sizeStatus": "Game8 (corrigido de 1x3)",
+      "rotatedDeg": -45.2,
+      "description": "Faca de cozinha achada pelo cenário. Fraca, mas melhor que nada.",
+      "rpg": {
+        "tipo": "faca",
+        "dano": "1d4",
+        "tags": [
+          "aparar"
+        ]
+      }
+    },
+    {
+      "id": "boot-knife",
+      "name": "Boot Knife",
+      "file": "icons/boot-knife.png",
+      "category": "weaponry",
+      "cols": 2,
+      "rows": 1,
+      "slots": 2,
+      "sizeStatus": "Game8/Sportskeeda (corrigido de 1x3)",
+      "rotatedDeg": -45.0,
+      "description": "Faca curta e leve, escondida na bota. Fraca, mas fácil de levar.",
+      "rpg": {
+        "tipo": "faca",
+        "dano": "1d4",
+        "tags": [
+          "aparar"
+        ]
+      }
+    },
+    {
+      "id": "fighting-knife",
+      "name": "Fighting Knife",
+      "file": "icons/fighting-knife.png",
+      "category": "weaponry",
+      "cols": 4,
+      "rows": 1,
+      "slots": 4,
+      "sizeStatus": "Namu/GamertagMythras (corrigido de 1x3)",
+      "rotatedDeg": -45.5,
+      "description": "Faca de combate feita sob medida, do Krauser. Afiada e pesada; a que mais dá dano entre as facas.",
+      "rpg": {
+        "tipo": "faca",
+        "dano": "1d8",
+        "tags": [
+          "aparar"
+        ]
+      }
+    },
+    {
+      "id": "primal-knife",
+      "name": "Primal Knife",
+      "file": "icons/primal-knife.png",
+      "category": "weaponry",
+      "cols": 3,
+      "rows": 1,
+      "slots": 3,
+      "sizeStatus": "Game8/Namu",
+      "rotatedDeg": -45.3,
+      "description": "Faca rústica de lâmina grossa, muito resistente.",
+      "rpg": {
+        "tipo": "faca",
+        "dano": "1d6",
+        "tags": [
+          "aparar"
+        ]
+      }
+    },
+    {
+      "id": "sg-09-r",
+      "name": "SG-09 R",
+      "file": "icons/sg-09-r.png",
+      "category": "weaponry",
+      "cols": 3,
+      "rows": 2,
+      "slots": 6,
+      "sizeStatus": "lista do usuario, confere com Namu/Game8",
+      "rotatedDeg": 0.0,
+      "description": "Pistola padrão do Leon. Equilibrada e confiável, com chance maior de tiro crítico. Aceita mira laser.",
+      "rpg": {
+        "tipo": "pistola",
+        "dano": "1d8",
+        "pente": 10,
+        "recarga": "rapida",
+        "alcance": "médio",
+        "precisaoJogo": 4.0,
+        "municao": "handgun-ammo",
+        "tags": [
+          "crítico ampliado",
+          "aceita mira laser"
+        ]
+      }
+    },
+    {
+      "id": "punisher",
+      "name": "Punisher",
+      "file": "icons/punisher.png",
+      "category": "weaponry",
+      "cols": 3,
+      "rows": 2,
+      "slots": 6,
+      "sizeStatus": "lista do usuario, confere com Namu/Game8",
+      "rotatedDeg": 0.0,
+      "description": "Pistola de cano curto e pouco recuo. As balas atravessam o alvo e acertam quem está atrás. Aceita mira laser.",
+      "rpg": {
+        "tipo": "pistola",
+        "dano": "1d6",
+        "pente": 12,
+        "recarga": "rapida",
+        "alcance": "médio",
+        "precisaoJogo": 4.5,
+        "municao": "handgun-ammo",
+        "tags": [
+          "perfurante",
+          "aceita mira laser"
+        ]
+      }
+    },
+    {
+      "id": "red9",
+      "name": "Red9",
+      "file": "icons/red9.png",
+      "category": "weaponry",
+      "cols": 3,
+      "rows": 2,
+      "slots": 6,
+      "sizeStatus": "lista do usuario, confere com Namu/Game8",
+      "rotatedDeg": 0.0,
+      "description": "Pistola de muito dano por tiro, mas com recuo forte. A coronha deixa ela bem mais precisa.",
+      "rpg": {
+        "tipo": "pistola",
+        "dano": "1d10",
+        "pente": 8,
+        "recarga": "normal",
+        "alcance": "médio",
+        "precisaoJogo": 3.0,
+        "municao": "handgun-ammo",
+        "tags": [
+          "recuo forte",
+          "aceita coronha"
+        ]
+      }
+    },
+    {
+      "id": "blacktail",
+      "name": "Blacktail",
+      "file": "icons/blacktail.png",
+      "category": "weaponry",
+      "cols": 2,
+      "rows": 2,
+      "slots": 4,
+      "sizeStatus": "lista do usuario, confere com Namu/Game8",
+      "rotatedDeg": 0.0,
+      "description": "Pistola compacta e precisa, com recarga e cadência rápidas. Ocupa pouco espaço.",
+      "rpg": {
+        "tipo": "pistola",
+        "dano": "1d8+1",
+        "pente": 9,
+        "recarga": "rapida",
+        "alcance": "médio",
+        "precisaoJogo": 4.2,
+        "municao": "handgun-ammo",
+        "tags": []
+      }
+    },
+    {
+      "id": "matilda",
+      "name": "Matilda",
+      "file": "icons/matilda.png",
+      "category": "weaponry",
+      "cols": 3,
+      "rows": 2,
+      "slots": 6,
+      "sizeStatus": "lista do usuario, confere com Namu/Game8",
+      "rotatedDeg": 0.0,
+      "description": "Pistola que dispara rajadas de três tiros. Gasta munição rápido; a coronha ajuda no controle.",
+      "rpg": {
+        "tipo": "pistola",
+        "dano": "2d6",
+        "rajada": true,
+        "balasPorRajada": 3,
+        "pente": 6,
+        "recarga": "rapida",
+        "alcance": "médio",
+        "precisaoJogo": 3.5,
+        "municao": "handgun-ammo",
+        "tags": [
+          "aceita coronha"
+        ]
+      }
+    },
+    {
+      "id": "sentinel-nine",
+      "name": "Sentinel Nine",
+      "file": "icons/sentinel-nine.png",
+      "category": "weaponry",
+      "cols": 3,
+      "rows": 2,
+      "slots": 6,
+      "sizeStatus": "lista do usuario, confere com Namu/Game8",
+      "rotatedDeg": 0.0,
+      "description": "Pistola customizada (bônus da edição Deluxe). Pente grande, tiro rápido e chance maior de crítico.",
+      "rpg": {
+        "tipo": "pistola",
+        "dano": "1d8",
+        "pente": 15,
+        "recarga": "rapida",
+        "alcance": "médio",
+        "precisaoJogo": 4.0,
+        "municao": "handgun-ammo",
+        "tags": [
+          "crítico ampliado",
+          "aceita mira laser"
+        ]
+      }
+    },
+    {
+      "id": "broken-butterfly",
+      "name": "Broken Butterfly",
+      "file": "icons/broken-butterfly.png",
+      "category": "weaponry",
+      "cols": 3,
+      "rows": 2,
+      "slots": 6,
+      "sizeStatus": "lista do usuario, confere com Namu/Game8",
+      "rotatedDeg": 0.0,
+      "description": "Revólver magnum de altíssimo poder de parada. Recuo pesado e pouca munição; ideal contra inimigos grandes.",
+      "rpg": {
+        "tipo": "magnum",
+        "dano": "2d12",
+        "pente": 6,
+        "recarga": "normal",
+        "alcance": "médio",
+        "precisaoJogo": 2.0,
+        "municao": "magnum-ammo",
+        "tags": [
+          "perfurante",
+          "recuo forte"
+        ]
+      }
+    },
+    {
+      "id": "killer7",
+      "name": "Killer7",
+      "file": "icons/killer7.png",
+      "category": "weaponry",
+      "cols": 3,
+      "rows": 2,
+      "slots": 6,
+      "sizeStatus": "lista do usuario, confere com Namu/Game8",
+      "rotatedDeg": 0.0,
+      "description": "Magnum semiautomática de aço inox, já vem com mira laser. Mais controlável que os revólveres.",
+      "rpg": {
+        "tipo": "magnum",
+        "dano": "2d12",
+        "pente": 7,
+        "recarga": "rapida",
+        "alcance": "médio",
+        "precisaoJogo": 2.5,
+        "municao": "magnum-ammo",
+        "tags": [
+          "perfurante",
+          "crítico ampliado",
+          "mira laser embutida"
+        ]
+      }
+    },
+    {
+      "id": "handcannon",
+      "name": "Handcannon",
+      "file": "icons/handcannon.png",
+      "category": "weaponry",
+      "cols": 4,
+      "rows": 2,
+      "slots": 8,
+      "sizeStatus": "lista do usuario, confere com Namu/Game8",
+      "rotatedDeg": 0.0,
+      "description": "Revólver gigante e devastador, o mais forte das magnums. Recarga lenta; com a melhoria exclusiva, munição infinita.",
+      "rpg": {
+        "tipo": "magnum",
+        "dano": "3d10",
+        "pente": 5,
+        "recarga": "lenta",
+        "alcance": "médio",
+        "precisaoJogo": 1.8,
+        "municao": "magnum-ammo",
+        "tags": [
+          "perfurante",
+          "recuo forte"
+        ]
+      }
+    },
+    {
+      "id": "tmp",
+      "name": "TMP",
+      "file": "icons/tmp.png",
+      "category": "weaponry",
+      "cols": 3,
+      "rows": 2,
+      "slots": 6,
+      "sizeStatus": "lista do usuario, confere com Namu/Game8",
+      "rotatedDeg": 0.0,
+      "description": "Submetralhadora compacta de cadência altíssima. Pouco dano por bala, imprecisa sem a coronha.",
+      "rpg": {
+        "tipo": "submetralhadora",
+        "dano": "2d4",
+        "rajada": true,
+        "balasPorRajada": 5,
+        "pente": 6,
+        "recarga": "rapida",
+        "alcance": "médio",
+        "precisaoJogo": 2.0,
+        "municao": "submachine-gun-ammo",
+        "tags": [
+          "aceita coronha"
+        ]
+      }
+    },
+    {
+      "id": "le-5",
+      "name": "LE 5",
+      "file": "icons/le-5.png",
+      "category": "weaponry",
+      "cols": 6,
+      "rows": 2,
+      "slots": 12,
+      "sizeStatus": "Game8/Namu (corrigido de 2x3)",
+      "rotatedDeg": 0.0,
+      "description": "Submetralhadora precisa, com balas que atravessam o alvo. Aceita mira telescópica.",
+      "rpg": {
+        "tipo": "submetralhadora",
+        "dano": "2d6",
+        "rajada": true,
+        "balasPorRajada": 5,
+        "pente": 5,
+        "recarga": "normal",
+        "alcance": "médio",
+        "precisaoJogo": 4.5,
+        "municao": "submachine-gun-ammo",
+        "tags": [
+          "perfurante",
+          "aceita mira"
+        ]
+      }
+    },
+    {
+      "id": "chicago-sweeper",
+      "name": "Chicago Sweeper",
+      "file": "icons/chicago-sweeper.png",
+      "category": "weaponry",
+      "cols": 7,
+      "rows": 3,
+      "slots": 21,
+      "sizeStatus": "lista do usuario, confere com Namu/Game8",
+      "rotatedDeg": 0.0,
+      "description": "Metralhadora de tambor gigante e fogo contínuo. Ocupa muito espaço; com a melhoria exclusiva, munição infinita.",
+      "rpg": {
+        "tipo": "submetralhadora",
+        "dano": "2d6",
+        "rajada": true,
+        "balasPorRajada": 5,
+        "pente": 14,
+        "recarga": "normal",
+        "alcance": "médio",
+        "precisaoJogo": 3.0,
+        "municao": "submachine-gun-ammo",
+        "tags": []
+      }
+    },
+    {
+      "id": "w-870",
+      "name": "W-870",
+      "file": "icons/w-870.png",
+      "category": "weaponry",
+      "cols": 8,
+      "rows": 2,
+      "slots": 16,
+      "sizeStatus": "lista do usuario, confere com Namu/Game8",
+      "rotatedDeg": 9.8,
+      "description": "Espingarda de bomba. Muito dano de perto e contra grupos, cadência lenta.",
+      "rpg": {
+        "tipo": "espingarda",
+        "dano": "2d8",
+        "pente": 5,
+        "recarga": "normal",
+        "alcance": "curto",
+        "precisaoJogo": 2.8,
+        "municao": "shotgun-shells",
+        "tags": [
+          "espalha"
+        ]
+      }
+    },
+    {
+      "id": "riot-gun",
+      "name": "Riot Gun",
+      "file": "icons/riot-gun.png",
+      "category": "weaponry",
+      "cols": 8,
+      "rows": 2,
+      "slots": 16,
+      "sizeStatus": "lista do usuario, confere com Namu/Game8",
+      "rotatedDeg": 9.7,
+      "description": "Espingarda com dispersão mais fechada, que mantém o dano um pouco mais longe.",
+      "rpg": {
+        "tipo": "espingarda",
+        "dano": "2d10",
+        "pente": 7,
+        "recarga": "normal",
+        "alcance": "curto",
+        "precisaoJogo": 3.5,
+        "municao": "shotgun-shells",
+        "tags": [
+          "espalha"
+        ]
+      }
+    },
+    {
+      "id": "striker",
+      "name": "Striker",
+      "file": "icons/striker.png",
+      "category": "weaponry",
+      "cols": 5,
+      "rows": 2,
+      "slots": 10,
+      "sizeStatus": "Namu/Sportskeeda dizem 2x5; Game8 diz 2x4 (em disputa)",
+      "rotatedDeg": 0.0,
+      "description": "Espingarda semiautomática com tambor de muitos cartuchos. Atira rápido, recarrega devagar.",
+      "rpg": {
+        "tipo": "espingarda",
+        "dano": "2d8",
+        "pente": 12,
+        "recarga": "lenta",
+        "alcance": "curto",
+        "precisaoJogo": 2.0,
+        "municao": "shotgun-shells",
+        "tags": [
+          "espalha",
+          "atira rápido"
+        ]
+      }
+    },
+    {
+      "id": "skull-shaker",
+      "name": "Skull Shaker",
+      "file": "icons/skull-shaker.png",
+      "category": "weaponry",
+      "cols": 5,
+      "rows": 1,
+      "slots": 5,
+      "sizeStatus": "lista do usuario, confere com Namu/Game8",
+      "rotatedDeg": 0.0,
+      "description": "Espingarda de cano serrado, minúscula (bônus da edição Deluxe). Ocupa pouquíssimo espaço.",
+      "rpg": {
+        "tipo": "espingarda",
+        "dano": "2d6",
+        "pente": 4,
+        "recarga": "normal",
+        "alcance": "curto",
+        "precisaoJogo": 2.3,
+        "municao": "shotgun-shells",
+        "tags": [
+          "espalha"
+        ]
+      }
+    },
+    {
+      "id": "sr-m1903",
+      "name": "SR M1903",
+      "file": "icons/sr-m1903.png",
+      "category": "weaponry",
+      "cols": 9,
+      "rows": 1,
+      "slots": 9,
+      "sizeStatus": "lista do usuario, confere com Namu/Game8",
+      "rotatedDeg": 11.0,
+      "description": "Rifle de ferrolho. O maior dano por tiro entre os rifles, mas atira devagar. Aceita miras.",
+      "rpg": {
+        "tipo": "rifle",
+        "dano": "2d8",
+        "pente": 5,
+        "recarga": "lenta",
+        "alcance": "longo",
+        "precisaoJogo": 5.2,
+        "municao": "rifle-ammo",
+        "tags": [
+          "perfurante",
+          "ferrolho (atira devagar)",
+          "aceita mira"
+        ]
+      }
+    },
+    {
+      "id": "stingray",
+      "name": "Stingray",
+      "file": "icons/stingray.png",
+      "category": "weaponry",
+      "cols": 7,
+      "rows": 2,
+      "slots": 14,
+      "sizeStatus": "lista do usuario, confere com Namu/Game8",
+      "rotatedDeg": 10.7,
+      "description": "Rifle semiautomático muito preciso, para tiros rápidos em sequência. Aceita miras.",
+      "rpg": {
+        "tipo": "rifle",
+        "dano": "2d6",
+        "pente": 10,
+        "recarga": "normal",
+        "alcance": "longo",
+        "precisaoJogo": 5.4,
+        "municao": "rifle-ammo",
+        "tags": [
+          "perfurante",
+          "aceita mira"
+        ]
+      }
+    },
+    {
+      "id": "cqbr-assault-rifle",
+      "name": "CQBR Assault Rifle",
+      "file": "icons/cqbr-assault-rifle.png",
+      "category": "weaponry",
+      "cols": 7,
+      "rows": 2,
+      "slots": 14,
+      "sizeStatus": "lista do usuario, confere com Namu/Game8",
+      "rotatedDeg": 15.8,
+      "description": "Fuzil de assalto automático e preciso. Versátil contra vários inimigos. Aceita miras.",
+      "rpg": {
+        "tipo": "rifle",
+        "dano": "2d6",
+        "rajada": true,
+        "balasPorRajada": 4,
+        "pente": 8,
+        "recarga": "normal",
+        "alcance": "longo",
+        "precisaoJogo": 5.0,
+        "municao": "rifle-ammo",
+        "tags": [
+          "perfurante",
+          "aceita mira"
+        ]
+      }
+    },
+    {
+      "id": "bolt-thrower",
+      "name": "Bolt Thrower",
+      "file": "icons/bolt-thrower.png",
+      "category": "weaponry",
+      "cols": 4,
+      "rows": 2,
+      "slots": 8,
+      "sizeStatus": "lista do usuario, confere com Namu/Game8",
+      "rotatedDeg": 0.0,
+      "description": "Besta silenciosa. Os virotes podem ser recolhidos depois do disparo, e dá para acoplar minas neles.",
+      "rpg": {
+        "tipo": "especial",
+        "dano": "1d8",
+        "pente": 5,
+        "recarga": "normal",
+        "alcance": "médio",
+        "precisaoJogo": 3.0,
+        "municao": "bolts",
+        "tags": [
+          "silenciosa",
+          "virotes recuperáveis",
+          "aceita minas"
+        ]
+      }
+    },
+    {
+      "id": "rocket-launcher",
+      "name": "Rocket Launcher",
+      "file": "icons/rocket-launcher.png",
+      "category": "weaponry",
+      "cols": 8,
+      "rows": 2,
+      "slots": 16,
+      "sizeStatus": "lista do usuario, confere com Namu/Game8",
+      "rotatedDeg": 15.4,
+      "description": "Lança-foguetes de uso único: um disparo, explosão enorme, e a arma é descartada.",
+      "rpg": {
+        "tipo": "especial",
+        "dano": "6d10",
+        "area": "raio grande",
+        "pente": 1,
+        "tags": [
+          "uso único (descarta após o tiro)"
+        ]
+      }
+    },
+    {
+      "id": "rocket-launcher-special",
+      "name": "Rocket Launcher (Special)",
+      "file": "icons/rocket-launcher-special.png",
+      "category": "weaponry",
+      "cols": 8,
+      "rows": 2,
+      "slots": 16,
+      "sizeStatus": "Namu",
+      "rotatedDeg": 15.4,
+      "description": "Lança-foguetes de munição infinita. Destrói quase tudo com um disparo.",
+      "rpg": {
+        "tipo": "especial",
+        "dano": "6d10",
+        "area": "raio grande",
+        "tags": [
+          "munição infinita"
+        ]
+      }
+    },
+    {
+      "id": "hand-grenade",
+      "name": "Hand Grenade",
+      "file": "icons/hand-grenade.png",
+      "category": "weaponry",
+      "cols": 1,
+      "rows": 1,
+      "slots": 1,
+      "sizeStatus": "lista do usuario, confere com Namu/Game8",
+      "rotatedDeg": 0.0,
+      "description": "Granada de fragmentação. Explosão eficaz contra pequenos grupos.",
+      "rpg": {
+        "tipo": "arremessável",
+        "dano": "3d6",
+        "area": "raio 3 m",
+        "tags": [
+          "uso único"
+        ]
+      }
+    },
+    {
+      "id": "flash-grenade",
+      "name": "Flash Grenade",
+      "file": "icons/flash-grenade.png",
+      "category": "weaponry",
+      "cols": 1,
+      "rows": 2,
+      "slots": 2,
+      "sizeStatus": "lista do usuario, confere com Namu/Game8",
+      "rotatedDeg": 0.0,
+      "description": "Granada de luz. Cega e atordoa quem está perto e mata na hora parasitas expostos.",
+      "rpg": {
+        "tipo": "arremessável",
+        "dano": "0",
+        "area": "raio 5 m",
+        "efeito": "Cega e atordoa por 1 rodada; mata na hora parasitas expostos.",
+        "tags": [
+          "uso único"
+        ]
+      }
+    },
+    {
+      "id": "heavy-grenade",
+      "name": "Heavy Grenade",
+      "file": "icons/heavy-grenade.png",
+      "category": "weaponry",
+      "cols": 1,
+      "rows": 2,
+      "slots": 2,
+      "sizeStatus": "lista do usuario, confere com Namu/Game8",
+      "rotatedDeg": 0.0,
+      "description": "Granada mais pesada, com explosão maior e mais dano que a granada comum.",
+      "rpg": {
+        "tipo": "arremessável",
+        "dano": "4d6",
+        "area": "raio 5 m",
+        "tags": [
+          "uso único"
+        ]
+      }
+    },
+    {
+      "id": "attachable-mines",
+      "name": "Attachable Mines",
+      "file": "icons/attachable-mines.png",
+      "category": "weaponry",
+      "cols": 2,
+      "rows": 1,
+      "slots": 2,
+      "sizeStatus": "lista do usuario (sem fonte do remake encontrada)",
+      "rotatedDeg": 0.0,
+      "description": "Minas que se acoplam aos virotes da besta. Grudam onde acertam e explodem.",
+      "rpg": {
+        "tipo": "munição especial",
+        "dano": "3d6",
+        "area": "raio 3 m",
+        "efeito": "Acopla no virote da besta; gruda onde acerta e explode.",
+        "tags": [
+          "uso único"
+        ]
+      }
+    },
+    {
+      "id": "scope",
+      "name": "Scope",
+      "file": "icons/scope.png",
+      "category": "weaponry",
+      "cols": 2,
+      "rows": 1,
+      "slots": 2,
+      "sizeStatus": "lista do usuario, confere com Namu/Game8",
+      "rotatedDeg": 0.0,
+      "description": "Mira telescópica com dois níveis de zoom, para média e longa distância.",
+      "rpg": {
+        "tipo": "anexo",
+        "encaixa": [
+          "le-5",
+          "sr-m1903",
+          "stingray",
+          "cqbr-assault-rifle"
+        ],
+        "efeito": "Permite atirar a longa distância sem penalidade.",
+        "modificador": "a definir pelo mestre"
+      }
+    },
+    {
+      "id": "high-power-scope",
+      "name": "High Power Scope",
+      "file": "icons/high-power-scope.png",
+      "category": "weaponry",
+      "cols": 3,
+      "rows": 1,
+      "slots": 3,
+      "sizeStatus": "lista do usuario, confere com Namu/Game8",
+      "rotatedDeg": 30.5,
+      "description": "Mira telescópica de alta potência, com três níveis de zoom para alvos muito distantes.",
+      "rpg": {
+        "tipo": "anexo",
+        "encaixa": [
+          "le-5",
+          "sr-m1903",
+          "stingray",
+          "cqbr-assault-rifle"
+        ],
+        "efeito": "Como a mira comum, e melhora o acerto a longa distância.",
+        "modificador": "a definir pelo mestre"
+      }
+    },
+    {
+      "id": "biosensor-scope",
+      "name": "Biosensor Scope",
+      "file": "icons/biosensor-scope.png",
+      "category": "weaponry",
+      "cols": 2,
+      "rows": 2,
+      "slots": 4,
+      "sizeStatus": "lista do usuario, confere com Namu/Game8",
+      "rotatedDeg": 0.0,
+      "description": "Mira especial que mostra os parasitas dentro dos inimigos e revela pontos fracos.",
+      "rpg": {
+        "tipo": "anexo",
+        "encaixa": [
+          "le-5",
+          "sr-m1903",
+          "stingray",
+          "cqbr-assault-rifle"
+        ],
+        "efeito": "Como a mira comum, e revela parasitas e pontos fracos: crítico ampliado contra eles.",
+        "modificador": "a definir pelo mestre"
+      }
+    },
+    {
+      "id": "laser-sight",
+      "name": "Laser Sight",
+      "file": "icons/laser-sight.png",
+      "category": "weaponry",
+      "cols": 1,
+      "rows": 1,
+      "slots": 1,
+      "sizeStatus": "lista do usuario, confere com Namu/Game8",
+      "rotatedDeg": 0.0,
+      "description": "Mira laser. Deixa a pistola mais precisa. Encaixa na SG-09 R, Punisher e Sentinel Nine.",
+      "rpg": {
+        "tipo": "anexo",
+        "encaixa": [
+          "sg-09-r",
+          "punisher",
+          "sentinel-nine"
+        ],
+        "efeito": "Melhora a precisão.",
+        "modificador": "a definir pelo mestre",
+        "efeitoNoJogo": "Precision +0,5"
+      }
+    },
+    {
+      "id": "red9-stock",
+      "name": "Red9 Stock",
+      "file": "icons/red9-stock.png",
+      "category": "weaponry",
+      "cols": 4,
+      "rows": 1,
+      "slots": 4,
+      "sizeStatus": "lista do usuario, confere com Namu/Game8",
+      "rotatedDeg": 40.0,
+      "description": "Coronha da Red9. Reduz o recuo e aumenta muito a precisão.",
+      "rpg": {
+        "tipo": "anexo",
+        "encaixa": [
+          "red9"
+        ],
+        "efeito": "Tira o recuo forte.",
+        "modificador": "a definir pelo mestre",
+        "efeitoNoJogo": "Precision 3,0 → 4,8"
+      }
+    },
+    {
+      "id": "tmp-stock",
+      "name": "TMP Stock",
+      "file": "icons/tmp-stock.png",
+      "category": "weaponry",
+      "cols": 3,
+      "rows": 2,
+      "slots": 6,
+      "sizeStatus": "lista do usuario, confere com Namu/Game8",
+      "rotatedDeg": 39.0,
+      "description": "Coronha da TMP. Reduz o recuo e melhora a precisão no fogo automático.",
+      "rpg": {
+        "tipo": "anexo",
+        "encaixa": [
+          "tmp"
+        ],
+        "efeito": "Fogo automático mais preciso.",
+        "modificador": "a definir pelo mestre",
+        "efeitoNoJogo": "Precision 2,0 → 3,5"
+      }
+    },
+    {
+      "id": "matilda-stock",
+      "name": "Matilda Stock",
+      "file": "icons/matilda-stock.png",
+      "category": "weaponry",
+      "cols": 3,
+      "rows": 1,
+      "slots": 3,
+      "sizeStatus": "lista do usuario, confere com Namu/Game8",
+      "rotatedDeg": 33.3,
+      "description": "Coronha da Matilda. Reduz o recuo e deixa as rajadas mais precisas.",
+      "rpg": {
+        "tipo": "anexo",
+        "encaixa": [
+          "matilda"
+        ],
+        "efeito": "Rajadas mais precisas.",
+        "modificador": "a definir pelo mestre",
+        "efeitoNoJogo": "Precision 3,5 → 4,6"
+      }
+    },
+    {
+      "id": "handgun-ammo",
+      "name": "Handgun Ammo",
+      "file": "icons/handgun-ammo.png",
+      "category": "weaponry",
+      "cols": 2,
+      "rows": 1,
+      "slots": 2,
+      "sizeStatus": "lista do usuario (sem fonte do remake encontrada)",
+      "rotatedDeg": 0.0,
+      "description": "Munição de pistola. A mais comum.",
+      "rpg": {
+        "tipo": "munição",
+        "efeito": "Caixa com até 15 balas. A arma puxa só o que falta ao recarregar; caixas do mesmo tipo se juntam.",
+        "balasPorCaixa": 15
+      }
+    },
+    {
+      "id": "shotgun-shells",
+      "name": "Shotgun Shells",
+      "file": "icons/shotgun-shells.png",
+      "category": "weaponry",
+      "cols": 2,
+      "rows": 1,
+      "slots": 2,
+      "sizeStatus": "lista do usuario (sem fonte do remake encontrada)",
+      "rotatedDeg": 0.0,
+      "description": "Cartuchos de espingarda.",
+      "rpg": {
+        "tipo": "munição",
+        "efeito": "Caixa com até 8 balas. A arma puxa só o que falta ao recarregar; caixas do mesmo tipo se juntam.",
+        "balasPorCaixa": 8
+      }
+    },
+    {
+      "id": "submachine-gun-ammo",
+      "name": "Submachine Gun Ammo",
+      "file": "icons/submachine-gun-ammo.png",
+      "category": "weaponry",
+      "cols": 2,
+      "rows": 1,
+      "slots": 2,
+      "sizeStatus": "lista do usuario (sem fonte do remake encontrada)",
+      "rotatedDeg": 0.0,
+      "description": "Munição de submetralhadora. Acaba rápido no fogo automático.",
+      "rpg": {
+        "tipo": "munição",
+        "efeito": "Caixa com até 50 balas. A arma puxa só o que falta ao recarregar; caixas do mesmo tipo se juntam.",
+        "balasPorCaixa": 50
+      }
+    },
+    {
+      "id": "rifle-ammo",
+      "name": "Rifle Ammo",
+      "file": "icons/rifle-ammo.png",
+      "category": "weaponry",
+      "cols": 2,
+      "rows": 1,
+      "slots": 2,
+      "sizeStatus": "lista do usuario (sem fonte do remake encontrada)",
+      "rotatedDeg": 0.0,
+      "description": "Munição de rifle. Escassa, mas cada bala vale muito.",
+      "rpg": {
+        "tipo": "munição",
+        "efeito": "Caixa com até 5 balas. A arma puxa só o que falta ao recarregar; caixas do mesmo tipo se juntam.",
+        "balasPorCaixa": 5
+      }
+    },
+    {
+      "id": "magnum-ammo",
+      "name": "Magnum Ammo",
+      "file": "icons/magnum-ammo.png",
+      "category": "weaponry",
+      "cols": 2,
+      "rows": 1,
+      "slots": 2,
+      "sizeStatus": "lista do usuario (sem fonte do remake encontrada)",
+      "rotatedDeg": 0.0,
+      "description": "Munição de magnum. Rara e poderosa.",
+      "rpg": {
+        "tipo": "munição",
+        "efeito": "Caixa com até 6 balas. A arma puxa só o que falta ao recarregar; caixas do mesmo tipo se juntam.",
+        "balasPorCaixa": 6
+      }
+    },
+    {
+      "id": "bolts",
+      "name": "Bolts",
+      "file": "icons/bolts.png",
+      "category": "weaponry",
+      "cols": 2,
+      "rows": 1,
+      "slots": 2,
+      "sizeStatus": "SUPOSICAO (nao estava na lista; assumido igual a municao)",
+      "rotatedDeg": 0.0,
+      "description": "Virotes para a besta. Podem ser recolhidos depois do disparo.",
+      "rpg": {
+        "tipo": "munição",
+        "efeito": "Caixa com até 5 virotes. A arma puxa só o que falta ao recarregar; caixas do mesmo tipo se juntam.",
+        "balasPorCaixa": 5
+      }
+    },
+    {
+      "id": "first-aid-spray",
+      "name": "First Aid Spray",
+      "file": "icons/first-aid-spray.png",
+      "category": "recovery",
+      "cols": 1,
+      "rows": 2,
+      "slots": 2,
+      "sizeStatus": "lista do usuario (sem fonte do remake encontrada)",
+      "rotatedDeg": 0.0,
+      "description": "Spray de primeiros socorros. Cura a vida toda na hora. Item raro.",
+      "rpg": {
+        "tipo": "cura",
+        "cura": "vida toda",
+        "tags": [
+          "raro"
+        ]
+      }
+    },
+    {
+      "id": "green-herb",
+      "name": "Green Herb",
+      "file": "icons/green-herb.png",
+      "category": "recovery",
+      "cols": 1,
+      "rows": 2,
+      "slots": 2,
+      "sizeStatus": "lista do usuario (sem fonte do remake encontrada)",
+      "rotatedDeg": 0.0,
+      "description": "Erva verde. Cura 1 dado de vida. Pode ser misturada com outras ervas.",
+      "rpg": {
+        "tipo": "cura",
+        "cura": "1 dado de vida"
+      }
+    },
+    {
+      "id": "red-herb",
+      "name": "Red Herb",
+      "file": "icons/red-herb.png",
+      "category": "recovery",
+      "cols": 1,
+      "rows": 2,
+      "slots": 2,
+      "sizeStatus": "lista do usuario (sem fonte do remake encontrada)",
+      "rotatedDeg": 0.0,
+      "description": "Erva vermelha. Cura meio dado de vida e tira a dor (remove desvantagens por dor).",
+      "rpg": {
+        "tipo": "cura",
+        "cura": "½ dado de vida",
+        "efeitos": [
+          "Tira a dor"
+        ]
+      }
+    },
+    {
+      "id": "yellow-herb",
+      "name": "Yellow Herb",
+      "file": "icons/yellow-herb.png",
+      "category": "recovery",
+      "cols": 1,
+      "rows": 2,
+      "slots": 2,
+      "sizeStatus": "lista do usuario (sem fonte do remake encontrada)",
+      "rotatedDeg": 0.0,
+      "description": "Erva amarela. Cura meio dado de vida e dá um pulso de adrenalina.",
+      "rpg": {
+        "tipo": "cura",
+        "cura": "½ dado de vida",
+        "efeitos": [
+          "Pulso de adrenalina"
+        ]
+      }
+    },
+    {
+      "id": "mixed-herb-gg",
+      "name": "Mixed Herb (G+G)",
+      "file": "icons/mixed-herb-gg.png",
+      "category": "recovery",
+      "cols": 1,
+      "rows": 2,
+      "slots": 2,
+      "sizeStatus": "lista do usuario (sem fonte do remake encontrada)",
+      "rotatedDeg": 0.0,
+      "description": "Mistura de duas ervas verdes. Cura 2 dados de vida.",
+      "rpg": {
+        "tipo": "cura",
+        "cura": "2 dados de vida"
+      }
+    },
+    {
+      "id": "mixed-herb-gr",
+      "name": "Mixed Herb (G+R)",
+      "file": "icons/mixed-herb-gr.png",
+      "category": "recovery",
+      "cols": 1,
+      "rows": 2,
+      "slots": 2,
+      "sizeStatus": "lista do usuario (sem fonte do remake encontrada)",
+      "rotatedDeg": 0.0,
+      "description": "Mistura de verde e vermelha. Cura 1 dado de vida e meio e tira a dor.",
+      "rpg": {
+        "tipo": "cura",
+        "cura": "1½ dado de vida",
+        "efeitos": [
+          "Tira a dor"
+        ]
+      }
+    },
+    {
+      "id": "mixed-herb-gy",
+      "name": "Mixed Herb (G+Y)",
+      "file": "icons/mixed-herb-gy.png",
+      "category": "recovery",
+      "cols": 1,
+      "rows": 2,
+      "slots": 2,
+      "sizeStatus": "lista do usuario (sem fonte do remake encontrada)",
+      "rotatedDeg": 0.0,
+      "description": "Mistura de verde e amarela. Cura 1 dado de vida e meio e dá um pulso de adrenalina.",
+      "rpg": {
+        "tipo": "cura",
+        "cura": "1½ dado de vida",
+        "efeitos": [
+          "Pulso de adrenalina"
+        ]
+      }
+    },
+    {
+      "id": "mixed-herb-ry",
+      "name": "Mixed Herb (R+Y)",
+      "file": "icons/mixed-herb-ry.png",
+      "category": "recovery",
+      "cols": 1,
+      "rows": 2,
+      "slots": 2,
+      "sizeStatus": "lista do usuario (sem fonte do remake encontrada)",
+      "rotatedDeg": 0.0,
+      "description": "Mistura de vermelha e amarela. Cura 1 dado de vida, tira a dor e dá um pulso de adrenalina.",
+      "rpg": {
+        "tipo": "cura",
+        "cura": "1 dado de vida",
+        "efeitos": [
+          "Tira a dor",
+          "Pulso de adrenalina"
+        ]
+      }
+    },
+    {
+      "id": "mixed-herb-ggg",
+      "name": "Mixed Herb (G+G+G)",
+      "file": "icons/mixed-herb-ggg.png",
+      "category": "recovery",
+      "cols": 1,
+      "rows": 2,
+      "slots": 2,
+      "sizeStatus": "lista do usuario (sem fonte do remake encontrada)",
+      "rotatedDeg": 0.0,
+      "description": "Mistura de três ervas verdes. Cura a vida toda.",
+      "rpg": {
+        "tipo": "cura",
+        "cura": "vida toda"
+      }
+    },
+    {
+      "id": "mixed-herb-ggy",
+      "name": "Mixed Herb (G+G+Y)",
+      "file": "icons/mixed-herb-ggy.png",
+      "category": "recovery",
+      "cols": 1,
+      "rows": 2,
+      "slots": 2,
+      "sizeStatus": "lista do usuario (sem fonte do remake encontrada)",
+      "rotatedDeg": 0.0,
+      "description": "Mistura de duas verdes e uma amarela. Cura a vida toda e dá um pulso de adrenalina.",
+      "rpg": {
+        "tipo": "cura",
+        "cura": "vida toda",
+        "efeitos": [
+          "Pulso de adrenalina"
+        ]
+      }
+    },
+    {
+      "id": "mixed-herb-gry",
+      "name": "Mixed Herb (G+R+Y)",
+      "file": "icons/mixed-herb-gry.png",
+      "category": "recovery",
+      "cols": 1,
+      "rows": 2,
+      "slots": 2,
+      "sizeStatus": "lista do usuario (sem fonte do remake encontrada)",
+      "rotatedDeg": 0.0,
+      "description": "Mistura das três cores. Cura a vida toda, tira a dor e dá um pulso de adrenalina.",
+      "rpg": {
+        "tipo": "cura",
+        "cura": "vida toda",
+        "efeitos": [
+          "Tira a dor",
+          "Pulso de adrenalina"
+        ]
+      }
+    }
+  ],
+  "recipes": [
+    {
+      "a": "green-herb",
+      "b": "green-herb",
+      "result": "mixed-herb-gg"
+    },
+    {
+      "a": "green-herb",
+      "b": "red-herb",
+      "result": "mixed-herb-gr"
+    },
+    {
+      "a": "green-herb",
+      "b": "yellow-herb",
+      "result": "mixed-herb-gy"
+    },
+    {
+      "a": "red-herb",
+      "b": "yellow-herb",
+      "result": "mixed-herb-ry"
+    },
+    {
+      "a": "mixed-herb-gg",
+      "b": "green-herb",
+      "result": "mixed-herb-ggg"
+    },
+    {
+      "a": "mixed-herb-gg",
+      "b": "yellow-herb",
+      "result": "mixed-herb-ggy"
+    },
+    {
+      "a": "mixed-herb-gy",
+      "b": "green-herb",
+      "result": "mixed-herb-ggy"
+    },
+    {
+      "a": "mixed-herb-gr",
+      "b": "yellow-herb",
+      "result": "mixed-herb-gry"
+    },
+    {
+      "a": "mixed-herb-gy",
+      "b": "red-herb",
+      "result": "mixed-herb-gry"
+    },
+    {
+      "a": "mixed-herb-ry",
+      "b": "green-herb",
+      "result": "mixed-herb-gry"
+    }
+  ]
+}

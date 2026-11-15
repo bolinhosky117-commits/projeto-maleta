@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mochila, Baú e Armário (protótipo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e1013; --panel: #161a1f; --panel2: #1c2128; --line: #2a3039;
+    --text: #e7e3d8; --muted: #8d929b; --accent: #c9a227; --accent-ink: #1a1500;
+    --danger: #d0604c; --ok: #74ad78; --radius: 8px;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+    --sans: "IBM Plex Sans", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.45 var(--sans); }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  header {
+    display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; justify-content: space-between;
+    padding: 14px 20px; border-bottom: 1px solid var(--line); background: #111418;
+    position: sticky; top: 0; z-index: 5;
+  }
+  .marca { font-family: var(--mono); letter-spacing: .08em; text-transform: uppercase; font-size: 12px; color: var(--muted); }
+  .marca b { color: var(--accent); font-weight: 600; }
+  .controles { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  label.campo-inline { display: flex; gap: 8px; align-items: center; color: var(--muted); font-size: 13px; }
+  select, input[type=text], input[type=number], textarea {
+    background: var(--panel2); border: 1px solid var(--line); border-radius: 6px; padding: 7px 9px; outline: none;
+  }
+  select:focus, input:focus, textarea:focus { border-color: var(--accent); }
+  .btn { background: var(--panel2); border: 1px solid var(--line); border-radius: 6px; padding: 7px 12px; }
+  .btn:hover { border-color: #3c4450; }
+  .btn.primario { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
+  .btn.perigo { border-color: #5a2b24; color: #f0a597; }
+  .btn.mini { padding: 3px 8px; font-size: 12px; }
+  .btn:disabled { opacity: .4; cursor: not-allowed; }
+  .base { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); font-size: 13px; }
+  .base .ponto { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); }
+  .base.fora .ponto { background: var(--danger); }
+  nav.abas { display: flex; gap: 4px; padding: 12px 20px 0; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  nav.abas button { background: none; border: none; border-bottom: 2px solid transparent; padding: 8px 12px; color: var(--muted); }
+  nav.abas button.ativa { color: var(--text); border-bottom-color: var(--accent); }
+  main { padding: 18px 20px 60px; max-width: 1280px; margin: 0 auto; }
+  .aviso { padding: 10px 14px; border: 1px dashed var(--line); border-radius: var(--radius); color: var(--muted); margin-bottom: 16px; font-size: 13px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+  .chip { border: 1px solid var(--line); background: var(--panel); border-radius: 999px; padding: 4px 12px; font-size: 13px; color: var(--muted); }
+  .chip.ativo { border-color: var(--accent); color: var(--text); }
+  .colunas { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  @media (max-width: 900px) { .colunas { grid-template-columns: 1fr; } }
+  .coluna { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); display: flex; flex-direction: column; min-height: 320px; }
+  .coluna-topo { padding: 12px 14px; border-bottom: 1px solid var(--line); }
+  .coluna-topo h2 { margin: 0; font-size: 15px; font-weight: 600; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .coluna-topo h2 small { font-family: var(--mono); font-size: 12px; color: var(--muted); font-weight: 400; }
+  .barra { height: 6px; background: var(--panel2); border-radius: 3px; margin-top: 8px; overflow: hidden; }
+  .barra i { display: block; height: 100%; background: var(--accent); }
+  .barra.cheia i { background: var(--danger); }
+  .ferramentas { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+  .ferramentas input { flex: 1; min-width: 120px; padding: 5px 8px; }
+  .ferramentas select { padding: 5px 8px; }
+  .lista { list-style: none; margin: 0; padding: 6px; flex: 1; }
+  .linha { display: grid; grid-template-columns: 1fr auto; gap: 6px 10px; align-items: center; padding: 8px; border-radius: 6px; }
+  .linha:hover { background: var(--panel2); }
+  .linha .nome { background: none; border: none; padding: 0; text-align: left; font-weight: 500; }
+  .linha .nome:hover { color: var(--accent); }
+  .linha .info { grid-column: 1 / 2; font-family: var(--mono); font-size: 12px; color: var(--muted); display: flex; gap: 10px; flex-wrap: wrap; }
+  .linha .acoes { grid-row: 1 / 3; grid-column: 2; display: flex; flex-direction: column; gap: 4px; align-items: stretch; }
+  .qtd { font-family: var(--mono); color: var(--accent); margin-left: 6px; font-size: 13px; }
+  .tag { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: .05em; padding: 1px 6px; border-radius: 4px; border: 1px solid var(--line); }
+  .vazio { color: var(--muted); padding: 20px 14px; font-size: 13px; text-align: center; }
+  .trancado { padding: 30px 16px; text-align: center; color: var(--muted); flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 6px; }
+  .trancado b { color: var(--text); font-weight: 500; }
+  .cadeado { font-size: 26px; opacity: .7; }
+  /* Catálogo */
+  .catalogo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 16px; }
+  @media (max-width: 900px) { .catalogo { grid-template-columns: 1fr; } }
+  .painel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; }
+  .painel h2 { margin: 0 0 12px; font-size: 15px; }
+  .form { display: grid; gap: 10px; }
+  .form label { display: grid; gap: 4px; font-size: 12px; color: var(--muted); }
+  .form .dupla { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .extra { display: grid; grid-template-columns: 1fr 1.4fr auto; gap: 6px; }
+  .separador { border: none; border-top: 1px solid var(--line); margin: 6px 0; }
+  .catlinha { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px; border-radius: 6px; border: 1px solid transparent; }
+  .catlinha.sel { border-color: var(--accent); background: var(--panel2); }
+  .catlinha:hover { background: var(--panel2); }
+  .historico li { padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 13px; display: flex; gap: 12px; }
+  .historico time { font-family: var(--mono); color: var(--muted); font-size: 12px; white-space: nowrap; }
+  .jog { display: grid; grid-template-columns: 1fr 110px auto; gap: 8px; align-items: center; margin-bottom: 8px; }
+  /* Diálogo */
+  .fundo { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 20; }
+  .dialogo { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; width: min(460px, 100%); max-height: 90vh; overflow: auto; padding: 18px; }
+  .dialogo h3 { margin: 0 0 4px; font-size: 18px; }
+  .dialogo .desc { color: #c9c5ba; margin: 10px 0; white-space: pre-wrap; }
+  .stats { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; font-size: 13px; margin: 10px 0; }
+  .stats dt { color: var(--muted); }
+  .stats dd { margin: 0; font-family: var(--mono); }
+  .dialogo .botoes { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; align-items: center; }
+  #toast { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); background: #2a1714; border: 1px solid var(--danger); color: #f4c2b7; padding: 10px 16px; border-radius: 8px; display: none; z-index: 30; max-width: 90vw; }
+  #toast.ok { background: #15221a; border-color: var(--ok); color: #c3e5c6; }
+</style>
+</head>
+<body>
+<div id="raiz"></div>
+<div id="toast" role="status"></div>
+<script>
+/* =====================================================================
+   PARTE 1 — REGRAS
+   Tudo que decide "pode ou não pode" está aqui, separado da tela.
+   É esta parte que deve ir para o site de verdade (no servidor/banco).
+   ===================================================================== */
+const LOCAIS = { armario: "Armário", mochila: "Mochila", bau: "Baú" };
+const CATEGORIAS = ["Arma", "Anexo", "Munição", "Explosivo", "Consumível", "Equipamento"];
+const CORES = { "Arma": "#d0604c", "Anexo": "#7aa7d6", "Munição": "#c9a227", "Explosivo": "#e08a3c", "Consumível": "#74ad78", "Equipamento": "#a08fd0" };
+
+const Regras = {
+  item(s, id) { return s.catalogo.find(i => i.id === id); },
+  personagem(s, id) { return s.personagens.find(p => p.id === id); },
+
+  // Devolve a lista de um lugar. Armário é um só; mochila e baú são de cada personagem.
+  lista(s, local, pid) {
+    if (local === "armario") return s.armario;
+    const p = Regras.personagem(s, pid);
+    return p ? p[local] : null;
+  },
+
+  espacoUsado(s, p) {
+    return p.mochila.reduce((soma, e) => soma + ((Regras.item(s, e.itemId) || {}).espaco || 0) * e.qtd, 0);
+  },
+  espacoLivre(s, p) { return p.capacidade - Regras.espacoUsado(s, p); },
+
+  // Mestre abre tudo. Jogador sempre abre a mochila; armário e baú dependem da base.
+  temAcesso(s, quem, local) {
+    if (quem === "mestre" || local === "mochila") return true;
+    if (!s.config.acessoSoNaBase) return true;
+    return s.config.naBase;
+  },
+
+  // Coloca qtd do item num lugar (qtd null = infinito, só no armário).
+  _adicionar(lista, itemId, qtd) {
+    const e = lista.find(x => x.itemId === itemId);
+    if (e) { if (e.qtd !== null) e.qtd = qtd === null ? null : e.qtd + qtd; }
+    else lista.push({ itemId, qtd });
+  },
+  _tirar(lista, itemId, qtd) {
+    const e = lista.find(x => x.itemId === itemId);
+    if (!e || e.qtd === null) return;
+    e.qtd -= qtd;
+    if (e.qtd <= 0) lista.splice(lista.indexOf(e), 1);
+  },
+  _cabe(s, p, item, qtd) {
+    const precisa = item.espaco * qtd, livre = Regras.espacoLivre(s, p);
+    if (precisa > livre + 1e-9) return `Não cabe na mochila de ${p.nome}: precisa de ${fmt(precisa)} espaço(s), sobram ${fmt(livre)}.`;
+    return null;
+  },
+
+  // Mover entre Armário, Mochila e Baú.
+  mover(s, { quem, pid, itemId, de, para, qtd }) {
+    qtd = Math.max(1, Math.floor(qtd || 1));
+    if (de === para) return { erro: "Origem e destino são o mesmo lugar." };
+    const p = Regras.personagem(s, pid);
+    if (!p) return { erro: "Personagem não encontrado." };
+    if (quem !== "mestre" && quem !== pid) return { erro: "Você só mexe nas suas próprias coisas." };
+    for (const l of [de, para]) {
+      if (!Regras.temAcesso(s, quem, l)) return { erro: `O ${LOCAIS[l]} só abre quando o grupo está na base.` };
+    }
+    const item = Regras.item(s, itemId);
+    if (!item) return { erro: "Item não existe no catálogo." };
+    const origem = Regras.lista(s, de, pid);
+    const ent = origem.find(x => x.itemId === itemId);
+    if (!ent) return { erro: `${item.nome} não está no ${LOCAIS[de]}.` };
+    if (ent.qtd !== null && ent.qtd < qtd) return { erro: `Só tem ${ent.qtd} no ${LOCAIS[de]}.` };
+    if (para === "mochila") { const e = Regras._cabe(s, p, item, qtd); if (e) return { erro: e }; }
+    Regras._tirar(origem, itemId, qtd);
+    Regras._adicionar(Regras.lista(s, para, pid), itemId, qtd);
+    Regras._log(s, quem, `${qtd}× ${item.nome}: ${LOCAIS[de]} → ${LOCAIS[para]} (${p.nome})`);
+    return { ok: true };
+  },
+
+  // Gastar 1 consumível que está na mochila.
+  usar(s, { quem, pid, itemId }) {
+    const p = Regras.personagem(s, pid), item = Regras.item(s, itemId);
+    if (!p || !item) return { erro: "Item ou personagem não encontrado." };
+    if (quem !== "mestre" && quem !== pid) return { erro: "Você só mexe nas suas próprias coisas." };
+    if (item.categoria !== "Consumível") return { erro: "Só consumíveis podem ser usados." };
+    if (!p.mochila.some(x => x.itemId === itemId)) return { erro: "Para usar, o item precisa estar na mochila." };
+    Regras._tirar(p.mochila, itemId, 1);
+    Regras._log(s, quem, `${p.nome} usou 1× ${item.nome}`);
+    return { ok: true };
+  },
+
+  // Só o mestre: tira itens de jogo (some de vez).
+  descartar(s, { quem, pid, local, itemId, qtd }) {
+    if (quem !== "mestre") return { erro: "Só o mestre descarta itens." };
+    const lista = Regras.lista(s, local, pid), item = Regras.item(s, itemId);
+    const ent = lista && lista.find(x => x.itemId === itemId);
+    if (!ent || !item) return { erro: "Item não encontrado." };
+    if (ent.qtd === null) lista.splice(lista.indexOf(ent), 1);
+    else Regras._tirar(lista, itemId, Math.min(qtd || 1, ent.qtd));
+    const dono = local === "armario" ? "" : ` (${Regras.personagem(s, pid).nome})`;
+    Regras._log(s, quem, `Descartou ${ent.qtd === null ? "todos os" : (qtd || 1) + "×"} ${item.nome} do ${LOCAIS[local]}${dono}`);
+    return { ok: true };
+  },
+
+  // Só o mestre: cria itens do catálogo em algum lugar (qtd null = infinito, só no armário).
+  colocarEmJogo(s, { quem, pid, local, itemId, qtd }) {
+    if (quem !== "mestre") return { erro: "Só o mestre coloca itens em jogo." };
+    const item = Regras.item(s, itemId);
+    if (!item) return { erro: "Item não existe no catálogo." };
+    if (qtd === null && local !== "armario") return { erro: "Quantidade infinita só existe no armário." };
+    if (qtd !== null) qtd = Math.max(1, Math.floor(qtd));
+    const lista = Regras.lista(s, local, pid);
+    if (!lista) return { erro: "Escolha um personagem." };
+    if (local === "mochila") { const e = Regras._cabe(s, Regras.personagem(s, pid), item, qtd); if (e) return { erro: e }; }
+    Regras._adicionar(lista, itemId, qtd);
+    const dono = local === "armario" ? "" : ` de ${Regras.personagem(s, pid).nome}`;
+    Regras._log(s, quem, `Colocou ${qtd === null ? "∞" : qtd + "×"} ${item.nome} no ${LOCAIS[local]}${dono}`);
+    return { ok: true };
+  },
+
+  // Excluir do catálogo tira o item de todos os lugares.
+  excluirDoCatalogo(s, itemId) {
+    s.catalogo = s.catalogo.filter(i => i.id !== itemId);
+    s.armario = s.armario.filter(e => e.itemId !== itemId);
+    s.personagens.forEach(p => { p.mochila = p.mochila.filter(e => e.itemId !== itemId); p.bau = p.bau.filter(e => e.itemId !== itemId); });
+  },
+
+  _log(s, quem, texto) {
+    const autor = quem === "mestre" ? "Mestre" : (Regras.personagem(s, quem) || {}).nome;
+    s.historico.unshift({ quando: new Date().toISOString(), autor, texto });
+    s.historico = s.historico.slice(0, 200);
+  },
+};
+
+/* =====================================================================
+   PARTE 2 — DADOS DE EXEMPLO E SALVAMENTO
+   No protótipo tudo fica só neste navegador. No site real, vai para o banco.
+   ===================================================================== */
+function exemplo() {
+  const it = (id, nome, categoria, dano, espaco, descricao, extras = []) => ({ id, nome, categoria, dano, espaco, descricao, extras: extras.map(([campo, valor]) => ({ campo, valor })) });
+  return {
+    config: { acessoSoNaBase: true, naBase: true },
+    catalogo: [
+      it("pistola", "Pistola 9mm", "Arma", "2d6", 2, "Semiautomática, compacta e confiável.", [["Alcance", "Curto"], ["Munição", "9mm"], ["Pente", "15 tiros"]]),
+      it("escopeta", "Escopeta calibre 12", "Arma", "3d6", 4, "Devastadora de perto, inútil de longe.", [["Alcance", "Curto"], ["Munição", "Cartucho 12"], ["Capacidade", "6 tiros"]]),
+      it("fuzil", "Fuzil 5.56", "Arma", "2d8", 5, "Arma longa, precisa a distância.", [["Alcance", "Longo"], ["Munição", "5.56"], ["Pente", "30 tiros"]]),
+      it("faca", "Faca de combate", "Arma", "1d4", 1, "Sempre útil. Silenciosa.", [["Alcance", "Corpo a corpo"]]),
+      it("mira", "Mira holográfica", "Anexo", "", 1, "Encaixa em pistola ou fuzil.", [["Efeito", "+1 no acerto à distância"]]),
+      it("silenciador", "Silenciador", "Anexo", "", 1, "Abafa o disparo. Encaixa na pistola.", [["Efeito", "Tiro não alerta quem está longe"]]),
+      it("mun9", "Pente 9mm", "Munição", "", 0.5, "Um pente cheio para a pistola.", [["Tiros", "15"]]),
+      it("mun12", "Caixa de cartuchos 12", "Munição", "", 1, "Recarga completa da escopeta.", [["Tiros", "6"]]),
+      it("granada", "Granada de fragmentação", "Explosivo", "3d6", 1, "Puxa o pino, conta até três.", [["Raio", "3 metros"]]),
+      it("kit", "Kit médico", "Consumível", "", 2, "Curativos, sutura e antisséptico.", [["Efeito", "Cura 1d8"]]),
+      it("analgesico", "Analgésico", "Consumível", "", 0.5, "Tira a dor por algumas horas.", [["Efeito", "Cura 1d4"]]),
+      it("lanterna", "Lanterna tática", "Equipamento", "", 1, "Facho forte, pilha para uma noite.", []),
+    ],
+    armario: [
+      { itemId: "pistola", qtd: 3 }, { itemId: "escopeta", qtd: 1 }, { itemId: "fuzil", qtd: 1 },
+      { itemId: "faca", qtd: null }, { itemId: "mira", qtd: 1 }, { itemId: "silenciador", qtd: 1 },
+      { itemId: "mun9", qtd: null }, { itemId: "mun12", qtd: 6 }, { itemId: "granada", qtd: 4 },
+    ],
+    personagens: [
+      { id: "p1", nome: "Ana", capacidade: 10, mochila: [{ itemId: "lanterna", qtd: 1 }, { itemId: "kit", qtd: 1 }], bau: [{ itemId: "analgesico", qtd: 2 }] },
+      { id: "p2", nome: "Bruno", capacidade: 12, mochila: [{ itemId: "faca", qtd: 1 }], bau: [] },
+      { id: "p3", nome: "Caio", capacidade: 8, mochila: [], bau: [{ itemId: "kit", qtd: 1 }] },
+    ],
+    historico: [],
+  };
+}
+
+const CHAVE = "mesa-inventario-prototipo-v1";
+let S = null;
+try { S = JSON.parse(localStorage.getItem(CHAVE)); } catch (e) { S = null; }
+if (!S || !Array.isArray(S.catalogo)) S = exemplo();
+function salvar() { try { localStorage.setItem(CHAVE, JSON.stringify(S)); } catch (e) { /* sem armazenamento: segue só na memória */ } }
+
+/* =====================================================================
+   PARTE 3 — TELA
+   Só desenha e chama as Regras. Pode ser refeita no estilo do site real.
+   ===================================================================== */
+const ui = { quem: "mestre", aba: "inventario", pid: S.personagens[0] && S.personagens[0].id, filtro: "Todas", busca: "", editando: null, dialogo: null, confirmar: null };
+
+function fmt(n) { return String(Math.round(n * 10) / 10).replace(".", ","); }
+function esc(t) { return String(t == null ? "" : t).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+function novoId() { return "i" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+function eMestre() { return ui.quem === "mestre"; }
+function pidAtual() { return eMestre() ? ui.pid : ui.quem; }
+function tag(cat) { const c = CORES[cat] || "#888"; return `<span class="tag" style="color:${c};border-color:${c}55">${esc(cat)}</span>`; }
+
+let toastTimer;
+function aviso(msg, ok) {
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.className = ok ? "ok" : ""; t.style.display = "block";
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => (t.style.display = "none"), 3200);
+}
+function aplicar(r, msgOk) { if (r.erro) aviso(r.erro); else { salvar(); if (msgOk) aviso(msgOk, true); } render(); }
+
+function render() {
+  if (!S.personagens.some(p => p.id === ui.pid)) ui.pid = S.personagens[0] && S.personagens[0].id;
+  if (!eMestre() && !S.personagens.some(p => p.id === ui.quem)) ui.quem = "mestre";
+  if (!eMestre() && ui.aba !== "inventario") ui.aba = "inventario";
+  const foco = document.activeElement && document.activeElement.id;
+  const pos = foco && document.activeElement.selectionStart;
+  document.getElementById("raiz").innerHTML = topo() + abas() + `<main>${conteudo()}</main>` + dialogo();
+  if (foco) { const el = document.getElementById(foco); if (el) { el.focus(); try { el.setSelectionRange(pos, pos); } catch (e) {} } }
+}
+
+function topo() {
+  const opcoes = [`<option value="mestre"${eMestre() ? " selected" : ""}>Mestre</option>`]
+    .concat(S.personagens.map(p => `<option value="${p.id}"${ui.quem === p.id ? " selected" : ""}>Jogador: ${esc(p.nome)}</option>`)).join("");
+  const naBase = S.config.naBase;
+  const base = !S.config.acessoSoNaBase ? `<span class="base"><span class="ponto"></span>Armário e baú sempre abertos</span>`
+    : eMestre() ? `<button class="base btn ${naBase ? "" : "fora"}" data-a="base"><span class="ponto"></span>${naBase ? "Grupo na base" : "Grupo em missão"} · trocar</button>`
+    : `<span class="base ${naBase ? "" : "fora"}"><span class="ponto"></span>${naBase ? "Grupo na base" : "Grupo em missão"}</span>`;
+  return `<header>
+    <div class="marca"><b>Inventário</b> · protótipo de mochila, baú e armário</div>
+    <div class="controles">${base}
+      <label class="campo-inline">Ver como <select id="quem" data-c="quem">${opcoes}</select></label>
+    </div></header>`;
+}
+
+function abas() {
+  const lista = eMestre() ? [["inventario", "Inventário"], ["catalogo", "Catálogo de Itens"], ["historico", "Histórico"], ["config", "Configurações"]] : [["inventario", "Meu inventário"]];
+  return `<nav class="abas">${lista.map(([k, n]) => `<button class="${ui.aba === k ? "ativa" : ""}" data-a="aba" data-v="${k}">${n}</button>`).join("")}</nav>`;
+}
+
+function conteudo() {
+  if (!S.personagens.length && ui.aba === "inventario") return `<div class="aviso">Nenhum personagem. Crie um em Configurações.</div>`;
+  if (ui.aba === "catalogo") return telaCatalogo();
+  if (ui.aba === "historico") return telaHistorico();
+  if (ui.aba === "config") return telaConfig();
+  return telaInventario();
+}
+
+/* ---------- Inventário ---------- */
+function telaInventario() {
+  const p = Regras.personagem(S, pidAtual());
+  let html = "";
+  if (eMestre()) {
+    html += `<div class="chips">${S.personagens.map(x => `<button class="chip ${x.id === ui.pid ? "ativo" : ""}" data-a="pid" data-v="${x.id}">${esc(x.nome)}</button>`).join("")}</div>`;
+  } else if (S.config.acessoSoNaBase && !S.config.naBase) {
+    html += `<div class="aviso">O grupo está em missão. Só dá para mexer na mochila. Armário e baú abrem quando o mestre marcar que vocês voltaram para a base.</div>`;
+  }
+  html += `<div class="colunas">${colunaArmario(p)}${colunaMochila(p)}${colunaBau(p)}</div>`;
+  return html;
+}
+
+function linhaItem(entrada, local, p) {
+  const item = Regras.item(S, entrada.itemId); if (!item) return "";
+  const outros = Object.keys(LOCAIS).filter(l => l !== local && Regras.temAcesso(S, ui.quem, l) && Regras.temAcesso(S, ui.quem, local));
+  const rotulo = { armario: "→ Armário", mochila: "→ Mochila", bau: "→ Baú" };
+  const botoes = outros.map(l => `<button class="btn mini" data-a="mover" data-item="${item.id}" data-de="${local}" data-para="${l}">${rotulo[l]}</button>`).join("");
+  const qtd = entrada.qtd === null ? "∞" : "×" + entrada.qtd;
+  return `<li class="linha">
+    <div><button class="nome" data-a="abrir" data-item="${item.id}" data-local="${local}">${esc(item.nome)}</button><span class="qtd">${qtd}</span></div>
+    <div class="acoes">${botoes}</div>
+    <div class="info">${tag(item.categoria)}${item.dano ? `<span>dano ${esc(item.dano)}</span>` : ""}<span>${fmt(item.espaco)} esp.</span></div>
+  </li>`;
+}
+
+function trancado(nome) {
+  return `<div class="trancado"><div class="cadeado">🔒</div><b>${nome} fechado</b><span>Só abre quando o grupo está na base.</span></div>`;
+}
+
+function colunaArmario(p) {
+  const topo = `<div class="coluna-topo"><h2>Armário de armas <small>do grupo</small></h2>`;
+  if (!Regras.temAcesso(S, ui.quem, "armario")) return `<section class="coluna">${topo}</div>${trancado("Armário")}</section>`;
+  const busca = ui.busca.trim().toLowerCase();
+  const itens = S.armario.filter(e => {
+    const i = Regras.item(S, e.itemId); if (!i) return false;
+    if (ui.filtro !== "Todas" && i.categoria !== ui.filtro) return false;
+    return !busca || i.nome.toLowerCase().includes(busca);
+  });
+  const filtros = `<div class="ferramentas"><input id="busca" type="text" placeholder="Procurar…" value="${esc(ui.busca)}" data-c="busca">
+    <select id="filtro" data-c="filtro">${["Todas"].concat(CATEGORIAS).map(c => `<option${c === ui.filtro ? " selected" : ""}>${c}</option>`).join("")}</select></div>`;
+  return `<section class="coluna">${topo}${filtros}</div>
+    <ul class="lista">${itens.length ? itens.map(e => linhaItem(e, "armario", p)).join("") : `<li class="vazio">Nada aqui${S.armario.length ? " com esse filtro" : ""}.</li>`}</ul></section>`;
+}
+
+function colunaMochila(p) {
+  const usado = Regras.espacoUsado(S, p), pct = Math.min(100, (usado / p.capacidade) * 100);
+  return `<section class="coluna"><div class="coluna-topo">
+      <h2>Mochila de ${esc(p.nome)} <small>${fmt(usado)} / ${fmt(p.capacidade)} espaços</small></h2>
+      <div class="barra ${usado >= p.capacidade ? "cheia" : ""}"><i style="width:${pct}%"></i></div></div>
+    <ul class="lista">${p.mochila.length ? p.mochila.map(e => linhaItem(e, "mochila", p)).join("") : `<li class="vazio">Mochila vazia.</li>`}</ul></section>`;
+}
+
+function colunaBau(p) {
+  const topo = `<div class="coluna-topo"><h2>Baú de ${esc(p.nome)} <small>sem limite</small></h2></div>`;
+  if (!Regras.temAcesso(S, ui.quem, "bau")) return `<section class="coluna">${topo}${trancado("Baú")}</section>`;
+  return `<section class="coluna">${topo}
+    <ul class="lista">${p.bau.length ? p.bau.map(e => linhaItem(e, "bau", p)).join("") : `<li class="vazio">Baú vazio.</li>`}</ul></section>`;
+}
+
+/* ---------- Diálogo do item ---------- */
+function dialogo() {
+  const d = ui.dialogo; if (!d) return "";
+  const item = Regras.item(S, d.itemId); if (!item) return "";
+  const p = Regras.personagem(S, d.pid);
+  const lista = Regras.lista(S, d.local, d.pid) || [];
+  const ent = lista.find(e => e.itemId === d.itemId);
+  if (!ent) { ui.dialogo = null; return ""; }
+  const max = ent.qtd === null ? 99 : ent.qtd;
+  const pode = l => l !== d.local && Regras.temAcesso(S, ui.quem, l) && Regras.temAcesso(S, ui.quem, d.local);
+  const mover = Object.keys(LOCAIS).filter(pode).map(l => `<button class="btn" data-a="moverQtd" data-para="${l}">${{ armario: "Para o armário", mochila: "Para a mochila", bau: "Para o baú" }[l]}</button>`).join("");
+  const extras = (item.extras || []).filter(x => x.campo || x.valor).map(x => `<dt>${esc(x.campo)}</dt><dd>${esc(x.valor)}</dd>`).join("");
+  const usar = item.categoria === "Consumível" && d.local === "mochila" ? `<button class="btn primario" data-a="usar">Usar 1</button>` : "";
+  const descartar = eMestre() ? `<button class="btn perigo" data-a="descartar">${ui.confirmar === "descartar" ? "Confirmar descarte" : "Descartar"}</button>` : "";
+  const onde = d.local === "armario" ? "No armário" : `${LOCAIS[d.local]} de ${p ? esc(p.nome) : ""}`;
+  return `<div class="fundo" data-a="fechar"><div class="dialogo" role="dialog" aria-label="${esc(item.nome)}">
+    <h3>${esc(item.nome)}</h3>${tag(item.categoria)}
+    ${item.descricao ? `<p class="desc">${esc(item.descricao)}</p>` : ""}
+    <dl class="stats">
+      ${item.dano ? `<dt>Dano</dt><dd>${esc(item.dano)}</dd>` : ""}
+      <dt>Espaço</dt><dd>${fmt(item.espaco)} por unidade</dd>
+      ${extras}
+      <dt>Onde</dt><dd>${onde}: ${ent.qtd === null ? "∞" : ent.qtd}</dd>
+    </dl>
+    <div class="botoes"><label class="campo-inline">Quantidade <input id="qtdDialogo" type="number" min="1" max="${max}" value="1" style="width:70px"></label></div>
+    <div class="botoes">${mover}${usar}${descartar}<button class="btn" data-a="fechar" style="margin-left:auto">Fechar</button></div>
+  </div></div>`;
+}
+
+/* ---------- Catálogo ---------- */
+function telaCatalogo() {
+  const sel = ui.editando && ui.editando !== "novo" ? Regras.item(S, ui.editando) : null;
+  const lista = S.catalogo.filter(i => ui.filtro === "Todas" || i.categoria === ui.filtro);
+  const esquerda = `<section class="painel"><h2>Catálogo de Itens <small style="color:var(--muted);font-weight:400">(${S.catalogo.length})</small></h2>
+    <div class="ferramentas" style="margin:0 0 10px"><select id="filtroCat" data-c="filtro">${["Todas"].concat(CATEGORIAS).map(c => `<option${c === ui.filtro ? " selected" : ""}>${c}</option>`).join("")}</select>
+    <button class="btn primario" data-a="novoItem">+ Novo item</button></div>
+    ${lista.map(i => `<div class="catlinha ${ui.editando === i.id ? "sel" : ""}"><div><button class="nome btn mini" style="border:none;background:none;padding:0;font-weight:500" data-a="editar" data-item="${i.id}">${esc(i.nome)}</button>
+      <div class="info" style="font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;gap:8px;margin-top:2px">${tag(i.categoria)}${i.dano ? `<span>${esc(i.dano)}</span>` : ""}<span>${fmt(i.espaco)} esp.</span></div></div>
+      <button class="btn mini" data-a="editar" data-item="${i.id}">Editar</button></div>`).join("") || `<div class="vazio">Nenhum item.</div>`}
+  </section>`;
+  return `<div class="catalogo">${esquerda}${ui.editando ? formItem(sel) : `<section class="painel"><div class="vazio">Escolha um item para editar ou crie um novo.</div></section>`}</div>`;
+}
+
+function formItem(item) {
+  const i = item || { id: "", nome: "", categoria: "Arma", dano: "", espaco: 1, descricao: "", extras: [] };
+  const extras = (ui.extrasRascunho || i.extras);
+  const destinos = [`<option value="armario">Armário de armas</option>`].concat(
+    S.personagens.flatMap(p => [`<option value="mochila:${p.id}">Mochila de ${esc(p.nome)}</option>`, `<option value="bau:${p.id}">Baú de ${esc(p.nome)}</option>`])).join("");
+  return `<section class="painel"><h2>${item ? "Editar item" : "Novo item"}</h2>
+    <form class="form" id="formItem" data-f="item">
+      <label>Nome<input id="fNome" type="text" value="${esc(i.nome)}" required></label>
+      <div class="dupla">
+        <label>Categoria<select id="fCat">${CATEGORIAS.map(c => `<option${c === i.categoria ? " selected" : ""}>${c}</option>`).join("")}</select></label>
+        <label>Dano (opcional)<input id="fDano" type="text" value="${esc(i.dano)}" placeholder="2d6"></label>
+        <label>Espaço por unidade<input id="fEsp" type="number" min="0" step="0.5" value="${i.espaco}"></label>
+      </div>
+      <label>Descrição<textarea id="fDesc" rows="3">${esc(i.descricao)}</textarea></label>
+      <label>Informações extras (o mestre escolhe os campos)</label>
+      ${extras.map((x, n) => `<div class="extra"><input type="text" class="fCampo" value="${esc(x.campo)}" placeholder="Campo (ex.: Alcance)"><input type="text" class="fValor" value="${esc(x.valor)}" placeholder="Valor (ex.: Curto)"><button type="button" class="btn mini" data-a="tirarExtra" data-n="${n}">✕</button></div>`).join("")}
+      <div><button type="button" class="btn mini" data-a="maisExtra">+ Campo extra</button></div>
+      <hr class="separador">
+      <div class="botoes" style="display:flex;gap:6px;flex-wrap:wrap">
+        <button type="submit" class="btn primario">Salvar</button>
+        <button type="button" class="btn" data-a="cancelarEdicao">Cancelar</button>
+        ${item ? `<button type="button" class="btn perigo" data-a="excluirItem" style="margin-left:auto">${ui.confirmar === "excluir" ? "Confirmar: some de todos os lugares" : "Excluir do catálogo"}</button>` : ""}
+      </div>
+    </form>
+    ${item ? `<hr class="separador" style="margin:16px 0">
+    <h2>Colocar em jogo</h2>
+    <div class="ferramentas"><select id="destino">${destinos}</select>
+      <input id="qtdJogo" type="text" value="1" style="max-width:90px" title="Número, ou ∞ (só no armário)">
+      <button class="btn" data-a="colocar">Colocar</button></div>
+    <p style="color:var(--muted);font-size:12px;margin:8px 0 0">Na quantidade, use um número ou <b>∞</b> (estoque infinito, só no armário).</p>` : ""}
+  </section>`;
+}
+
+function lerExtrasDoForm() {
+  const c = [...document.querySelectorAll(".fCampo")].map(e => e.value), v = [...document.querySelectorAll(".fValor")].map(e => e.value);
+  return c.map((campo, n) => ({ campo, valor: v[n] }));
+}
+
+/* ---------- Histórico e Configurações ---------- */
+function telaHistorico() {
+  if (!S.historico.length) return `<section class="painel"><div class="vazio">Nada aconteceu ainda.</div></section>`;
+  return `<section class="painel"><h2>Histórico</h2><ul class="historico" style="list-style:none;margin:0;padding:0">
+    ${S.historico.map(h => `<li><time>${new Date(h.quando).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}</time><span><b>${esc(h.autor)}</b> · ${esc(h.texto)}</span></li>`).join("")}</ul></section>`;
+}
+
+function telaConfig() {
+  return `<div class="catalogo">
+  <section class="painel"><h2>Regras de acesso</h2>
+    <label class="campo-inline" style="color:var(--text)"><input type="checkbox" id="cBase" data-c="acessoSoNaBase" ${S.config.acessoSoNaBase ? "checked" : ""}> Armário e baú só abrem quando o grupo está na base</label>
+    <p style="color:var(--muted);font-size:13px">Ligado: em missão, o jogador só mexe na mochila. O botão "Grupo na base / em missão" no topo controla isso. Desligado: tudo aberto sempre.</p>
+    <hr class="separador" style="margin:14px 0">
+    <h2>Protótipo</h2>
+    <p style="color:var(--muted);font-size:13px">Os dados ficam só neste navegador.</p>
+    <button class="btn perigo" data-a="resetar">${ui.confirmar === "resetar" ? "Confirmar: apagar tudo e voltar ao exemplo" : "Voltar aos dados de exemplo"}</button>
+  </section>
+  <section class="painel"><h2>Personagens</h2>
+    <div class="jog" style="color:var(--muted);font-size:12px"><span>Nome</span><span>Espaços da mochila</span><span></span></div>
+    ${S.personagens.map(p => `<div class="jog"><input type="text" id="n_${p.id}" value="${esc(p.nome)}" data-c="nome" data-pid="${p.id}">
+      <input type="number" id="c_${p.id}" min="1" step="0.5" value="${p.capacidade}" data-c="capacidade" data-pid="${p.id}">
+      <button class="btn mini perigo" data-a="tirarPersonagem" data-pid="${p.id}">${ui.confirmar === "tirar:" + p.id ? "Confirmar" : "Remover"}</button></div>`).join("")}
+    <button class="btn" data-a="maisPersonagem">+ Personagem</button>
+  </section></div>`;
+}
+
+/* ---------- Eventos ---------- */
+document.addEventListener("click", ev => {
+  const b = ev.target.closest("[data-a]"); if (!b) return;
+  const a = b.dataset.a;
+  if (a === "fechar" && ev.target !== b) return; // clique dentro do diálogo não fecha
+  if (a !== "descartar" && a !== "excluirItem" && a !== "resetar" && a !== "tirarPersonagem") ui.confirmar = null;
+  const q = ui.quem;
+  switch (a) {
+    case "aba": ui.aba = b.dataset.v; ui.editando = null; ui.filtro = "Todas"; return render();
+    case "pid": ui.pid = b.dataset.v; return render();
+    case "base": S.config.naBase = !S.config.naBase; Regras._log(S, "mestre", S.config.naBase ? "Grupo voltou para a base" : "Grupo saiu em missão"); salvar(); return render();
+    case "mover": return aplicar(Regras.mover(S, { quem: q, pid: pidAtual(), itemId: b.dataset.item, de: b.dataset.de, para: b.dataset.para, qtd: 1 }));
+    case "abrir": ui.dialogo = { itemId: b.dataset.item, local: b.dataset.local, pid: pidAtual() }; return render();
+    case "fechar": ui.dialogo = null; return render();
+    case "moverQtd": {
+      const d = ui.dialogo, qtd = +document.getElementById("qtdDialogo").value || 1;
+      return aplicar(Regras.mover(S, { quem: q, pid: d.pid, itemId: d.itemId, de: d.local, para: b.dataset.para, qtd }));
+    }
+    case "usar": { const d = ui.dialogo; const it = Regras.item(S, d.itemId); return aplicar(Regras.usar(S, { quem: q, pid: d.pid, itemId: d.itemId }), `Usou ${it.nome}.`); }
+    case "descartar": {
+      if (ui.confirmar !== "descartar") { ui.confirmar = "descartar"; return render(); }
+      ui.confirmar = null; const d = ui.dialogo, qtd = +document.getElementById("qtdDialogo").value || 1;
+      return aplicar(Regras.descartar(S, { quem: q, pid: d.pid, local: d.local, itemId: d.itemId, qtd }));
+    }
+    case "novoItem": ui.editando = "novo"; ui.extrasRascunho = null; return render();
+    case "editar": ui.editando = b.dataset.item; ui.extrasRascunho = null; return render();
+    case "cancelarEdicao": ui.editando = null; ui.extrasRascunho = null; return render();
+    case "maisExtra": ui.extrasRascunho = lerExtrasDoForm().concat([{ campo: "", valor: "" }]); return renderMantendoForm();
+    case "tirarExtra": { const ex = lerExtrasDoForm(); ex.splice(+b.dataset.n, 1); ui.extrasRascunho = ex; return renderMantendoForm(); }
+    case "excluirItem": {
+      if (ui.confirmar !== "excluir") { ui.confirmar = "excluir"; return renderMantendoForm(); }
+      const it = Regras.item(S, ui.editando); Regras.excluirDoCatalogo(S, ui.editando); Regras._log(S, "mestre", `Excluiu ${it.nome} do catálogo`);
+      ui.confirmar = null; ui.editando = null; salvar(); aviso("Item excluído.", true); return render();
+    }
+    case "colocar": {
+      const [local, pid] = document.getElementById("destino").value.split(":");
+      const txt = document.getElementById("qtdJogo").value.trim();
+      const qtd = txt === "∞" || txt.toLowerCase() === "infinito" ? null : parseInt(txt, 10);
+      if (qtd !== null && !(qtd > 0)) return aviso("Quantidade inválida.");
+      return aplicar(Regras.colocarEmJogo(S, { quem: "mestre", pid, local, itemId: ui.editando, qtd }), "Colocado em jogo.");
+    }
+    case "resetar":
+      if (ui.confirmar !== "resetar") { ui.confirmar = "resetar"; return render(); }
+      S = exemplo(); ui.confirmar = null; ui.pid = "p1"; salvar(); aviso("Dados de exemplo restaurados.", true); return render();
+    case "maisPersonagem": S.personagens.push({ id: novoId(), nome: "Novo personagem", capacidade: 10, mochila: [], bau: [] }); salvar(); return render();
+    case "tirarPersonagem": {
+      const k = "tirar:" + b.dataset.pid;
+      if (ui.confirmar !== k) { ui.confirmar = k; return render(); }
+      S.personagens = S.personagens.filter(p => p.id !== b.dataset.pid); ui.confirmar = null; salvar(); return render();
+    }
+  }
+});
+
+// Mantém o que já foi digitado no formulário do item ao redesenhar.
+function renderMantendoForm() {
+  const f = { n: val("fNome"), c: val("fCat"), d: val("fDano"), e: val("fEsp"), s: val("fDesc") };
+  render();
+  set("fNome", f.n); set("fCat", f.c); set("fDano", f.d); set("fEsp", f.e); set("fDesc", f.s);
+}
+function val(id) { const e = document.getElementById(id); return e ? e.value : null; }
+function set(id, v) { const e = document.getElementById(id); if (e && v !== null) e.value = v; }
+
+document.addEventListener("submit", ev => {
+  if (ev.target.dataset.f !== "item") return;
+  ev.preventDefault();
+  const nome = val("fNome").trim(); if (!nome) return aviso("Dê um nome ao item.");
+  const espaco = Math.max(0, parseFloat(String(val("fEsp")).replace(",", ".")) || 0);
+  const dados = { nome, categoria: val("fCat"), dano: val("fDano").trim(), espaco, descricao: val("fDesc").trim(), extras: lerExtrasDoForm().filter(x => x.campo.trim() || x.valor.trim()) };
+  if (ui.editando === "novo") { const id = novoId(); S.catalogo.push({ id, ...dados }); ui.editando = id; Regras._log(S, "mestre", `Criou ${nome} no catálogo`); }
+  else { Object.assign(Regras.item(S, ui.editando), dados); Regras._log(S, "mestre", `Editou ${nome}`); }
+  ui.extrasRascunho = null; salvar(); aviso("Item salvo.", true); render();
+});
+
+document.addEventListener("input", ev => {
+  const c = ev.target.dataset.c;
+  if (c === "busca") { ui.busca = ev.target.value; render(); }
+});
+document.addEventListener("change", ev => {
+  const t = ev.target, c = t.dataset.c; if (!c) return;
+  if (c === "quem") { ui.quem = t.value; ui.dialogo = null; ui.aba = "inventario"; }
+  else if (c === "filtro") ui.filtro = t.value;
+  else if (c === "acessoSoNaBase") S.config.acessoSoNaBase = t.checked;
+  else if (c === "nome") { const p = Regras.personagem(S, t.dataset.pid); if (p) p.nome = t.value.trim() || p.nome; }
+  else if (c === "capacidade") { const p = Regras.personagem(S, t.dataset.pid); const v = parseFloat(t.value); if (p && v > 0) p.capacidade = v; }
+  else return;
+  salvar(); render();
+});
+document.addEventListener("keydown", ev => { if (ev.key === "Escape" && ui.dialogo) { ui.dialogo = null; render(); } });
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maleta (protótipo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0d0f; --painel: #14181b; --painel2: #1b2024; --linha: #2a3136;
+    --texto: #e9e4d6; --suave: #8f978f; --ouro: #d9b44a; --ok: #6fbf73; --erro: #d0564a; --mix: #59a8d6;
+    --celula: #182226; --celula-linha: #26353a; --item: #22303a;
+    --C: 56px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: radial-gradient(ellipse at top, #151b1e, var(--bg) 70%); color: var(--texto); font: 14px/1.45 Barlow, system-ui, sans-serif; min-height: 100vh; }
+  button, input, select { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  header { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; justify-content: space-between; padding: 12px 18px; border-bottom: 1px solid var(--linha); }
+  h1 { margin: 0; font: 700 20px/1 "Barlow Condensed", sans-serif; letter-spacing: .12em; text-transform: uppercase; }
+  h1 span { color: var(--ouro); }
+  .barra { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .btn { background: var(--painel2); border: 1px solid var(--linha); border-radius: 6px; padding: 6px 12px; }
+  .btn:hover { border-color: #46525a; }
+  .btn.ouro { background: var(--ouro); border-color: var(--ouro); color: #1d1600; font-weight: 600; }
+  .btn.perigo { color: #f0a497; border-color: #5b2b25; }
+  .btn.mini { padding: 3px 8px; font-size: 12px; }
+  .btn:disabled { opacity: .4; cursor: not-allowed; }
+  select, input[type=text] { background: var(--painel2); border: 1px solid var(--linha); border-radius: 6px; padding: 6px 8px; }
+  .rotulo { color: var(--suave); font-size: 13px; }
+  main { display: grid; grid-template-columns: 260px minmax(0, 1fr) 300px; gap: 16px; padding: 16px 18px 40px; align-items: start; }
+  @media (max-width: 1100px) { main { grid-template-columns: 1fr; } }
+  .painel { background: var(--painel); border: 1px solid var(--linha); border-radius: 10px; }
+  .painel h2 { margin: 0; padding: 10px 12px; font: 600 15px/1.2 "Barlow Condensed", sans-serif; letter-spacing: .1em; text-transform: uppercase; border-bottom: 1px solid var(--linha); display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .painel h2 small { font: 500 12px Barlow, sans-serif; letter-spacing: 0; text-transform: none; color: var(--suave); }
+  /* Armário */
+  .abas { display: flex; flex-wrap: wrap; gap: 4px; padding: 8px 10px 0; }
+  .aba { background: none; border: 1px solid transparent; border-radius: 999px; padding: 3px 10px; font-size: 12px; color: var(--suave); }
+  .aba.ativa { border-color: var(--ouro); color: var(--texto); }
+  .busca { padding: 8px 10px; }
+  .busca input { width: 100%; }
+  .lista { list-style: none; margin: 0; padding: 4px 6px 8px; max-height: 62vh; overflow: auto; }
+  .entrada { display: grid; grid-template-columns: 52px 1fr auto; gap: 8px; align-items: center; padding: 5px 6px; border-radius: 6px; cursor: grab; touch-action: none; user-select: none; }
+  .entrada:hover { background: var(--painel2); }
+  .miniatura { width: 52px; height: 34px; display: flex; align-items: center; justify-content: center; }
+  .miniatura img { max-width: 100%; max-height: 100%; pointer-events: none; }
+  .entrada .nome { font-size: 13px; line-height: 1.2; }
+  .entrada .tam { font: 600 11px "Barlow Condensed", sans-serif; color: var(--suave); letter-spacing: .05em; }
+  .vazio { color: var(--suave); text-align: center; padding: 18px 10px; font-size: 13px; }
+  /* Maleta */
+  .maleta-area { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .estojo { padding: 14px; border-radius: 14px; background: linear-gradient(#2b2219, #1d1711); border: 1px solid #4a3a28; box-shadow: 0 20px 50px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.06); max-width: 100%; overflow: auto; }
+  .grade { position: relative; touch-action: none;
+    background-color: var(--celula);
+    background-image: linear-gradient(var(--celula-linha) 1px, transparent 1px), linear-gradient(90deg, var(--celula-linha) 1px, transparent 1px);
+    background-size: var(--C) var(--C); border: 1px solid var(--celula-linha); border-radius: 4px; }
+  .item { position: absolute; border-radius: 3px; background: var(--item); outline: 1px solid #3a4c58; outline-offset: -1px; cursor: grab; touch-action: none; user-select: none; overflow: hidden; }
+  .item:hover { outline-color: #6f8a99; }
+  .item.sel { outline: 2px solid var(--ouro); outline-offset: -2px; z-index: 2; }
+  .item.arrastando { opacity: .25; }
+  .item img { position: absolute; left: 50%; top: 50%; pointer-events: none; }
+  .marca { position: absolute; right: 4px; bottom: 4px; width: 16px; height: 8px; border-radius: 4px; z-index: 1; pointer-events: none; box-shadow: 0 0 0 1px rgba(0,0,0,.6), 0 0 6px currentColor; }
+  .item.par { outline: 2px dashed var(--ouro); outline-offset: -2px; }
+  .equipado { display: flex; align-items: center; gap: 8px; padding: 4px 0; font-size: 13px; }
+  .equipado img { width: 40px; height: 24px; object-fit: contain; }
+  .pegada { position: absolute; border-radius: 3px; pointer-events: none; z-index: 5; }
+  .pegada.ok { background: rgba(111,191,115,.28); outline: 2px solid var(--ok); }
+  .pegada.erro { background: rgba(208,86,74,.28); outline: 2px solid var(--erro); }
+  .pegada.mix { background: rgba(89,168,214,.32); outline: 2px solid var(--mix); }
+  .fantasma { position: fixed; pointer-events: none; z-index: 50; opacity: .9; filter: drop-shadow(0 8px 14px rgba(0,0,0,.6)); }
+  .fantasma img { position: absolute; left: 50%; top: 50%; }
+  .info-maleta { display: flex; gap: 14px; color: var(--suave); font-size: 13px; flex-wrap: wrap; justify-content: center; }
+  .info-maleta b { color: var(--texto); font-weight: 600; }
+  .dica { color: var(--suave); font-size: 12px; text-align: center; max-width: 560px; }
+  kbd { font: 600 11px "Barlow Condensed", sans-serif; border: 1px solid var(--linha); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; color: var(--texto); }
+  /* Detalhes */
+  .lado { display: grid; gap: 16px; }
+  .detalhe { padding: 12px; }
+  .detalhe .foto { height: 110px; display: flex; align-items: center; justify-content: center; background: var(--celula); border-radius: 6px; margin-bottom: 10px; }
+  .detalhe .foto img { max-width: 92%; max-height: 92%; }
+  .detalhe h3 { margin: 0; font: 700 20px/1.1 "Barlow Condensed", sans-serif; letter-spacing: .03em; }
+  .detalhe .sub { color: var(--suave); font-size: 12px; margin: 2px 0 8px; }
+  .detalhe p { margin: 6px 0 10px; color: #cfc9b9; font-size: 13px; }
+  .stats { display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; font-size: 13px; margin: 0 0 10px; }
+  .stats dt { color: var(--suave); }
+  .stats dd { margin: 0; font-weight: 600; }
+  .tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+  .tag { font-size: 11px; border: 1px solid var(--linha); border-radius: 999px; padding: 1px 8px; color: #cfc9b9; }
+  .acoes { display: flex; flex-wrap: wrap; gap: 6px; }
+  .bau-alvo { min-height: 120px; transition: background .15s; }
+  .bau-alvo.sobre { background: rgba(217,180,74,.08); outline: 2px dashed var(--ouro); outline-offset: -6px; border-radius: 10px; }
+  #aviso { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); padding: 10px 16px; border-radius: 8px; background: #1d2a1e; border: 1px solid var(--ok); color: #cfeccf; display: none; z-index: 60; max-width: 90vw; }
+  #aviso.erro { background: #2b1714; border-color: var(--erro); color: #f3c3b9; }
+  #aviso.mix { background: #142430; border-color: var(--mix); color: #cbe6f6; }
+  .titulo-maleta { font: 600 15px/1 "Barlow Condensed", sans-serif; letter-spacing: .12em; text-transform: uppercase; color: var(--suave); }
+  .entrada .qtd { font: 600 12px "Barlow Condensed", sans-serif; color: var(--ouro); margin-left: 4px; }
+  .entrada .botoes { display: flex; gap: 4px; }
+  .objeto { border-bottom: 1px solid var(--linha); }
+  .objeto:last-child { border-bottom: none; }
+  .obj-cab, .obj-nome { width: 100%; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; background: none; border: none; padding: 10px 12px; text-align: left; font-weight: 600; }
+  .obj-nome { padding: 0; width: auto; flex: 1; }
+  .obj-cab small, .obj-nome small { color: var(--suave); font-weight: 400; font-size: 12px; }
+  .obj-cab.aberto, .obj-linha.aberto { color: var(--ouro); }
+  .obj-linha { display: flex; align-items: center; gap: 8px; padding: 8px 12px; }
+  .alvo-armario { min-height: 54px; border-radius: 8px; }
+  .alvo-armario.sobre { background: rgba(217,180,74,.08); outline: 2px dashed var(--ouro); outline-offset: -4px; }
+  .estoque { display: grid; grid-template-columns: 44px 1fr auto; gap: 8px; align-items: center; padding: 4px 6px; font-size: 13px; }
+  .estoque .miniatura { width: 44px; height: 28px; }
+  .qtd-ctrl { display: flex; align-items: center; gap: 3px; }
+  .qtd-ctrl b { min-width: 22px; text-align: center; font: 600 14px "Barlow Condensed", sans-serif; color: var(--ouro); }
+  select:disabled { opacity: .5; }
+  .destino { padding: 8px 10px 0; }
+  .destino select { padding: 3px 6px; margin-left: 4px; }
+  .mais { display: inline-block; background: var(--ouro); color: #1d1600; border-radius: 4px; padding: 0 5px; }
+  .contador { position: absolute; right: 3px; bottom: 3px; padding: 1px 6px; border-radius: 4px; background: rgba(8,11,13,.82); border: 1px solid rgba(255,255,255,.18);
+    font: 600 12px/1.3 Barlow, system-ui, sans-serif; font-variant-numeric: tabular-nums; letter-spacing: .02em; color: #f2efe6; pointer-events: none; z-index: 1; }
+  .contador.vazio { color: #ff9c8c; border-color: rgba(240,120,100,.5); }
+  .item .contador { right: 4px; }
+  .item .marca ~ .contador, .item .contador.arma { right: auto; left: 4px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Maleta <span>·</span> protótipo</h1>
+  <div class="barra">
+    <label class="rotulo">Ver como <select id="quem"></select></label>
+    <label class="rotulo" id="verJogBox">Maleta de <select id="verJog"></select></label>
+    <label class="rotulo" id="dvBox" title="O dado que o personagem usa para curar">Dado de vida <select id="dadoVida"><option>d4</option><option>d6</option><option>d8</option><option>d10</option><option>d12</option></select></label>
+    <label class="rotulo">Tamanho
+      <select id="tamanho">
+        <option value="10x7">10 × 7 (inicial)</option>
+        <option value="12x7">12 × 7</option>
+        <option value="12x8">12 × 8</option>
+        <option value="13x8">13 × 8</option>
+        <option value="13x9">13 × 9 (máxima)</option>
+      </select>
+    </label>
+    <button class="btn" id="organizar">Organizar</button>
+    <button class="btn perigo" id="esvaziar">Esvaziar maleta</button>
+  </div>
+</header>
+
+<main>
+  <section class="painel" id="esquerda"></section>
+
+  <section class="maleta-area">
+    <div class="titulo-maleta" id="tituloMaleta"></div>
+    <div class="estojo"><div class="grade" id="grade"></div></div>
+    <div class="info-maleta" id="infoMaleta"></div>
+    <div class="dica">Arraste para mover. <kbd>R</kbd>, botão direito ou rodinha giram 90° enquanto arrasta. Solte uma erva em cima de outra para misturar, ou um anexo em cima da arma para equipar. Arraste para o baú ou para o armário para guardar ou devolver.</div>
+  </section>
+
+  <aside class="lado">
+    <section class="painel" id="detalhe"></section>
+    <section class="painel" id="cena"></section>
+    <section class="painel bau-alvo" id="bau"></section>
+  </aside>
+</main>
+<div id="aviso" role="status"></div>
+
+<script>
+/* ======================= DADOS (gerados por tools/build_prototipo.py) ======================= */
+const DADOS = __DADOS__;
+
+/* ======================= REGRAS DA MALETA ======================= */
+const ITENS = Object.fromEntries(DADOS.items.map(i => [i.id, i]));
+const RECEITA = {};
+for (const r of DADOS.recipes) { RECEITA[r.a + "|" + r.b] = r.result; RECEITA[r.b + "|" + r.a] = r.result; }
+
+// Anexos: encaixam (não fundem) em armas específicas. Cada arma aceita 1 mira e 1 coronha.
+const ehAnexo = id => (ITENS[id].rpg || {}).tipo === "anexo";
+const tipoAnexo = id => /-stock$/.test(id) ? "coronha" : "mira";
+const ACEITA = {}; // arma -> anexos possíveis
+for (const it of DADOS.items) for (const a of ((it.rpg || {}).encaixa || [])) (ACEITA[a] = ACEITA[a] || []).push(it.id);
+// O anexo continua na grade; só guarda em "equipadoEm" o uid da arma.
+const equipados = arma => S.maleta.filter(a => a.equipadoEm === arma.uid);
+function podeEquipar(anexoId, arma, anexoUid) {
+  if (!((ITENS[anexoId].rpg || {}).encaixa || []).includes(arma.id)) return "nao";
+  if (equipados(arma).some(a => a.uid !== anexoUid && tipoAnexo(a.id) === tipoAnexo(anexoId))) return "ocupado";
+  return "ok";
+}
+// Guardar no baú: a arma leva junto os anexos equipados; um anexo sozinho perde o vínculo.
+function paraBau(o) {
+  const levar = equipados(o);
+  S.maleta = S.maleta.filter(x => x !== o && !levar.includes(x));
+  S.bau.push({ uid: o.uid, id: o.id, anexos: levar.map(a => a.id), ...estadoDe(o) });
+}
+// Arma que volta do baú: tenta pôr os anexos dela na grade, já equipados.
+function voltarAnexos(arma, ids) {
+  let sobra = 0;
+  for (const a of ids || []) {
+    const l = achaLugar(S, a);
+    if (l) S.maleta.push({ uid: novoUid(), id: a, ...l, equipadoEm: arma.uid });
+    else { S.bau.push({ uid: novoUid(), id: a, anexos: [] }); sobra++; }
+  }
+  if (sobra) aviso(`${sobra} anexo(s) da ${ITENS[arma.id].name} não couberam e ficaram no baú.`, "erro");
+}
+function limparVinculos() {
+  const uids = new Set(S.maleta.map(o => o.uid));
+  for (const o of S.maleta) if (o.equipadoEm && !uids.has(o.equipadoEm)) delete o.equipadoEm;
+}
+const CORES_PAR = ["#e0453a", "#3fa7e0", "#5cc96b", "#e0a33a", "#b46be0", "#e05fb0"];
+function corDoPar(armaUid) {
+  const armas = [...new Set(S.maleta.filter(a => a.equipadoEm).map(a => a.equipadoEm))];
+  return CORES_PAR[armas.indexOf(armaUid) % CORES_PAR.length];
+}
+
+// Munição: cada caixa guarda "balas" (até balasPorCaixa). Cada arma guarda "carregado" (até a capacidade do pente em balas).
+const ehCaixa = id => !!(ITENS[id].rpg || {}).balasPorCaixa;
+const ehArmaDeFogo = id => !!(ITENS[id].rpg || {}).municao;
+const capArma = id => { const r = ITENS[id].rpg; return r.pente * (r.balasPorRajada || 1); };
+const porDisparo = id => ITENS[id].rpg.balasPorRajada || 1;
+// item novo (do armário, catálogo ou baú antigo) chega cheio
+function prepararItem(o) {
+  if (ehCaixa(o.id) && o.balas === undefined) o.balas = ITENS[o.id].rpg.balasPorCaixa;
+  if (ehArmaDeFogo(o.id) && o.carregado === undefined) o.carregado = capArma(o.id);
+  return o;
+}
+const estadoDe = o => { const e = {}; if (o.balas !== undefined) e.balas = o.balas; if (o.carregado !== undefined) e.carregado = o.carregado; return e; };
+function recarregar(S, arma) {
+  const r = ITENS[arma.id].rpg, falta = capArma(arma.id) - arma.carregado;
+  if (falta <= 0) return { erro: "Já está cheia." };
+  const caixas = S.maleta.filter(o => o.id === r.municao).sort((a, b) => a.balas - b.balas); // gasta primeiro as caixas mais vazias
+  if (!caixas.length) return { erro: `Sem ${ITENS[r.municao].name} na maleta.` };
+  let pegou = 0;
+  for (const c of caixas) {
+    const n = Math.min(c.balas, falta - pegou); c.balas -= n; pegou += n;
+    if (c.balas <= 0) S.maleta = S.maleta.filter(x => x !== c);
+    if (pegou >= falta) break;
+  }
+  arma.carregado += pegou;
+  const sobra = S.maleta.filter(o => o.id === r.municao).reduce((t, c) => t + c.balas, 0);
+  return { ok: `Recarregou ${pegou} ${pegou === 1 ? "bala" : "balas"} (${arma.carregado}/${capArma(arma.id)}). Sobram ${sobra} na maleta.` };
+}
+// solta uma caixa em cima de outra do mesmo tipo: junta até encher
+function juntarCaixas(origem, alvo) {
+  const max = ITENS[alvo.id].rpg.balasPorCaixa, n = Math.min(origem.balas, max - alvo.balas);
+  alvo.balas += n; origem.balas -= n; return n;
+}
+
+const TAMANHOS = { "10x7": [10, 7], "12x7": [12, 7], "12x8": [12, 8], "13x8": [13, 8], "13x9": [13, 9] };
+
+// rot 0..3 = quantas vezes girou 90° no sentido horário. Em 1 e 3, largura e altura trocam.
+function medida(id, rot) { const it = ITENS[id]; return rot % 2 ? [it.rows, it.cols] : [it.cols, it.rows]; }
+// Posições permitidas: facas giram livre (4); o resto fica deitado (0) ou em pé apontando para baixo (1); quadrados não giram.
+const ehFaca = id => (ITENS[id].rpg || {}).tipo === "faca";
+function rotsPermitidas(id) {
+  if (ehFaca(id)) return [0, 1, 2, 3];
+  return ITENS[id].cols === ITENS[id].rows ? [0] : [0, 1];
+}
+const proximaRot = (id, rot) => { const p = rotsPermitidas(id); return p[(p.indexOf(rot) + 1) % p.length]; };
+const normalizarRot = (id, rot) => rotsPermitidas(id).includes(rot) ? rot : (rotsPermitidas(id).includes(rot % 2) ? rot % 2 : 0);
+
+function cabe(S, id, rot, x, y, ignorar = []) {
+  const [w, h] = medida(id, rot);
+  if (x < 0 || y < 0 || x + w > S.cols || y + h > S.rows) return false;
+  for (const o of S.maleta) {
+    if (ignorar.includes(o.uid)) continue;
+    const [ow, oh] = medida(o.id, o.rot);
+    if (x < o.x + ow && o.x < x + w && y < o.y + oh && o.y < y + h) return false;
+  }
+  return true;
+}
+
+function achaLugar(S, id, ignorar = []) {
+  const it = ITENS[id];
+  const rots = it.cols === it.rows ? [0] : [0, 1];
+  for (let y = 0; y < S.rows; y++) for (let x = 0; x < S.cols; x++)
+    for (const rot of rots) if (cabe(S, id, rot, x, y, ignorar)) return { x, y, rot };
+  return null;
+}
+
+function quemEsta(S, x, y) {
+  return S.maleta.find(o => { const [w, h] = medida(o.id, o.rot); return x >= o.x && x < o.x + w && y >= o.y && y < o.y + h; });
+}
+
+function misturar(S, idA, alvo) {
+  const res = RECEITA[idA + "|" + alvo.id];
+  if (!res) return null;
+  for (const rot of [normalizarRot(res, alvo.rot), ...rotsPermitidas(res)]) if (cabe(S, res, rot, alvo.x, alvo.y, [alvo.uid])) { alvo.id = res; alvo.rot = rot; return res; }
+  const lugar = achaLugar(S, res, [alvo.uid]);
+  if (!lugar) return null;
+  Object.assign(alvo, { id: res }, lugar);
+  return res;
+}
+
+// Organizar: testa várias ordens e jeitos de encaixar e fica com o que deixa a área livre mais "limpa"
+// (menos cantos/ângulos internos), sem deixar item de fora.
+function cantosLivres(S) {
+  const livre = Array.from({ length: S.rows }, () => Array(S.cols).fill(true));
+  for (const o of S.maleta) { const [w, h] = medida(o.id, o.rot); for (let y = o.y; y < o.y + h; y++) for (let x = o.x; x < o.x + w; x++) livre[y][x] = false; }
+  const L = (x, y) => x >= 0 && y >= 0 && x < S.cols && y < S.rows && livre[y][x];
+  let cantos = 0;
+  for (let y = 0; y <= S.rows; y++) for (let x = 0; x <= S.cols; x++) {
+    const a = L(x - 1, y - 1), b = L(x, y - 1), c = L(x - 1, y), d = L(x, y), n = a + b + c + d;
+    if (n === 1 || n === 3) cantos++; else if (n === 2 && a === d) cantos += 2;
+  }
+  return cantos;
+}
+function encaixar(S, lista, porColuna, preferir) {
+  S.maleta = []; const sobrou = [];
+  for (const o of lista) {
+    const rots = rotsPermitidas(o.id).filter(r => r < 2);
+    const ordem = preferir === "deitado" ? rots : preferir === "empe" ? rots.slice().reverse() : [o.rot % 2 && rots.includes(1) ? 1 : 0, ...rots];
+    let lugar = null;
+    const A = porColuna ? S.cols : S.rows, B = porColuna ? S.rows : S.cols;
+    busca: for (let i = 0; i < A; i++) for (let j = 0; j < B; j++) {
+      const x = porColuna ? i : j, y = porColuna ? j : i;
+      for (const rot of ordem) if (cabe(S, o.id, rot, x, y)) { lugar = { x, y, rot }; break busca; }
+    }
+    if (lugar) S.maleta.push(Object.assign(o, lugar)); else sobrou.push(o);
+  }
+  return sobrou;
+}
+function organizar(S) {
+  const todos = S.maleta.slice(), guardar = todos.map(o => ({ o, x: o.x, y: o.y, rot: o.rot }));
+  const area = o => ITENS[o.id].slots, maior = o => Math.max(ITENS[o.id].cols, ITENS[o.id].rows);
+  const ordens = [
+    (a, b) => area(b) - area(a) || maior(b) - maior(a),
+    (a, b) => maior(b) - maior(a) || area(b) - area(a),
+    (a, b) => Math.min(ITENS[b.id].cols, ITENS[b.id].rows) - Math.min(ITENS[a.id].cols, ITENS[a.id].rows) || area(b) - area(a),
+  ];
+  let melhor = null;
+  for (const ord of ordens) for (const porColuna of [false, true]) for (const pref of ["deitado", "empe", "atual"]) {
+    const lista = todos.slice().sort(ord);
+    const sobrou = encaixar(S, lista, porColuna, pref);
+    // prioridade: caber tudo > área livre com menos cantos > menos itens girados (de pé)
+    const nota = sobrou.length * 1000 + cantosLivres(S) * 10 + S.maleta.filter(o => o.rot % 2).length * 5;
+    if (!melhor || nota < melhor.nota) melhor = { nota, pos: todos.map(o => ({ o, x: o.x, y: o.y, rot: o.rot, dentro: S.maleta.includes(o) })) };
+  }
+  S.maleta = [];
+  const sobrou = [];
+  for (const p of melhor.pos) { Object.assign(p.o, { x: p.x, y: p.y, rot: p.rot }); (p.dentro ? S.maleta : sobrou).push(p.o); }
+  return sobrou;
+}
+
+// Cura em "dados de vida" (o dado de cura do personagem): "1 dado de vida", "½ dado de vida", "1½ dado de vida", "2 dados de vida".
+function rolarCura(texto, dv) {
+  const m = /^(\d*)(½?)\s*dados? de vida$/.exec(String(texto).trim());
+  if (!m) return null;
+  const inteiros = m[1] ? +m[1] : 0, meio = !!m[2], f = +dv.slice(1), dados = [];
+  for (let i = 0; i < inteiros; i++) dados.push(1 + Math.floor(Math.random() * f));
+  let total = dados.reduce((a, b) => a + b, 0), meioVal = 0;
+  if (meio) { meioVal = Math.ceil((1 + Math.floor(Math.random() * f)) / 2); total += meioVal; }
+  return { total, texto: [...dados.map(String), ...(meio ? [`½${dv}→${meioVal}`] : [])].join(" + ") };
+}
+
+function rolar(expr) {
+  const m = /^(\d+)d(\d+)([+-]\d+)?$/.exec(String(expr).trim());
+  if (!m) return null;
+  const n = +m[1], f = +m[2], b = +(m[3] || 0), dados = [];
+  for (let i = 0; i < n; i++) dados.push(1 + Math.floor(Math.random() * f));
+  return { total: dados.reduce((s, d) => s + d, 0) + b, dados, bonus: b };
+}
+
+
+/* ======================= ESTADO =======================
+   G = tudo (jogadores e cena). S = a maleta + baú do jogador que está na tela.
+   Cena: objetos que o mestre coloca. Armário: estoque definido pelo mestre (qtd null = infinito).
+   Baú: cada jogador só vê o próprio baú, e só abre se houver um Baú na cena. */
+const CHAVE = "projeto-maleta-prototipo-v3";
+let uidN = 1;
+const novoUid = () => "u" + Date.now().toString(36) + (uidN++);
+
+function novoJogador(id, nome, kit, bau) {
+  const J = { id, nome, tam: "10x7", cols: 10, rows: 7, maleta: [], bau: [] };
+  for (const k of kit) { const l = achaLugar(J, k); if (l) J.maleta.push(prepararItem({ uid: novoUid(), id: k, ...l })); }
+  organizar(J);
+  for (const b of bau) J.bau.push(prepararItem({ uid: novoUid(), id: b, anexos: [] }));
+  return J;
+}
+function inicial() {
+  const est = (pares) => pares.map(([id, qtd]) => ({ id, qtd }));
+  return {
+    jogadores: [
+      novoJogador("j1", "Jogador 1", ["sg-09-r", "w-870", "combat-knife", "handgun-ammo", "handgun-ammo", "shotgun-shells", "green-herb", "green-herb", "red-herb", "yellow-herb", "hand-grenade", "first-aid-spray"], ["green-herb", "handgun-ammo"]),
+      novoJogador("j2", "Jogador 2", ["punisher", "combat-knife", "handgun-ammo", "handgun-ammo", "green-herb", "flash-grenade"], ["red-herb"]),
+      novoJogador("j3", "Jogador 3", ["matilda", "kitchen-knife", "handgun-ammo", "green-herb", "red-herb"], []),
+    ],
+    cena: [
+      { uid: novoUid(), tipo: "armario", nome: "Armário de armas", estoque: est([
+        ["red9", 1], ["red9-stock", 1], ["sr-m1903", 1], ["scope", 1], ["tmp", 1], ["tmp-stock", 1], ["laser-sight", 1],
+        ["handgun-ammo", null], ["shotgun-shells", 4], ["rifle-ammo", 3], ["submachine-gun-ammo", 3], ["hand-grenade", 2]]) },
+      { uid: novoUid(), tipo: "bau", nome: "Baú" },
+    ],
+  };
+}
+let G;
+try { G = JSON.parse(localStorage.getItem(CHAVE)); } catch (e) { G = null; }
+if (!G || !Array.isArray(G.jogadores) || !G.jogadores.length) G = inicial();
+for (const J of G.jogadores) {
+  J.maleta = J.maleta.filter(o => ITENS[o.id]); J.bau = J.bau.filter(o => ITENS[o.id]);
+  for (const o of J.maleta) { o.rot = normalizarRot(o.id, o.rot); prepararItem(o); }
+  for (const o of J.bau) prepararItem(o);
+}
+for (const o of G.cena) if (o.estoque) o.estoque = o.estoque.filter(e => ITENS[e.id]);
+function salvar() { try { localStorage.setItem(CHAVE, JSON.stringify(G)); } catch (e) {} }
+
+const ui = { quem: "mestre", ver: G.jogadores[0].id, sel: null, selFonte: null, aba: "Armas", busca: "", armAberto: null };
+let S;
+function sync() {
+  if (ui.quem !== "mestre" && !G.jogadores.some(j => j.id === ui.quem)) ui.quem = "mestre";
+  if (!G.jogadores.some(j => j.id === ui.ver)) ui.ver = G.jogadores[0].id;
+  S = G.jogadores.find(j => j.id === (ui.quem === "mestre" ? ui.ver : ui.quem));
+  const arms = armarios();
+  if (!arms.some(a => a.uid === ui.armAberto)) ui.armAberto = arms.length ? arms[0].uid : null;
+}
+const ehMestre = () => ui.quem === "mestre";
+const armarios = () => G.cena.filter(o => o.tipo === "armario");
+const bauNaCena = () => G.cena.some(o => o.tipo === "bau");
+const podeBau = () => ehMestre() || bauNaCena();
+const armario = uid => G.cena.find(o => o.uid === uid && o.tipo === "armario");
+
+function estoqueAdd(arm, id, n = 1) {
+  const e = arm.estoque.find(x => x.id === id);
+  if (e) { if (e.qtd !== null) e.qtd += n; } else arm.estoque.push({ id, qtd: n });
+}
+function estoqueTirar(arm, id) { // devolve false se não tem
+  const e = arm.estoque.find(x => x.id === id);
+  if (!e) return false;
+  if (e.qtd !== null) { e.qtd--; if (e.qtd <= 0) arm.estoque = arm.estoque.filter(x => x !== e); }
+  return true;
+}
+// Item que saiu de algum lugar fora da maleta: tira de lá.
+function consumir(d) {
+  if (d.origem === "bau") S.bau = S.bau.filter(x => x.uid !== d.uid);
+  else if (d.origem === "armario") { const a = armario(d.arm); if (a) estoqueTirar(a, d.id); }
+}
+
+/* ======================= TELA ======================= */
+const $ = id => document.getElementById(id);
+const esc = t => String(t ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+let C = 56;
+
+const GRUPOS = {
+  "Armas": ["faca", "pistola", "submetralhadora", "rifle", "espingarda", "magnum", "especial"],
+  "Explosivos": ["arremessável", "munição especial"],
+  "Munição": ["munição"],
+  "Anexos": ["anexo"],
+  "Cura": ["cura"],
+};
+const grupoDe = id => Object.keys(GRUPOS).find(g => GRUPOS[g].includes((ITENS[id].rpg || {}).tipo)) || "Armas";
+
+let avisoT;
+function aviso(msg, tipo = "") { const a = $("aviso"); a.textContent = msg; a.className = tipo; a.style.display = "block"; clearTimeout(avisoT); avisoT = setTimeout(() => a.style.display = "none", 3200); }
+
+function imgHTML(id, rot, cel) {
+  const it = ITENS[id];
+  const w = it.cols * cel, h = it.rows * cel;
+  return `<img src="${it.icon}" alt="" style="width:${w}px;height:${h}px;transform:translate(-50%,-50%)${rot ? ` rotate(${rot * 90}deg)` : ""}">`;
+}
+
+function medirC() {
+  const area = document.querySelector(".maleta-area");
+  const livre = Math.max(280, area.clientWidth - 40);
+  C = Math.max(34, Math.min(64, Math.floor(livre / S.cols)));
+  document.documentElement.style.setProperty("--C", C + "px");
+}
+
+function marcaHTML(o) {
+  const armaUid = o.equipadoEm || (equipados(o).length ? o.uid : null);
+  if (!armaUid) return "";
+  const cor = corDoPar(armaUid);
+  return `<span class="marca" style="background:${cor};color:${cor}" title="Equipado"></span>`;
+}
+function contadorHTML(o) {
+  if (o.balas !== undefined) return `<span class="contador">${o.balas}</span>`;
+  if (o.carregado !== undefined) return `<span class="contador arma${o.carregado ? "" : " vazio"}">${o.carregado}/${capArma(o.id)}</span>`;
+  return "";
+}
+function ehPar(o) {
+  const sel = S.maleta.find(x => x.uid === ui.sel); if (!sel || sel === o) return false;
+  return o.equipadoEm === sel.uid || sel.equipadoEm === o.uid;
+}
+
+function renderTopo() {
+  $("quem").innerHTML = `<option value="mestre">Mestre</option>` + G.jogadores.map(j => `<option value="${j.id}">${esc(j.nome)}</option>`).join("");
+  $("quem").value = ui.quem;
+  $("verJog").innerHTML = G.jogadores.map(j => `<option value="${j.id}">${esc(j.nome)}</option>`).join("");
+  $("verJog").value = ui.ver;
+  $("verJogBox").style.display = ehMestre() ? "" : "none";
+  $("dadoVida").value = S.dadoVida || "d8"; $("dadoVida").disabled = !ehMestre();
+  $("tamanho").value = S.tam; $("tamanho").disabled = !ehMestre();
+  $("tamanho").title = ehMestre() ? "" : "Só o mestre aumenta a maleta";
+  $("esvaziar").disabled = !podeBau();
+}
+
+function renderGrade() {
+  medirC(); limparVinculos();
+  $("tituloMaleta").textContent = ehMestre() ? `Maleta de ${S.nome}` : `Sua maleta (${S.nome})`;
+  const g = $("grade");
+  g.style.width = S.cols * C + "px"; g.style.height = S.rows * C + "px";
+  g.innerHTML = S.maleta.map(o => {
+    const [w, h] = medida(o.id, o.rot);
+    return `<div class="item${ui.sel === o.uid ? " sel" : ehPar(o) ? " par" : ""}${drag && drag.uid === o.uid && drag.moveu ? " arrastando" : ""}" data-uid="${o.uid}" title="${esc(ITENS[o.id].name)}"
+      style="left:${o.x * C}px;top:${o.y * C}px;width:${w * C}px;height:${h * C}px">${imgHTML(o.id, o.rot, C)}${marcaHTML(o)}${contadorHTML(o)}</div>`;
+  }).join("");
+  const usado = S.maleta.reduce((s, o) => s + ITENS[o.id].slots, 0), total = S.cols * S.rows;
+  $("infoMaleta").innerHTML = `<span>Espaço <b>${usado} / ${total}</b></span><span>Itens <b>${S.maleta.length}</b></span>`;
+}
+
+function info(id) {
+  const r = ITENS[id].rpg || {};
+  return `${ITENS[id].cols}×${ITENS[id].rows}${r.dano && r.dano !== "0" ? " · " + esc(r.dano) : ""}${r.cura && r.cura !== "0" ? " · cura " + esc(r.cura) : ""}`;
+}
+// Uma linha de lista que pode ser arrastada para a maleta.
+function entradaHTML(id, { origem, uid = "", arm = "", qtd, extra = "", botoes = "" }) {
+  const q = qtd === undefined ? "" : `<span class="qtd">${qtd === null ? "∞" : "×" + qtd}</span>`;
+  return `<li class="entrada" data-origem="${origem}" data-id="${id}" data-uid="${uid}" data-arm="${arm}">
+    <div class="miniatura"><img src="${ITENS[id].icon}" alt=""></div>
+    <div><div class="nome">${esc(ITENS[id].name)} ${q}</div><div class="tam">${info(id)}${extra}</div></div>
+    <div class="botoes">${botoes}</div></li>`;
+}
+
+function renderEsquerda() {
+  if (ehMestre()) {
+    const arm = armario(ui.armAberto);
+    const b = ui.busca.trim().toLowerCase();
+    const lista = DADOS.items.filter(it => b ? it.name.toLowerCase().includes(b) : grupoDe(it.id) === ui.aba);
+    const arms = armarios();
+    $("esquerda").innerHTML = `<h2>Catálogo</h2>
+      <div class="destino">${arms.length ? `<label class="rotulo">O <b class="mais">+</b> põe no <select id="destinoArm">${arms.map(a => `<option value="${a.uid}"${a.uid === ui.armAberto ? " selected" : ""}>${esc(a.nome)}</option>`).join("")}</select></label>`
+        : `<span class="rotulo">Para usar o <b class="mais">+</b>, ponha um armário na cena (painel Cena, à direita).</span>`}</div>
+      <div class="abas">${Object.keys(GRUPOS).map(g => `<button class="aba${ui.aba === g ? " ativa" : ""}" data-aba="${g}">${g}</button>`).join("")}</div>
+      <div class="busca"><input id="busca" type="text" placeholder="Procurar item…" value="${esc(ui.busca)}"></div>
+      <ul class="lista">${lista.map(it => entradaHTML(it.id, { origem: "catalogo", botoes:
+        `<button class="btn mini ouro" data-acao="addArmario" data-id="${it.id}" title="Pôr 1 no armário" ${arm ? "" : "disabled"}>+</button>
+         <button class="btn mini" data-acao="addMaleta" data-id="${it.id}" title="Dar direto para a maleta de ${esc(S.nome)}">→</button>` })).join("") || `<li class="vazio">Nada encontrado.</li>`}</ul>`;
+  } else {
+    const arms = armarios();
+    $("esquerda").innerHTML = `<h2>Na cena</h2>` + (arms.length ? arms.map(a => {
+      const aberto = a.uid === ui.armAberto;
+      return `<div class="objeto">
+        <button class="obj-cab${aberto ? " aberto" : ""}" data-acao="abrirArm" data-uid="${a.uid}"><span>🗄 ${esc(a.nome)}</span><small>${a.estoque.length} itens</small></button>
+        ${aberto ? `<ul class="lista alvo-armario" data-drop-arm="${a.uid}">${a.estoque.map(e => entradaHTML(e.id, { origem: "armario", arm: a.uid, qtd: e.qtd,
+          botoes: `<button class="btn mini" data-acao="pegar" data-id="${e.id}" data-arm="${a.uid}" title="Pegar 1">+</button>` })).join("") || `<li class="vazio">Armário vazio. Arraste itens da maleta para devolver.</li>`}</ul>` : ""}
+      </div>`;
+    }).join("") : `<div class="vazio">O mestre não colocou nenhum armário nesta cena.</div>`)
+      + `<div class="vazio" style="text-align:left;padding:10px 14px">${bauNaCena() ? "🧰 Tem um <b>baú</b> aqui: o seu está aberto à direita." : "Nenhum baú nesta cena."}</div>`;
+  }
+}
+
+function renderCena() {
+  if (!ehMestre()) { $("cena").style.display = "none"; return; }
+  $("cena").style.display = "";
+  const arm = armario(ui.armAberto);
+  $("cena").innerHTML = `<h2>Cena <small>objetos que os jogadores veem</small></h2>
+    <div class="acoes" style="padding:10px 12px 4px">
+      <button class="btn mini" data-acao="novoArmario">+ Armário</button>
+      <button class="btn mini" data-acao="novoBau" ${bauNaCena() ? "disabled title='Já tem um baú na cena'" : ""}>+ Baú</button>
+    </div>
+    ${G.cena.map(o => `<div class="objeto">
+      <div class="obj-linha${o.uid === ui.armAberto ? " aberto" : ""}">
+        ${o.tipo === "armario" ? `<button class="obj-nome" data-acao="abrirArm" data-uid="${o.uid}">🗄 ${esc(o.nome)} <small>${o.estoque.length} itens</small></button>` : `<span class="obj-nome">🧰 Baú <small>cada jogador abre o próprio</small></span>`}
+        <button class="btn mini perigo" data-acao="removerObj" data-uid="${o.uid}">${ui.confirmar === o.uid ? "Confirmar" : "Tirar"}</button>
+      </div>
+      ${o.tipo === "armario" && o.uid === ui.armAberto ? `<ul class="lista alvo-armario" data-drop-arm="${o.uid}">${o.estoque.map(e => `<li class="estoque">
+          <div class="miniatura"><img src="${ITENS[e.id].icon}" alt=""></div><div class="nome">${esc(ITENS[e.id].name)}</div>
+          <div class="qtd-ctrl"><button class="btn mini" data-acao="estMenos" data-id="${e.id}">−</button><b>${e.qtd === null ? "∞" : e.qtd}</b><button class="btn mini" data-acao="estMais" data-id="${e.id}">+</button>
+          <button class="btn mini${e.qtd === null ? " ouro" : ""}" data-acao="estInf" data-id="${e.id}" title="Infinito">∞</button><button class="btn mini" data-acao="estTirar" data-id="${e.id}" title="Tirar do armário">✕</button></div></li>`).join("")
+          || `<li class="vazio">Vazio. Use o <b>+</b> do Catálogo para pôr itens aqui.</li>`}</ul>` : ""}
+    </div>`).join("") || `<div class="vazio">Cena vazia. Ponha um armário ou um baú.</div>`}`;
+}
+
+function renderBau() {
+  const titulo = `<h2>Baú ${ehMestre() ? "de " + esc(S.nome) : ""} <small>${S.bau.length ? S.bau.length + " itens" : ""}</small></h2>`;
+  if (!podeBau()) { $("bau").innerHTML = titulo + `<div class="vazio">🔒 Sem baú nesta cena. Ele aparece quando o mestre colocar um.</div>`; return; }
+  $("bau").innerHTML = titulo + `<ul class="lista">${S.bau.map(o => entradaHTML(o.id, { origem: "bau", uid: o.uid,
+    extra: ((o.anexos || []).length ? " · + " + o.anexos.map(a => esc(ITENS[a].name)).join(", ") : "")
+      + (o.balas !== undefined ? ` · ${o.balas} balas` : "") + (o.carregado !== undefined ? ` · ${o.carregado}/${capArma(o.id)} carregada` : ""),
+    botoes: `<button class="btn mini" data-acao="tirarBau" data-uid="${o.uid}" title="Levar para a maleta">→</button>` })).join("")
+    || `<li class="vazio">Baú vazio. Arraste itens da maleta para cá.</li>`}</ul>`;
+}
+
+function renderDetalhe() {
+  const o = S.maleta.find(x => x.uid === ui.sel) || S.bau.find(x => x.uid === ui.sel);
+  const fonte = !o ? ui.selFonte : null;
+  const id = o ? o.id : fonte && fonte.id;
+  if (!id || !ITENS[id]) { $("detalhe").innerHTML = `<h2>Item</h2><div class="vazio">Clique num item para ver os detalhes.</div>`; return; }
+  const it = ITENS[id], r = it.rpg || {};
+  const linhas = [];
+  const add = (k, v) => { if (v !== undefined && v !== null && v !== "" && v !== "0") linhas.push(`<dt>${k}</dt><dd>${esc(v)}</dd>`); };
+  add("Tamanho", `${it.cols}×${it.rows} (${it.slots} quadrados)`);
+  add("Tipo", r.tipo);
+  add("Dano", r.dano && (r.rajada ? r.dano + " por rajada" : r.dano));
+  add("Área", r.area);
+  add("Pente", r.pente && (r.pente + (r.rajada ? ` rajadas (${r.balasPorRajada} balas cada)` : "")));
+  add("Recarga", r.recarga && { rapida: "rápida", normal: "normal", lenta: "lenta" }[r.recarga]);
+  add("Alcance", r.alcance);
+  add("Munição", r.municao && ITENS[r.municao] && ITENS[r.municao].name);
+  add("Precisão (jogo)", r.precisaoJogo);
+  add("Carregada", o && o.carregado !== undefined ? `${o.carregado} / ${capArma(id)} balas` : null);
+  add("Balas na caixa", o && o.balas !== undefined ? `${o.balas} / ${r.balasPorCaixa}` : (r.balasPorCaixa ? `até ${r.balasPorCaixa}` : null));
+  add("Cura", r.cura);
+  add("Efeitos", r.efeitos && r.efeitos.join(" + "));
+  add("Efeito", r.efeito);
+  add("Encaixa em", r.encaixa && r.encaixa.map(x => ITENS[x].name).join(", "));
+  add("No jogo", r.efeitoNoJogo);
+  add("Modificador", r.modificador);
+  add("Aceita", ACEITA[id] && ACEITA[id].map(x => ITENS[x].name).join(", "));
+  const tags = (r.tags || []).map(t => `<span class="tag">${esc(t)}</span>`).join("");
+  const acoes = [];
+  const naMaleta = o && S.maleta.includes(o), noBau = o && S.bau.includes(o);
+  if (naMaleta && ehArmaDeFogo(id)) {
+    acoes.push(`<button class="btn ouro" data-acao="atirar" ${o.carregado >= porDisparo(id) ? "" : "disabled title='Sem bala: recarregue'"}>${r.rajada ? "Disparar rajada" : "Atirar"}</button>`);
+    acoes.push(`<button class="btn" data-acao="recarregar" ${o.carregado < capArma(id) ? "" : "disabled title='Já está cheia'"}>Recarregar</button>`);
+  } else if (r.dano && r.dano !== "0" && /d/.test(r.dano)) acoes.push(`<button class="btn ouro" data-acao="rolarDano">Rolar dano</button>`);
+  if (naMaleta && ["cura", "arremessável", "munição especial"].includes(r.tipo)) acoes.push(`<button class="btn ouro" data-acao="usar">Usar</button>`);
+  if (naMaleta && rotsPermitidas(id).length > 1) acoes.push(`<button class="btn" data-acao="girar">Girar</button>`);
+  if (naMaleta && podeBau()) acoes.push(`<button class="btn" data-acao="paraBau">Guardar no baú</button>`);
+  if (naMaleta && armario(ui.armAberto) && (ehMestre() || armarios().length)) acoes.push(`<button class="btn" data-acao="devolver">Devolver ao armário</button>`);
+  if (noBau) acoes.push(`<button class="btn" data-acao="tirarBau" data-uid="${o.uid}">Levar para a maleta</button>`);
+  if (fonte && fonte.origem === "catalogo") acoes.push(`<button class="btn" data-acao="addArmario" data-id="${id}" ${armario(ui.armAberto) ? "" : "disabled"}>Pôr no armário</button>`, `<button class="btn" data-acao="addMaleta" data-id="${id}">Dar para ${esc(S.nome)}</button>`);
+  if (fonte && fonte.origem === "armario") acoes.push(`<button class="btn ouro" data-acao="pegar" data-id="${id}" data-arm="${fonte.arm}">Pegar</button>`);
+  if (o) acoes.push(`<button class="btn perigo" data-acao="descartar">Descartar</button>`);
+  let vinculo = "";
+  if (naMaleta && ACEITA[id]) {
+    const eq = equipados(o);
+    vinculo = `<div style="margin:0 0 10px"><div class="rotulo" style="margin-bottom:2px">Anexos equipados</div>${eq.map(a => `<div class="equipado"><img src="${ITENS[a.id].icon}" alt=""><span style="flex:1">${esc(ITENS[a.id].name)}</span><button class="btn mini" data-acao="desequipar" data-uid="${a.uid}">Desequipar</button></div>`).join("") || `<div class="rotulo" style="font-size:12px">Nenhum. Arraste um anexo compatível para cima da arma.</div>`}</div>`;
+  } else if (naMaleta && ehAnexo(id)) {
+    const arma = S.maleta.find(x => x.uid === o.equipadoEm);
+    vinculo = `<div style="margin:0 0 10px"><div class="rotulo" style="margin-bottom:2px">Situação</div>${arma ? `<div class="equipado"><img src="${ITENS[arma.id].icon}" alt=""><span style="flex:1">Equipado na ${esc(ITENS[arma.id].name)}</span><button class="btn mini" data-acao="desequipar" data-uid="${o.uid}">Desequipar</button></div>` : `<div class="rotulo" style="font-size:12px">Não equipado. Arraste para cima de uma arma compatível.</div>`}</div>`;
+  } else if (noBau && (o.anexos || []).length) {
+    vinculo = `<div style="margin:0 0 10px"><div class="rotulo">Guardada com: ${o.anexos.map(a => esc(ITENS[a].name)).join(", ")}</div></div>`;
+  }
+  const receitas = DADOS.recipes.filter(x => x.a === id || x.b === id).map(x => `${ITENS[x.a === id ? x.b : x.a].name} → ${ITENS[x.result].name}`);
+  const onde = naMaleta ? "Na maleta" : noBau ? "No baú" : fonte && fonte.origem === "armario" ? "No armário" : "No catálogo";
+  $("detalhe").innerHTML = `<h2>${onde}</h2><div class="detalhe">
+    <div class="foto"><img src="${it.icon}" alt=""></div>
+    <h3>${esc(it.name)}</h3><div class="sub">${esc(grupoDe(id))}</div>
+    <p>${esc(it.description)}</p>
+    <dl class="stats">${linhas.join("")}</dl>
+    ${tags ? `<div class="tags">${tags}</div>` : ""}
+    ${receitas.length ? `<p style="font-size:12px;color:var(--suave)"><b style="color:var(--mix)">Misturas:</b> ${receitas.map(esc).join(" · ")}</p>` : ""}
+    ${vinculo}
+    <div class="acoes">${acoes.join("")}</div></div>`;
+}
+
+function render() {
+  sync();
+  const foco = document.activeElement && document.activeElement.id, pos = foco === "busca" ? document.activeElement.selectionStart : null;
+  renderTopo(); renderGrade(); renderEsquerda(); renderCena(); renderBau(); renderDetalhe();
+  if (foco === "busca") { const b = $("busca"); if (b) { b.focus(); b.setSelectionRange(pos, pos); } }
+}
+
+/* ======================= AÇÕES ======================= */
+function porNaMaleta(id, uid, anexos, estado) {
+  const l = achaLugar(S, id);
+  if (!l) { aviso(`Não cabe: ${ITENS[id].name} precisa de ${ITENS[id].cols}×${ITENS[id].rows}. Tente "Organizar".`, "erro"); return false; }
+  const o = prepararItem({ uid: uid || novoUid(), id, ...l, ...(estado || {}) });
+  S.maleta.push(o); voltarAnexos(o, anexos); ui.sel = o.uid; ui.selFonte = null; return true;
+}
+// Devolver um item da maleta ao armário (a arma deixa os anexos na maleta, desequipados).
+function devolver(o, arm) {
+  for (const a of equipados(o)) delete a.equipadoEm;
+  S.maleta = S.maleta.filter(x => x !== o); estoqueAdd(arm, o.id, 1);
+  if (ui.sel === o.uid) ui.sel = null;
+  aviso(`${ITENS[o.id].name} devolvido ao ${arm.nome}.`);
+}
+
+function acao(nome, el) {
+  const o = S.maleta.find(x => x.uid === ui.sel) || S.bau.find(x => x.uid === ui.sel);
+  const arm = armario(ui.armAberto);
+  if (nome !== "removerObj") ui.confirmar = null;
+  switch (nome) {
+    case "addMaleta": if (porNaMaleta(el.dataset.id)) aviso(`${ITENS[el.dataset.id].name} dado para ${S.nome}.`); break;
+    case "addArmario": if (arm) { estoqueAdd(arm, el.dataset.id, 1); aviso(`+1 ${ITENS[el.dataset.id].name} no ${arm.nome}.`); } break;
+    case "pegar": {
+      const a = armario(el.dataset.arm);
+      if (a && a.estoque.some(e => e.id === el.dataset.id) && porNaMaleta(el.dataset.id)) { estoqueTirar(a, el.dataset.id); ui.selFonte = null; }
+      break;
+    }
+    case "abrirArm": ui.armAberto = el.dataset.uid; break;
+    case "novoArmario": { const n = armarios().length + 1; const a = { uid: novoUid(), tipo: "armario", nome: n === 1 ? "Armário de armas" : "Armário " + n, estoque: [] }; G.cena.push(a); ui.armAberto = a.uid; break; }
+    case "novoBau": if (!bauNaCena()) G.cena.push({ uid: novoUid(), tipo: "bau", nome: "Baú" }); break;
+    case "removerObj":
+      if (ui.confirmar !== el.dataset.uid) { ui.confirmar = el.dataset.uid; break; }
+      G.cena = G.cena.filter(x => x.uid !== el.dataset.uid); ui.confirmar = null; break;
+    case "estMais": if (arm) estoqueAdd(arm, el.dataset.id, 1); break;
+    case "estMenos": if (arm) { const e = arm.estoque.find(x => x.id === el.dataset.id); if (e) { if (e.qtd === null) e.qtd = 1; else estoqueTirar(arm, e.id); } } break;
+    case "estInf": if (arm) { const e = arm.estoque.find(x => x.id === el.dataset.id); if (e) e.qtd = e.qtd === null ? 1 : null; } break;
+    case "estTirar": if (arm) arm.estoque = arm.estoque.filter(x => x.id !== el.dataset.id); break;
+    case "tirarBau": {
+      const b = S.bau.find(x => x.uid === el.dataset.uid);
+      if (b && porNaMaleta(b.id, b.uid, b.anexos, estadoDe(b))) S.bau = S.bau.filter(x => x !== b);
+      break;
+    }
+    case "girar":
+      if (o) {
+        const p = rotsPermitidas(o.id), i = p.indexOf(o.rot);
+        const nr = [...p.slice(i + 1), ...p.slice(0, i)].find(r => cabe(S, o.id, r, o.x, o.y, [o.uid]));
+        if (nr !== undefined) o.rot = nr; else aviso("Sem espaço para girar aqui. Arraste e aperte R enquanto arrasta.", "erro");
+      }
+      break;
+    case "paraBau": if (o && podeBau()) { paraBau(o); aviso(`${ITENS[o.id].name} guardado no baú.`); } break;
+    case "devolver": if (o && arm) devolver(o, arm); break;
+    case "descartar":
+      if (o) {
+        const eq = S.maleta.includes(o) ? equipados(o) : [];
+        for (const a of eq) delete a.equipadoEm;
+        S.maleta = S.maleta.filter(x => x !== o); S.bau = S.bau.filter(x => x !== o); ui.sel = null;
+        for (const a of (o.anexos || [])) S.bau.push({ uid: novoUid(), id: a, anexos: [] });
+        aviso(`${ITENS[o.id].name} descartado.${eq.length ? " Os anexos ficaram na maleta, desequipados." : ""}`);
+      }
+      break;
+    case "desequipar": {
+      const a = S.maleta.find(x => x.uid === el.dataset.uid);
+      if (a) { const arma = S.maleta.find(x => x.uid === a.equipadoEm); delete a.equipadoEm; aviso(`${ITENS[a.id].name} desequipado${arma ? " da " + ITENS[arma.id].name : ""}.`); }
+      break;
+    }
+    case "atirar":
+      if (o && o.carregado >= porDisparo(o.id)) {
+        o.carregado -= porDisparo(o.id); const r = ITENS[o.id].rpg, x = rolar(r.dano);
+        aviso(`${ITENS[o.id].name}: ${x.total} de dano [${x.dados.join(" + ")}${x.bonus ? " + " + x.bonus : ""}]. Restam ${o.carregado}/${capArma(o.id)}.`, "mix");
+      }
+      break;
+    case "recarregar": if (o) { const x = recarregar(S, o); aviso(x.erro || x.ok, x.erro ? "erro" : "mix"); } break;
+    case "rolarDano": {
+      const id = o ? o.id : ui.selFonte && ui.selFonte.id, r = ITENS[id].rpg, x = rolar(r.dano);
+      if (x) aviso(`${ITENS[id].name}: ${x.total} de dano  [${x.dados.join(" + ")}${x.bonus ? (x.bonus > 0 ? " + " : " − ") + Math.abs(x.bonus) : ""}]`, "mix");
+      break;
+    }
+    case "usar":
+      if (o) {
+        const it = ITENS[o.id], r = it.rpg; let msg = `Usou ${it.name}.`;
+        if (r.tipo === "cura") {
+          const dv = S.dadoVida || "d8", x = rolarCura(r.cura, dv);
+          const quanto = x ? `curou ${x.total} PV (${r.cura}, ${dv}: ${x.texto})` : r.cura === "vida toda" ? "curou a vida toda" : "cura " + r.cura;
+          msg = `${it.name}: ${quanto}${r.efeitos ? " + " + r.efeitos.join(" + ").toLowerCase() : ""}.`;
+        }
+        else if (r.dano && /d/.test(r.dano)) msg = `${it.name}: ${rolar(r.dano).total} de dano (${r.area}).`;
+        for (const a of equipados(o)) delete a.equipadoEm;
+        S.maleta = S.maleta.filter(x => x !== o); ui.sel = null; aviso(msg, "mix");
+      }
+      break;
+  }
+  salvar(); render();
+}
+
+document.addEventListener("click", ev => {
+  const b = ev.target.closest("[data-acao]"); if (b) { ev.stopPropagation(); if (!b.disabled) acao(b.dataset.acao, b); return; }
+  const a = ev.target.closest("[data-aba]"); if (a) { ui.aba = a.dataset.aba; ui.busca = ""; render(); return; }
+  // clique num quadradinho vazio da maleta: tira a seleção
+  if (ev.target.id === "grade" && (ui.sel || ui.selFonte)) { ui.sel = null; ui.selFonte = null; render(); }
+});
+document.addEventListener("input", e => { if (e.target.id === "busca") { ui.busca = e.target.value; render(); } });
+$("quem").addEventListener("change", e => { ui.quem = e.target.value; ui.sel = null; ui.selFonte = null; render(); });
+document.addEventListener("change", e => { if (e.target.id === "destinoArm") { ui.armAberto = e.target.value; render(); } });
+$("verJog").addEventListener("change", e => { ui.ver = e.target.value; ui.sel = null; render(); });
+$("dadoVida").addEventListener("change", e => { S.dadoVida = e.target.value; salvar(); render(); });
+$("tamanho").addEventListener("change", e => {
+  S.tam = e.target.value; [S.cols, S.rows] = TAMANHOS[S.tam];
+  const fora = S.maleta.filter(o => { const [w, h] = medida(o.id, o.rot); return o.x + w > S.cols || o.y + h > S.rows; });
+  S.maleta = S.maleta.filter(o => !fora.includes(o));
+  for (const o of fora) { const l = achaLugar(S, o.id); if (l) S.maleta.push(Object.assign(o, l)); else paraBau(o); }
+  if (fora.length) aviso(`${fora.length} item(ns) reposicionado(s); o que não coube foi para o baú.`);
+  salvar(); render();
+});
+$("organizar").addEventListener("click", () => {
+  const sobrou = organizar(S);
+  for (const o of sobrou) paraBau(o);
+  aviso(sobrou.length ? `Organizado. ${sobrou.length} item(ns) não couberam e foram para o baú.` : "Maleta organizada.");
+  salvar(); render();
+});
+let confirmaEsvaziar = false;
+$("esvaziar").addEventListener("click", e => {
+  if (!podeBau()) return;
+  if (!confirmaEsvaziar) { confirmaEsvaziar = true; e.target.textContent = "Clique de novo: tudo vai para o baú"; setTimeout(() => { confirmaEsvaziar = false; e.target.textContent = "Esvaziar maleta"; }, 3000); return; }
+  confirmaEsvaziar = false; e.target.textContent = "Esvaziar maleta";
+  for (const o of S.maleta.slice()) if (S.maleta.includes(o)) paraBau(o);
+  S.maleta = []; ui.sel = null; salvar(); render();
+});
+window.addEventListener("resize", () => renderGrade());
+
+/* ======================= ARRASTAR ======================= */
+let drag = null, fantasma = null, pegada = null;
+
+document.addEventListener("pointerdown", ev => {
+  if (ev.button !== 0 || ev.target.closest("[data-acao]") || ev.target.closest("input,select")) return;
+  const item = ev.target.closest(".item"), ent = ev.target.closest(".entrada");
+  if (!item && !ent) return;
+  ev.preventDefault();
+  if (item) {
+    const o = S.maleta.find(x => x.uid === item.dataset.uid);
+    const r = item.getBoundingClientRect();
+    drag = { origem: "maleta", uid: o.uid, id: o.id, rot: o.rot, gx: Math.floor((ev.clientX - r.left) / C), gy: Math.floor((ev.clientY - r.top) / C) };
+  } else {
+    const id = ent.dataset.id, it = ITENS[id];
+    drag = { origem: ent.dataset.origem, uid: ent.dataset.uid || null, arm: ent.dataset.arm || null, id, rot: 0, gx: Math.floor((it.cols - 1) / 2), gy: Math.floor((it.rows - 1) / 2) };
+  }
+  Object.assign(drag, { x0: ev.clientX, y0: ev.clientY, moveu: false, alvo: null });
+});
+
+document.addEventListener("pointermove", ev => {
+  if (!drag) return;
+  if (!drag.moveu) {
+    if (Math.hypot(ev.clientX - drag.x0, ev.clientY - drag.y0) < 6) return;
+    drag.moveu = true; if (drag.origem === "maleta") ui.sel = drag.uid;
+    fantasma = document.createElement("div"); fantasma.className = "fantasma"; document.body.appendChild(fantasma);
+    renderGrade();
+  }
+  drag.cx = ev.clientX; drag.cy = ev.clientY;
+  atualizarArraste();
+});
+
+function limparMarcasDrop() { document.querySelectorAll(".sobre").forEach(e => e.classList.remove("sobre")); }
+
+function atualizarArraste() {
+  const [w, h] = medida(drag.id, drag.rot);
+  fantasma.style.width = w * C + "px"; fantasma.style.height = h * C + "px";
+  fantasma.style.left = drag.cx - (drag.gx + .5) * C + "px"; fantasma.style.top = drag.cy - (drag.gy + .5) * C + "px";
+  fantasma.innerHTML = imgHTML(drag.id, drag.rot, C);
+  // Baú ou armário embaixo do cursor?
+  limparMarcasDrop();
+  const sobEl = document.elementFromPoint(drag.cx, drag.cy);
+  const bauEl = sobEl && sobEl.closest("#bau"), armEl = sobEl && sobEl.closest("[data-drop-arm]");
+  drag.noBau = !!bauEl && podeBau() && drag.origem !== "bau";
+  drag.noArm = armEl && !(drag.origem === "armario" && drag.arm === armEl.dataset.dropArm) ? armEl.dataset.dropArm : null;
+  if (drag.noBau) bauEl.classList.add("sobre");
+  if (drag.noArm) armEl.classList.add("sobre");
+  if (pegada) { pegada.remove(); pegada = null; }
+  drag.alvo = null;
+  const g = $("grade").getBoundingClientRect();
+  const dentro = drag.cx >= g.left && drag.cx < g.right && drag.cy >= g.top && drag.cy < g.bottom;
+  if (!dentro) return;
+  const cx = Math.floor((drag.cx - g.left) / C), cy = Math.floor((drag.cy - g.top) / C);
+  const sob = quemEsta(S, cx, cy);
+  pegada = document.createElement("div"); pegada.className = "pegada";
+  const st = sob && sob.uid !== drag.uid && ehAnexo(drag.id) ? podeEquipar(drag.id, sob, drag.uid) : "nao";
+  if (st !== "nao") {
+    const [sw, sh] = medida(sob.id, sob.rot);
+    Object.assign(pegada.style, { left: sob.x * C + "px", top: sob.y * C + "px", width: sw * C + "px", height: sh * C + "px" });
+    pegada.classList.add(st === "ok" ? "mix" : "erro"); drag.alvo = st === "ok" ? { tipo: "equipar", sob } : { tipo: "ocupado", sob };
+  } else if (sob && sob.uid !== drag.uid && sob.id === drag.id && ehCaixa(sob.id) && sob.balas < ITENS[sob.id].rpg.balasPorCaixa) {
+    const [sw, sh] = medida(sob.id, sob.rot);
+    Object.assign(pegada.style, { left: sob.x * C + "px", top: sob.y * C + "px", width: sw * C + "px", height: sh * C + "px" });
+    pegada.classList.add("mix"); drag.alvo = { tipo: "juntar", sob };
+  } else if (sob && sob.uid !== drag.uid && RECEITA[drag.id + "|" + sob.id]) {
+    const [sw, sh] = medida(sob.id, sob.rot);
+    Object.assign(pegada.style, { left: sob.x * C + "px", top: sob.y * C + "px", width: sw * C + "px", height: sh * C + "px" });
+    pegada.classList.add("mix"); drag.alvo = { tipo: "mix", sob };
+  } else {
+    const x = cx - drag.gx, y = cy - drag.gy;
+    const ok = cabe(S, drag.id, drag.rot, x, y, drag.uid && drag.origem === "maleta" ? [drag.uid] : []);
+    Object.assign(pegada.style, { left: x * C + "px", top: y * C + "px", width: w * C + "px", height: h * C + "px" });
+    pegada.classList.add(ok ? "ok" : "erro"); drag.alvo = ok ? { tipo: "por", x, y } : { tipo: "erro" };
+  }
+  $("grade").appendChild(pegada);
+}
+
+function girarArraste() {
+  if (!drag || !drag.moveu) return;
+  const alvo = proximaRot(drag.id, drag.rot);
+  if (alvo === drag.rot) return;
+  // gira de 90 em 90° (horário) em volta do quadradinho sob o cursor até chegar na próxima posição permitida
+  while (drag.rot !== alvo) {
+    const [, h] = medida(drag.id, drag.rot);
+    [drag.gx, drag.gy] = [h - 1 - drag.gy, drag.gx];
+    drag.rot = (drag.rot + 1) % 4;
+  }
+  atualizarArraste();
+}
+document.addEventListener("keydown", ev => { if ((ev.key === "r" || ev.key === "R") && drag && drag.moveu) { ev.preventDefault(); girarArraste(); } });
+document.addEventListener("contextmenu", ev => { if (drag && drag.moveu) { ev.preventDefault(); girarArraste(); } });
+document.addEventListener("wheel", ev => { if (drag && drag.moveu) { ev.preventDefault(); girarArraste(); } }, { passive: false });
+
+document.addEventListener("pointerup", ev => {
+  if (!drag) return;
+  const d = drag; drag = null;
+  if (fantasma) { fantasma.remove(); fantasma = null; }
+  if (pegada) { pegada.remove(); pegada = null; }
+  limparMarcasDrop();
+  if (!d.moveu) { // foi um clique
+    if (d.origem === "maleta" || d.origem === "bau") { ui.sel = d.uid; ui.selFonte = null; }
+    else { ui.sel = null; ui.selFonte = { origem: d.origem, id: d.id, arm: d.arm }; }
+    return render();
+  }
+  const o = d.origem === "maleta" ? S.maleta.find(x => x.uid === d.uid) : null;
+  if (d.noArm) { // soltou num armário: devolve (ou, do catálogo, abastece)
+    const arm = armario(d.noArm);
+    if (o) devolver(o, arm);
+    else if (d.origem === "catalogo") { estoqueAdd(arm, d.id, 1); aviso(`+1 ${ITENS[d.id].name} no ${arm.nome}.`); }
+    else if (d.origem === "bau") { consumir(d); estoqueAdd(arm, d.id, 1); aviso(`${ITENS[d.id].name} devolvido ao ${arm.nome}.`); }
+    else if (d.origem === "armario") { consumir(d); estoqueAdd(arm, d.id, 1); }
+  } else if (d.noBau) {
+    if (o) { paraBau(o); aviso(`${ITENS[o.id].name} guardado no baú.`); }
+    else { consumir(d); S.bau.push(prepararItem({ uid: novoUid(), id: d.id, anexos: [] })); aviso(`${ITENS[d.id].name} guardado no baú.`); }
+  } else if (d.alvo && d.alvo.tipo === "equipar") {
+    const arma = d.alvo.sob;
+    let anexo = o; // da maleta: fica onde estava, só ganha o vínculo
+    if (!anexo) {   // de fora: precisa de um lugar na grade
+      const l = achaLugar(S, d.id);
+      if (!l) { aviso(`Sem espaço na maleta para o ${ITENS[d.id].name}.`, "erro"); salvar(); return render(); }
+      anexo = { uid: d.origem === "bau" ? d.uid : novoUid(), id: d.id, ...l }; S.maleta.push(anexo); consumir(d);
+    }
+    anexo.equipadoEm = arma.uid; ui.sel = arma.uid;
+    aviso(`${ITENS[d.id].name} equipado na ${ITENS[arma.id].name}.`, "mix");
+  } else if (d.alvo && d.alvo.tipo === "ocupado") {
+    aviso(`A ${ITENS[d.alvo.sob.id].name} já tem uma ${tipoAnexo(d.id)}. Remova a outra primeiro.`, "erro");
+  } else if (d.alvo && d.alvo.tipo === "juntar") {
+    let origem = o;
+    if (!origem) { origem = prepararItem({ id: d.id }); if (d.origem === "bau") { const b = S.bau.find(x => x.uid === d.uid); if (b) origem.balas = b.balas ?? origem.balas; } }
+    const n = juntarCaixas(origem, d.alvo.sob);
+    if (o && o.balas <= 0) S.maleta = S.maleta.filter(x => x !== o);
+    if (!o) { if (origem.balas <= 0) consumir(d); else { const l = achaLugar(S, d.id); if (l) { S.maleta.push({ uid: novoUid(), id: d.id, ...l, balas: origem.balas }); consumir(d); } else if (d.origem === "bau") { const b = S.bau.find(x => x.uid === d.uid); if (b) b.balas = origem.balas; } } }
+    ui.sel = d.alvo.sob.uid; aviso(`Juntou ${n} na caixa (${d.alvo.sob.balas}/${ITENS[d.id].rpg.balasPorCaixa}).`, "mix");
+  } else if (d.alvo && d.alvo.tipo === "mix") {
+    const antes = ITENS[d.alvo.sob.id].name;
+    if (o) S.maleta = S.maleta.filter(x => x !== o);
+    const res = misturar(S, d.id, d.alvo.sob);
+    if (res) { if (!o) consumir(d); ui.sel = d.alvo.sob.uid; aviso(`${ITENS[d.id].name} + ${antes} = ${ITENS[res].name}`, "mix"); }
+    else { if (o) S.maleta.push(o); aviso("Sem espaço para a mistura.", "erro"); }
+  } else if (d.alvo && d.alvo.tipo === "por") {
+    if (o) Object.assign(o, { x: d.alvo.x, y: d.alvo.y, rot: d.rot });
+    else {
+      const doBau = d.origem === "bau" ? S.bau.find(x => x.uid === d.uid) : null;
+      const n = prepararItem({ uid: doBau ? d.uid : novoUid(), id: d.id, x: d.alvo.x, y: d.alvo.y, rot: d.rot, ...(doBau ? estadoDe(doBau) : {}) });
+      S.maleta.push(n); consumir(d); if (doBau) voltarAnexos(n, doBau.anexos); ui.sel = n.uid; ui.selFonte = null;
+    }
+  } else if (d.alvo && d.alvo.tipo === "erro") aviso("Não cabe aí.", "erro");
+  salvar(); render();
+});
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,721 @@
+{
+  "_comment": "Fonte de verdade dos tamanhos, descrições e receitas. size = [lado maior, lado menor] em quadradinhos. recipes = misturas de ervas (a + b = result; a ordem de a e b não importa). Edite aqui e rode tools/make_icons.py.",
+  "cellSize": 64,
+  "padding": 4,
+  "items": [
+    {
+      "id": "combat-knife",
+      "name": "Combat Knife",
+      "category": "weaponry",
+      "size": [
+        3,
+        1
+      ],
+      "forceHorizontal": true,
+      "status": "Game8/Namu",
+      "description": "Faca padrão do Leon. Serve para aparar golpes, finalizar inimigos caídos e escapar de agarrões."
+    },
+    {
+      "id": "kitchen-knife",
+      "name": "Kitchen Knife",
+      "category": "weaponry",
+      "size": [
+        2,
+        1
+      ],
+      "forceHorizontal": true,
+      "status": "Game8 (corrigido de 1x3)",
+      "description": "Faca de cozinha achada pelo cenário. Fraca, mas melhor que nada."
+    },
+    {
+      "id": "boot-knife",
+      "name": "Boot Knife",
+      "category": "weaponry",
+      "size": [
+        2,
+        1
+      ],
+      "forceHorizontal": true,
+      "status": "Game8/Sportskeeda (corrigido de 1x3)",
+      "description": "Faca curta e leve, escondida na bota. Fraca, mas fácil de levar."
+    },
+    {
+      "id": "fighting-knife",
+      "name": "Fighting Knife",
+      "category": "weaponry",
+      "size": [
+        4,
+        1
+      ],
+      "forceHorizontal": true,
+      "status": "Namu/GamertagMythras (corrigido de 1x3)",
+      "description": "Faca de combate feita sob medida, do Krauser. Afiada e pesada; a que mais dá dano entre as facas."
+    },
+    {
+      "id": "primal-knife",
+      "name": "Primal Knife",
+      "category": "weaponry",
+      "size": [
+        3,
+        1
+      ],
+      "forceHorizontal": true,
+      "status": "Game8/Namu",
+      "description": "Faca rústica de lâmina grossa, muito resistente."
+    },
+    {
+      "id": "sg-09-r",
+      "name": "SG-09 R",
+      "category": "weaponry",
+      "size": [
+        3,
+        2
+      ],
+      "forceHorizontal": true,
+      "status": "lista do usuario, confere com Namu/Game8",
+      "description": "Pistola padrão do Leon. Equilibrada e confiável, com chance maior de tiro crítico. Aceita mira laser."
+    },
+    {
+      "id": "punisher",
+      "name": "Punisher",
+      "category": "weaponry",
+      "size": [
+        3,
+        2
+      ],
+      "forceHorizontal": true,
+      "status": "lista do usuario, confere com Namu/Game8",
+      "description": "Pistola de cano curto e pouco recuo. As balas atravessam o alvo e acertam quem está atrás. Aceita mira laser."
+    },
+    {
+      "id": "red9",
+      "name": "Red9",
+      "category": "weaponry",
+      "size": [
+        3,
+        2
+      ],
+      "forceHorizontal": true,
+      "status": "lista do usuario, confere com Namu/Game8",
+      "description": "Pistola de muito dano por tiro, mas com recuo forte. A coronha deixa ela bem mais precisa."
+    },
+    {
+      "id": "blacktail",
+      "name": "Blacktail",
+      "category": "weaponry",
+      "size": [
+        2,
+        2
+      ],
+      "forceHorizontal": false,
+      "status": "lista do usuario, confere com Namu/Game8",
+      "description": "Pistola compacta e precisa, com recarga e cadência rápidas. Ocupa pouco espaço."
+    },
+    {
+      "id": "matilda",
+      "name": "Matilda",
+      "category": "weaponry",
+      "size": [
+        3,
+        2
+      ],
+      "forceHorizontal": true,
+      "status": "lista do usuario, confere com Namu/Game8",
+      "description": "Pistola que dispara rajadas de três tiros. Gasta munição rápido; a coronha ajuda no controle."
+    },
+    {
+      "id": "sentinel-nine",
+      "name": "Sentinel Nine",
+      "category": "weaponry",
+      "size": [
+        3,
+        2
+      ],
+      "forceHorizontal": true,
+      "status": "lista do usuario, confere com Namu/Game8",
+      "description": "Pistola customizada (bônus da edição Deluxe). Pente grande, tiro rápido e chance maior de crítico."
+    },
+    {
+      "id": "broken-butterfly",
+      "name": "Broken Butterfly",
+      "category": "weaponry",
+      "size": [
+        3,
+        2
+      ],
+      "forceHorizontal": true,
+      "status": "lista do usuario, confere com Namu/Game8",
+      "description": "Revólver magnum de altíssimo poder de parada. Recuo pesado e pouca munição; ideal contra inimigos grandes."
+    },
+    {
+      "id": "killer7",
+      "name": "Killer7",
+      "category": "weaponry",
+      "size": [
+        3,
+        2
+      ],
+      "forceHorizontal": true,
+      "status": "lista do usuario, confere com Namu/Game8",
+      "description": "Magnum semiautomática de aço inox, já vem com mira laser. Mais controlável que os revólveres."
+    },
+    {
+      "id": "handcannon",
+      "name": "Handcannon",
+      "category": "weaponry",
+      "size": [
+        4,
+        2
+      ],
+      "forceHorizontal": true,
+      "status": "lista do usuario, confere com Namu/Game8",
+      "description": "Revólver gigante e devastador, o mais forte das magnums. Recarga lenta; com a melhoria exclusiva, munição infinita."
+    },
+    {
+      "id": "tmp",
+      "name": "TMP",
+      "category": "weaponry",
+      "size": [
+        3,
+        2
+      ],
+      "forceHorizontal": true,
+      "status": "lista do usuario, confere com Namu/Game8",
+      "description": "Submetralhadora compacta de cadência altíssima. Pouco dano por bala, imprecisa sem a coronha."
+    },
+    {
+      "id": "le-5",
+      "name": "LE 5",
+      "category": "weaponry",
+      "size": [
+        6,
+        2
+      ],
+      "forceHorizontal": true,
+      "status": "Game8/Namu (corrigido de 2x3)",
+      "description": "Submetralhadora precisa, com balas que atravessam o alvo. Aceita mira telescópica."
+    },
+    {
+      "id": "chicago-sweeper",
+      "name": "Chicago Sweeper",
+      "category": "weaponry",
+      "size": [
+        7,
+        3
+      ],
+      "forceHorizontal": true,
+      "status": "lista do usuario, confere com Namu/Game8",
+      "description": "Metralhadora de tambor gigante e fogo contínuo. Ocupa muito espaço; com a melhoria exclusiva, munição infinita."
+    },
+    {
+      "id": "w-870",
+      "name": "W-870",
+      "category": "weaponry",
+      "size": [
+        8,
+        2
+      ],
+      "forceHorizontal": true,
+      "status": "lista do usuario, confere com Namu/Game8",
+      "description": "Espingarda de bomba. Muito dano de perto e contra grupos, cadência lenta."
+    },
+    {
+      "id": "riot-gun",
+      "name": "Riot Gun",
+      "category": "weaponry",
+      "size": [
+        8,
+        2
+      ],
+      "forceHorizontal": true,
+      "status": "lista do usuario, confere com Namu/Game8",
+      "description": "Espingarda com dispersão mais fechada, que mantém o dano um pouco mais longe."
+    },
+    {
+      "id": "striker",
+      "name": "Striker",
+      "category": "weaponry",
+      "size": [
+        5,
+        2
+      ],
+      "forceHorizontal": true,
+      "status": "Namu/Sportskeeda dizem 2x5; Game8 diz 2x4 (em disputa)",
+      "description": "Espingarda semiautomática com tambor de muitos cartuchos. Atira rápido, recarrega devagar."
+    },
+    {
+      "id": "skull-shaker",
+      "name": "Skull Shaker",
+      "category": "weaponry",
+      "size": [
+        5,
+        1
+      ],
+      "forceHorizontal": true,
+      "status": "lista do usuario, confere com Namu/Game8",
+      "description": "Espingarda de cano serrado, minúscula (bônus da edição Deluxe). Ocupa pouquíssimo espaço."
+    },
+    {
+      "id": "sr-m1903",
+      "name": "SR M1903",
+      "category": "weaponry",
+      "size": [
+        9,
+        1
+      ],
+      "forceHorizontal": true,
+      "status": "lista do usuario, confere com Namu/Game8",
+      "description": "Rifle de ferrolho. O maior dano por tiro entre os rifles, mas atira devagar. Aceita miras."
+    },
+    {
+      "id": "stingray",
+      "name": "Stingray",
+      "category": "weaponry",
+      "size": [
+        7,
+        2
+      ],
+      "forceHorizontal": true,
+      "status": "lista do usuario, confere com Namu/Game8",
+      "description": "Rifle semiautomático muito preciso, para tiros rápidos em sequência. Aceita miras."
+    },
+    {
+      "id": "cqbr-assault-rifle",
+      "name": "CQBR Assault Rifle",
+      "category": "weaponry",
+      "size": [
+        7,
+        2
+      ],
+      "forceHorizontal": true,
+      "status": "lista do usuario, confere com Namu/Game8",
+      "description": "Fuzil de assalto automático e preciso. Versátil contra vários inimigos. Aceita miras."
+    },
+    {
+      "id": "bolt-thrower",
+      "name": "Bolt Thrower",
+      "category": "weaponry",
+      "size": [
+        4,
+        2
+      ],
+      "forceHorizontal": true,
+      "status": "lista do usuario, confere com Namu/Game8",
+      "description": "Besta silenciosa. Os virotes podem ser recolhidos depois do disparo, e dá para acoplar minas neles."
+    },
+    {
+      "id": "rocket-launcher",
+      "name": "Rocket Launcher",
+      "category": "weaponry",
+      "size": [
+        8,
+        2
+      ],
+      "forceHorizontal": true,
+      "status": "lista do usuario, confere com Namu/Game8",
+      "description": "Lança-foguetes de uso único: um disparo, explosão enorme, e a arma é descartada."
+    },
+    {
+      "id": "rocket-launcher-special",
+      "name": "Rocket Launcher (Special)",
+      "category": "weaponry",
+      "size": [
+        8,
+        2
+      ],
+      "forceHorizontal": true,
+      "status": "Namu",
+      "description": "Lança-foguetes de munição infinita. Destrói quase tudo com um disparo."
+    },
+    {
+      "id": "hand-grenade",
+      "name": "Hand Grenade",
+      "category": "weaponry",
+      "size": [
+        1,
+        1
+      ],
+      "forceHorizontal": false,
+      "status": "lista do usuario, confere com Namu/Game8",
+      "description": "Granada de fragmentação. Explosão eficaz contra pequenos grupos."
+    },
+    {
+      "id": "flash-grenade",
+      "name": "Flash Grenade",
+      "category": "weaponry",
+      "size": [
+        2,
+        1
+      ],
+      "forceHorizontal": false,
+      "status": "lista do usuario, confere com Namu/Game8",
+      "description": "Granada de luz. Cega e atordoa quem está perto e mata na hora parasitas expostos."
+    },
+    {
+      "id": "heavy-grenade",
+      "name": "Heavy Grenade",
+      "category": "weaponry",
+      "size": [
+        2,
+        1
+      ],
+      "forceHorizontal": false,
+      "status": "lista do usuario, confere com Namu/Game8",
+      "description": "Granada mais pesada, com explosão maior e mais dano que a granada comum."
+    },
+    {
+      "id": "attachable-mines",
+      "name": "Attachable Mines",
+      "category": "weaponry",
+      "size": [
+        2,
+        1
+      ],
+      "forceHorizontal": false,
+      "status": "lista do usuario (sem fonte do remake encontrada)",
+      "description": "Minas que se acoplam aos virotes da besta. Grudam onde acertam e explodem."
+    },
+    {
+      "id": "scope",
+      "name": "Scope",
+      "category": "weaponry",
+      "size": [
+        2,
+        1
+      ],
+      "forceHorizontal": true,
+      "status": "lista do usuario, confere com Namu/Game8",
+      "description": "Mira telescópica com dois níveis de zoom, para média e longa distância."
+    },
+    {
+      "id": "high-power-scope",
+      "name": "High Power Scope",
+      "category": "weaponry",
+      "size": [
+        3,
+        1
+      ],
+      "forceHorizontal": true,
+      "status": "lista do usuario, confere com Namu/Game8",
+      "description": "Mira telescópica de alta potência, com três níveis de zoom para alvos muito distantes.",
+      "fundoLimite": 195
+    },
+    {
+      "id": "biosensor-scope",
+      "name": "Biosensor Scope",
+      "category": "weaponry",
+      "size": [
+        2,
+        2
+      ],
+      "forceHorizontal": false,
+      "status": "lista do usuario, confere com Namu/Game8",
+      "description": "Mira especial que mostra os parasitas dentro dos inimigos e revela pontos fracos."
+    },
+    {
+      "id": "laser-sight",
+      "name": "Laser Sight",
+      "category": "weaponry",
+      "size": [
+        1,
+        1
+      ],
+      "forceHorizontal": false,
+      "status": "lista do usuario, confere com Namu/Game8",
+      "description": "Mira laser. Deixa a pistola mais precisa. Encaixa na SG-09 R, Punisher e Sentinel Nine."
+    },
+    {
+      "id": "red9-stock",
+      "name": "Red9 Stock",
+      "category": "weaponry",
+      "size": [
+        4,
+        1
+      ],
+      "forceHorizontal": true,
+      "status": "lista do usuario, confere com Namu/Game8",
+      "description": "Coronha da Red9. Reduz o recuo e aumenta muito a precisão."
+    },
+    {
+      "id": "tmp-stock",
+      "name": "TMP Stock",
+      "category": "weaponry",
+      "size": [
+        3,
+        2
+      ],
+      "forceHorizontal": true,
+      "status": "lista do usuario, confere com Namu/Game8",
+      "description": "Coronha da TMP. Reduz o recuo e melhora a precisão no fogo automático.",
+      "endireitar": true
+    },
+    {
+      "id": "matilda-stock",
+      "name": "Matilda Stock",
+      "category": "weaponry",
+      "size": [
+        3,
+        1
+      ],
+      "forceHorizontal": true,
+      "status": "lista do usuario, confere com Namu/Game8",
+      "description": "Coronha da Matilda. Reduz o recuo e deixa as rajadas mais precisas."
+    },
+    {
+      "id": "handgun-ammo",
+      "name": "Handgun Ammo",
+      "category": "weaponry",
+      "size": [
+        2,
+        1
+      ],
+      "forceHorizontal": false,
+      "status": "lista do usuario (sem fonte do remake encontrada)",
+      "description": "Munição de pistola. A mais comum."
+    },
+    {
+      "id": "shotgun-shells",
+      "name": "Shotgun Shells",
+      "category": "weaponry",
+      "size": [
+        2,
+        1
+      ],
+      "forceHorizontal": false,
+      "status": "lista do usuario (sem fonte do remake encontrada)",
+      "description": "Cartuchos de espingarda."
+    },
+    {
+      "id": "submachine-gun-ammo",
+      "name": "Submachine Gun Ammo",
+      "category": "weaponry",
+      "size": [
+        2,
+        1
+      ],
+      "forceHorizontal": false,
+      "status": "lista do usuario (sem fonte do remake encontrada)",
+      "description": "Munição de submetralhadora. Acaba rápido no fogo automático."
+    },
+    {
+      "id": "rifle-ammo",
+      "name": "Rifle Ammo",
+      "category": "weaponry",
+      "size": [
+        2,
+        1
+      ],
+      "forceHorizontal": false,
+      "status": "lista do usuario (sem fonte do remake encontrada)",
+      "description": "Munição de rifle. Escassa, mas cada bala vale muito."
+    },
+    {
+      "id": "magnum-ammo",
+      "name": "Magnum Ammo",
+      "category": "weaponry",
+      "size": [
+        2,
+        1
+      ],
+      "forceHorizontal": false,
+      "status": "lista do usuario (sem fonte do remake encontrada)",
+      "description": "Munição de magnum. Rara e poderosa."
+    },
+    {
+      "id": "bolts",
+      "name": "Bolts",
+      "category": "weaponry",
+      "size": [
+        2,
+        1
+      ],
+      "forceHorizontal": false,
+      "status": "SUPOSICAO (nao estava na lista; assumido igual a municao)",
+      "description": "Virotes para a besta. Podem ser recolhidos depois do disparo."
+    },
+    {
+      "id": "first-aid-spray",
+      "name": "First Aid Spray",
+      "category": "recovery",
+      "size": [
+        2,
+        1
+      ],
+      "forceHorizontal": false,
+      "status": "lista do usuario (sem fonte do remake encontrada)",
+      "description": "Spray de primeiros socorros. Cura a vida toda na hora. Item raro."
+    },
+    {
+      "id": "green-herb",
+      "name": "Green Herb",
+      "category": "recovery",
+      "size": [
+        2,
+        1
+      ],
+      "forceHorizontal": false,
+      "status": "lista do usuario (sem fonte do remake encontrada)",
+      "description": "Erva verde. Cura 1 dado de vida. Pode ser misturada com outras ervas."
+    },
+    {
+      "id": "red-herb",
+      "name": "Red Herb",
+      "category": "recovery",
+      "size": [
+        2,
+        1
+      ],
+      "forceHorizontal": false,
+      "status": "lista do usuario (sem fonte do remake encontrada)",
+      "description": "Erva vermelha. Cura meio dado de vida e tira a dor (remove desvantagens por dor)."
+    },
+    {
+      "id": "yellow-herb",
+      "name": "Yellow Herb",
+      "category": "recovery",
+      "size": [
+        2,
+        1
+      ],
+      "forceHorizontal": false,
+      "status": "lista do usuario (sem fonte do remake encontrada)",
+      "description": "Erva amarela. Cura meio dado de vida e dá um pulso de adrenalina."
+    },
+    {
+      "id": "mixed-herb-gg",
+      "name": "Mixed Herb (G+G)",
+      "category": "recovery",
+      "size": [
+        2,
+        1
+      ],
+      "forceHorizontal": false,
+      "status": "lista do usuario (sem fonte do remake encontrada)",
+      "description": "Mistura de duas ervas verdes. Cura 2 dados de vida."
+    },
+    {
+      "id": "mixed-herb-gr",
+      "name": "Mixed Herb (G+R)",
+      "category": "recovery",
+      "size": [
+        2,
+        1
+      ],
+      "forceHorizontal": false,
+      "status": "lista do usuario (sem fonte do remake encontrada)",
+      "description": "Mistura de verde e vermelha. Cura 1 dado de vida e meio e tira a dor."
+    },
+    {
+      "id": "mixed-herb-gy",
+      "name": "Mixed Herb (G+Y)",
+      "category": "recovery",
+      "size": [
+        2,
+        1
+      ],
+      "forceHorizontal": false,
+      "status": "lista do usuario (sem fonte do remake encontrada)",
+      "description": "Mistura de verde e amarela. Cura 1 dado de vida e meio e dá um pulso de adrenalina."
+    },
+    {
+      "id": "mixed-herb-ry",
+      "name": "Mixed Herb (R+Y)",
+      "category": "recovery",
+      "size": [
+        2,
+        1
+      ],
+      "forceHorizontal": false,
+      "status": "lista do usuario (sem fonte do remake encontrada)",
+      "description": "Mistura de vermelha e amarela. Cura 1 dado de vida, tira a dor e dá um pulso de adrenalina."
+    },
+    {
+      "id": "mixed-herb-ggg",
+      "name": "Mixed Herb (G+G+G)",
+      "category": "recovery",
+      "size": [
+        2,
+        1
+      ],
+      "forceHorizontal": false,
+      "status": "lista do usuario (sem fonte do remake encontrada)",
+      "description": "Mistura de três ervas verdes. Cura a vida toda."
+    },
+    {
+      "id": "mixed-herb-ggy",
+      "name": "Mixed Herb (G+G+Y)",
+      "category": "recovery",
+      "size": [
+        2,
+        1
+      ],
+      "forceHorizontal": false,
+      "status": "lista do usuario (sem fonte do remake encontrada)",
+      "description": "Mistura de duas verdes e uma amarela. Cura a vida toda e dá um pulso de adrenalina."
+    },
+    {
+      "id": "mixed-herb-gry",
+      "name": "Mixed Herb (G+R+Y)",
+      "category": "recovery",
+      "size": [
+        2,
+        1
+      ],
+      "forceHorizontal": false,
+      "status": "lista do usuario (sem fonte do remake encontrada)",
+      "description": "Mistura das três cores. Cura a vida toda, tira a dor e dá um pulso de adrenalina."
+    }
+  ],
+  "recipes": [
+    {
+      "a": "green-herb",
+      "b": "green-herb",
+      "result": "mixed-herb-gg"
+    },
+    {
+      "a": "green-herb",
+      "b": "red-herb",
+      "result": "mixed-herb-gr"
+    },
+    {
+      "a": "green-herb",
+      "b": "yellow-herb",
+      "result": "mixed-herb-gy"
+    },
+    {
+      "a": "red-herb",
+      "b": "yellow-herb",
+      "result": "mixed-herb-ry"
+    },
+    {
+      "a": "mixed-herb-gg",
+      "b": "green-herb",
+      "result": "mixed-herb-ggg"
+    },
+    {
+      "a": "mixed-herb-gg",
+      "b": "yellow-herb",
+      "result": "mixed-herb-ggy"
+    },
+    {
+      "a": "mixed-herb-gy",
+      "b": "green-herb",
+      "result": "mixed-herb-ggy"
+    },
+    {
+      "a": "mixed-herb-gr",
+      "b": "yellow-herb",
+      "result": "mixed-herb-gry"
+    },
+    {
+      "a": "mixed-herb-gy",
+      "b": "red-herb",
+      "result": "mixed-herb-gry"
+    },
+    {
+      "a": "mixed-herb-ry",
+      "b": "green-herb",
+      "result": "mixed-herb-gry"
+    }
+  ]
+}

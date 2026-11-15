@@ -1,0 +1,524 @@
+{
+  "_comment": "Proposta de números para o RPG (Ez, com ajustes do mestre em 14/11/2026). Escala: humano tem até 12 PV; a pistola inicial (SG-09 R) causa 1d8. Ervas curam em 'dados de vida' (do sistema do mestre): verde 1, vermelha ½ + tira a dor, amarela ½ + pulso de adrenalina; misturas somam; 3 ervas curam a vida toda. O acerto e o modificador dos anexos ficam com o mestre. Explicação em docs/conversao-rpg.md.",
+  "items": {
+    "kitchen-knife": {
+      "tipo": "faca",
+      "dano": "1d4",
+      "tags": [
+        "aparar"
+      ]
+    },
+    "boot-knife": {
+      "tipo": "faca",
+      "dano": "1d4",
+      "tags": [
+        "aparar"
+      ]
+    },
+    "combat-knife": {
+      "tipo": "faca",
+      "dano": "1d6",
+      "tags": [
+        "aparar"
+      ]
+    },
+    "primal-knife": {
+      "tipo": "faca",
+      "dano": "1d6",
+      "tags": [
+        "aparar"
+      ]
+    },
+    "fighting-knife": {
+      "tipo": "faca",
+      "dano": "1d8",
+      "tags": [
+        "aparar"
+      ]
+    },
+    "sg-09-r": {
+      "tipo": "pistola",
+      "dano": "1d8",
+      "pente": 10,
+      "recarga": "rapida",
+      "alcance": "médio",
+      "precisaoJogo": 4.0,
+      "municao": "handgun-ammo",
+      "tags": [
+        "crítico ampliado",
+        "aceita mira laser"
+      ]
+    },
+    "punisher": {
+      "tipo": "pistola",
+      "dano": "1d6",
+      "pente": 12,
+      "recarga": "rapida",
+      "alcance": "médio",
+      "precisaoJogo": 4.5,
+      "municao": "handgun-ammo",
+      "tags": [
+        "perfurante",
+        "aceita mira laser"
+      ]
+    },
+    "sentinel-nine": {
+      "tipo": "pistola",
+      "dano": "1d8",
+      "pente": 15,
+      "recarga": "rapida",
+      "alcance": "médio",
+      "precisaoJogo": 4.0,
+      "municao": "handgun-ammo",
+      "tags": [
+        "crítico ampliado",
+        "aceita mira laser"
+      ]
+    },
+    "blacktail": {
+      "tipo": "pistola",
+      "dano": "1d8+1",
+      "pente": 9,
+      "recarga": "rapida",
+      "alcance": "médio",
+      "precisaoJogo": 4.2,
+      "municao": "handgun-ammo",
+      "tags": []
+    },
+    "red9": {
+      "tipo": "pistola",
+      "dano": "1d10",
+      "pente": 8,
+      "recarga": "normal",
+      "alcance": "médio",
+      "precisaoJogo": 3.0,
+      "municao": "handgun-ammo",
+      "tags": [
+        "recuo forte",
+        "aceita coronha"
+      ]
+    },
+    "matilda": {
+      "tipo": "pistola",
+      "dano": "2d6",
+      "rajada": true,
+      "balasPorRajada": 3,
+      "pente": 6,
+      "recarga": "rapida",
+      "alcance": "médio",
+      "precisaoJogo": 3.5,
+      "municao": "handgun-ammo",
+      "tags": [
+        "aceita coronha"
+      ]
+    },
+    "tmp": {
+      "tipo": "submetralhadora",
+      "dano": "2d4",
+      "rajada": true,
+      "balasPorRajada": 5,
+      "pente": 6,
+      "recarga": "rapida",
+      "alcance": "médio",
+      "precisaoJogo": 2.0,
+      "municao": "submachine-gun-ammo",
+      "tags": [
+        "aceita coronha"
+      ]
+    },
+    "le-5": {
+      "tipo": "submetralhadora",
+      "dano": "2d6",
+      "rajada": true,
+      "balasPorRajada": 5,
+      "pente": 5,
+      "recarga": "normal",
+      "alcance": "médio",
+      "precisaoJogo": 4.5,
+      "municao": "submachine-gun-ammo",
+      "tags": [
+        "perfurante",
+        "aceita mira"
+      ]
+    },
+    "chicago-sweeper": {
+      "tipo": "submetralhadora",
+      "dano": "2d6",
+      "rajada": true,
+      "balasPorRajada": 5,
+      "pente": 14,
+      "recarga": "normal",
+      "alcance": "médio",
+      "precisaoJogo": 3.0,
+      "municao": "submachine-gun-ammo",
+      "tags": []
+    },
+    "cqbr-assault-rifle": {
+      "tipo": "rifle",
+      "dano": "2d6",
+      "rajada": true,
+      "balasPorRajada": 4,
+      "pente": 8,
+      "recarga": "normal",
+      "alcance": "longo",
+      "precisaoJogo": 5.0,
+      "municao": "rifle-ammo",
+      "tags": [
+        "perfurante",
+        "aceita mira"
+      ]
+    },
+    "stingray": {
+      "tipo": "rifle",
+      "dano": "2d6",
+      "pente": 10,
+      "recarga": "normal",
+      "alcance": "longo",
+      "precisaoJogo": 5.4,
+      "municao": "rifle-ammo",
+      "tags": [
+        "perfurante",
+        "aceita mira"
+      ]
+    },
+    "sr-m1903": {
+      "tipo": "rifle",
+      "dano": "2d8",
+      "pente": 5,
+      "recarga": "lenta",
+      "alcance": "longo",
+      "precisaoJogo": 5.2,
+      "municao": "rifle-ammo",
+      "tags": [
+        "perfurante",
+        "ferrolho (atira devagar)",
+        "aceita mira"
+      ]
+    },
+    "skull-shaker": {
+      "tipo": "espingarda",
+      "dano": "2d6",
+      "pente": 4,
+      "recarga": "normal",
+      "alcance": "curto",
+      "precisaoJogo": 2.3,
+      "municao": "shotgun-shells",
+      "tags": [
+        "espalha"
+      ]
+    },
+    "w-870": {
+      "tipo": "espingarda",
+      "dano": "2d8",
+      "pente": 5,
+      "recarga": "normal",
+      "alcance": "curto",
+      "precisaoJogo": 2.8,
+      "municao": "shotgun-shells",
+      "tags": [
+        "espalha"
+      ]
+    },
+    "striker": {
+      "tipo": "espingarda",
+      "dano": "2d8",
+      "pente": 12,
+      "recarga": "lenta",
+      "alcance": "curto",
+      "precisaoJogo": 2.0,
+      "municao": "shotgun-shells",
+      "tags": [
+        "espalha",
+        "atira rápido"
+      ]
+    },
+    "riot-gun": {
+      "tipo": "espingarda",
+      "dano": "2d10",
+      "pente": 7,
+      "recarga": "normal",
+      "alcance": "curto",
+      "precisaoJogo": 3.5,
+      "municao": "shotgun-shells",
+      "tags": [
+        "espalha"
+      ]
+    },
+    "broken-butterfly": {
+      "tipo": "magnum",
+      "dano": "2d12",
+      "pente": 6,
+      "recarga": "normal",
+      "alcance": "médio",
+      "precisaoJogo": 2.0,
+      "municao": "magnum-ammo",
+      "tags": [
+        "perfurante",
+        "recuo forte"
+      ]
+    },
+    "killer7": {
+      "tipo": "magnum",
+      "dano": "2d12",
+      "pente": 7,
+      "recarga": "rapida",
+      "alcance": "médio",
+      "precisaoJogo": 2.5,
+      "municao": "magnum-ammo",
+      "tags": [
+        "perfurante",
+        "crítico ampliado",
+        "mira laser embutida"
+      ]
+    },
+    "handcannon": {
+      "tipo": "magnum",
+      "dano": "3d10",
+      "pente": 5,
+      "recarga": "lenta",
+      "alcance": "médio",
+      "precisaoJogo": 1.8,
+      "municao": "magnum-ammo",
+      "tags": [
+        "perfurante",
+        "recuo forte"
+      ]
+    },
+    "bolt-thrower": {
+      "tipo": "especial",
+      "dano": "1d8",
+      "pente": 5,
+      "recarga": "normal",
+      "alcance": "médio",
+      "precisaoJogo": 3.0,
+      "municao": "bolts",
+      "tags": [
+        "silenciosa",
+        "virotes recuperáveis",
+        "aceita minas"
+      ]
+    },
+    "rocket-launcher": {
+      "tipo": "especial",
+      "dano": "6d10",
+      "area": "raio grande",
+      "pente": 1,
+      "tags": [
+        "uso único (descarta após o tiro)"
+      ]
+    },
+    "rocket-launcher-special": {
+      "tipo": "especial",
+      "dano": "6d10",
+      "area": "raio grande",
+      "tags": [
+        "munição infinita"
+      ]
+    },
+    "hand-grenade": {
+      "tipo": "arremessável",
+      "dano": "3d6",
+      "area": "raio 3 m",
+      "tags": [
+        "uso único"
+      ]
+    },
+    "heavy-grenade": {
+      "tipo": "arremessável",
+      "dano": "4d6",
+      "area": "raio 5 m",
+      "tags": [
+        "uso único"
+      ]
+    },
+    "flash-grenade": {
+      "tipo": "arremessável",
+      "dano": "0",
+      "area": "raio 5 m",
+      "efeito": "Cega e atordoa por 1 rodada; mata na hora parasitas expostos.",
+      "tags": [
+        "uso único"
+      ]
+    },
+    "attachable-mines": {
+      "tipo": "munição especial",
+      "dano": "3d6",
+      "area": "raio 3 m",
+      "efeito": "Acopla no virote da besta; gruda onde acerta e explode.",
+      "tags": [
+        "uso único"
+      ]
+    },
+    "handgun-ammo": {
+      "tipo": "munição",
+      "efeito": "Caixa com até 15 balas. A arma puxa só o que falta ao recarregar; caixas do mesmo tipo se juntam.",
+      "balasPorCaixa": 15
+    },
+    "shotgun-shells": {
+      "tipo": "munição",
+      "efeito": "Caixa com até 8 balas. A arma puxa só o que falta ao recarregar; caixas do mesmo tipo se juntam.",
+      "balasPorCaixa": 8
+    },
+    "submachine-gun-ammo": {
+      "tipo": "munição",
+      "efeito": "Caixa com até 50 balas. A arma puxa só o que falta ao recarregar; caixas do mesmo tipo se juntam.",
+      "balasPorCaixa": 50
+    },
+    "rifle-ammo": {
+      "tipo": "munição",
+      "efeito": "Caixa com até 5 balas. A arma puxa só o que falta ao recarregar; caixas do mesmo tipo se juntam.",
+      "balasPorCaixa": 5
+    },
+    "magnum-ammo": {
+      "tipo": "munição",
+      "efeito": "Caixa com até 6 balas. A arma puxa só o que falta ao recarregar; caixas do mesmo tipo se juntam.",
+      "balasPorCaixa": 6
+    },
+    "bolts": {
+      "tipo": "munição",
+      "efeito": "Caixa com até 5 virotes. A arma puxa só o que falta ao recarregar; caixas do mesmo tipo se juntam.",
+      "balasPorCaixa": 5
+    },
+    "laser-sight": {
+      "tipo": "anexo",
+      "encaixa": [
+        "sg-09-r",
+        "punisher",
+        "sentinel-nine"
+      ],
+      "efeito": "Melhora a precisão.",
+      "modificador": "a definir pelo mestre",
+      "efeitoNoJogo": "Precision +0,5"
+    },
+    "scope": {
+      "tipo": "anexo",
+      "encaixa": [
+        "le-5",
+        "sr-m1903",
+        "stingray",
+        "cqbr-assault-rifle"
+      ],
+      "efeito": "Permite atirar a longa distância sem penalidade.",
+      "modificador": "a definir pelo mestre"
+    },
+    "high-power-scope": {
+      "tipo": "anexo",
+      "encaixa": [
+        "le-5",
+        "sr-m1903",
+        "stingray",
+        "cqbr-assault-rifle"
+      ],
+      "efeito": "Como a mira comum, e melhora o acerto a longa distância.",
+      "modificador": "a definir pelo mestre"
+    },
+    "biosensor-scope": {
+      "tipo": "anexo",
+      "encaixa": [
+        "le-5",
+        "sr-m1903",
+        "stingray",
+        "cqbr-assault-rifle"
+      ],
+      "efeito": "Como a mira comum, e revela parasitas e pontos fracos: crítico ampliado contra eles.",
+      "modificador": "a definir pelo mestre"
+    },
+    "red9-stock": {
+      "tipo": "anexo",
+      "encaixa": [
+        "red9"
+      ],
+      "efeito": "Tira o recuo forte.",
+      "modificador": "a definir pelo mestre",
+      "efeitoNoJogo": "Precision 3,0 → 4,8"
+    },
+    "matilda-stock": {
+      "tipo": "anexo",
+      "encaixa": [
+        "matilda"
+      ],
+      "efeito": "Rajadas mais precisas.",
+      "modificador": "a definir pelo mestre",
+      "efeitoNoJogo": "Precision 3,5 → 4,6"
+    },
+    "tmp-stock": {
+      "tipo": "anexo",
+      "encaixa": [
+        "tmp"
+      ],
+      "efeito": "Fogo automático mais preciso.",
+      "modificador": "a definir pelo mestre",
+      "efeitoNoJogo": "Precision 2,0 → 3,5"
+    },
+    "green-herb": {
+      "tipo": "cura",
+      "cura": "1 dado de vida"
+    },
+    "red-herb": {
+      "tipo": "cura",
+      "cura": "½ dado de vida",
+      "efeitos": [
+        "Tira a dor"
+      ]
+    },
+    "yellow-herb": {
+      "tipo": "cura",
+      "cura": "½ dado de vida",
+      "efeitos": [
+        "Pulso de adrenalina"
+      ]
+    },
+    "mixed-herb-gg": {
+      "tipo": "cura",
+      "cura": "2 dados de vida"
+    },
+    "mixed-herb-gr": {
+      "tipo": "cura",
+      "cura": "1½ dado de vida",
+      "efeitos": [
+        "Tira a dor"
+      ]
+    },
+    "mixed-herb-gy": {
+      "tipo": "cura",
+      "cura": "1½ dado de vida",
+      "efeitos": [
+        "Pulso de adrenalina"
+      ]
+    },
+    "mixed-herb-ry": {
+      "tipo": "cura",
+      "cura": "1 dado de vida",
+      "efeitos": [
+        "Tira a dor",
+        "Pulso de adrenalina"
+      ]
+    },
+    "mixed-herb-ggg": {
+      "tipo": "cura",
+      "cura": "vida toda"
+    },
+    "mixed-herb-ggy": {
+      "tipo": "cura",
+      "cura": "vida toda",
+      "efeitos": [
+        "Pulso de adrenalina"
+      ]
+    },
+    "mixed-herb-gry": {
+      "tipo": "cura",
+      "cura": "vida toda",
+      "efeitos": [
+        "Tira a dor",
+        "Pulso de adrenalina"
+      ]
+    },
+    "first-aid-spray": {
+      "tipo": "cura",
+      "cura": "vida toda",
+      "tags": [
+        "raro"
+      ]
+    }
+  }
+}
