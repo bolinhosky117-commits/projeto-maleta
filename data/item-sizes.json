@@ -152,12 +152,16 @@
       "name": "Killer7",
       "category": "weaponry",
       "size": [
-        3,
+        2,
         2
       ],
       "forceHorizontal": true,
-      "status": "lista do usuario, confere com Namu/Game8",
-      "description": "Magnum semiautomática de aço inox, já vem com mira laser. Mais controlável que os revólveres."
+      "status": "ajustado ao ícone (menos espaço vazio)",
+      "description": "Magnum semiautomática de aço inox, já vem com mira laser. Mais controlável que os revólveres.",
+      "tamanhoJogo": [
+        3,
+        2
+      ]
     },
     {
       "id": "handcannon",
@@ -188,12 +192,16 @@
       "name": "LE 5",
       "category": "weaponry",
       "size": [
-        6,
+        4,
         2
       ],
       "forceHorizontal": true,
-      "status": "Game8/Namu (corrigido de 2x3)",
-      "description": "Submetralhadora precisa, com balas que atravessam o alvo. Aceita mira telescópica."
+      "status": "ajustado ao ícone (menos espaço vazio)",
+      "description": "Submetralhadora precisa, com balas que atravessam o alvo. Aceita mira telescópica.",
+      "tamanhoJogo": [
+        6,
+        2
+      ]
     },
     {
       "id": "chicago-sweeper",
@@ -248,24 +256,32 @@
       "name": "Skull Shaker",
       "category": "weaponry",
       "size": [
-        5,
+        3,
         1
       ],
       "forceHorizontal": true,
-      "status": "lista do usuario, confere com Namu/Game8",
-      "description": "Espingarda de cano serrado, minúscula (bônus da edição Deluxe). Ocupa pouquíssimo espaço."
+      "status": "ajustado ao ícone (menos espaço vazio)",
+      "description": "Espingarda de cano serrado, minúscula (bônus da edição Deluxe). Ocupa pouquíssimo espaço.",
+      "tamanhoJogo": [
+        5,
+        1
+      ]
     },
     {
       "id": "sr-m1903",
       "name": "SR M1903",
       "category": "weaponry",
       "size": [
-        9,
+        4,
         1
       ],
       "forceHorizontal": true,
-      "status": "lista do usuario, confere com Namu/Game8",
-      "description": "Rifle de ferrolho. O maior dano por tiro entre os rifles, mas atira devagar. Aceita miras."
+      "status": "ajustado ao ícone (menos espaço vazio)",
+      "description": "Rifle de ferrolho. O maior dano por tiro entre os rifles, mas atira devagar. Aceita miras.",
+      "tamanhoJogo": [
+        9,
+        1
+      ]
     },
     {
       "id": "stingray",
@@ -284,12 +300,16 @@
       "name": "CQBR Assault Rifle",
       "category": "weaponry",
       "size": [
-        7,
+        5,
         2
       ],
       "forceHorizontal": true,
-      "status": "lista do usuario, confere com Namu/Game8",
-      "description": "Fuzil de assalto automático e preciso. Versátil contra vários inimigos. Aceita miras."
+      "status": "ajustado ao ícone (menos espaço vazio)",
+      "description": "Fuzil de assalto automático e preciso. Versátil contra vários inimigos. Aceita miras.",
+      "tamanhoJogo": [
+        7,
+        2
+      ]
     },
     {
       "id": "bolt-thrower",
@@ -337,7 +357,8 @@
       ],
       "forceHorizontal": false,
       "status": "lista do usuario, confere com Namu/Game8",
-      "description": "Granada de fragmentação. Explosão eficaz contra pequenos grupos."
+      "description": "Granada de fragmentação. Explosão eficaz contra pequenos grupos.",
+      "endireitar": true
     },
     {
       "id": "flash-grenade",
@@ -349,7 +370,8 @@
       ],
       "forceHorizontal": false,
       "status": "lista do usuario, confere com Namu/Game8",
-      "description": "Granada de luz. Cega e atordoa quem está perto e mata na hora parasitas expostos."
+      "description": "Granada de luz. Cega e atordoa quem está perto e mata na hora parasitas expostos.",
+      "endireitar": true
     },
     {
       "id": "heavy-grenade",
@@ -361,7 +383,8 @@
       ],
       "forceHorizontal": false,
       "status": "lista do usuario, confere com Namu/Game8",
-      "description": "Granada mais pesada, com explosão maior e mais dano que a granada comum."
+      "description": "Granada mais pesada, com explosão maior e mais dano que a granada comum.",
+      "endireitar": true
     },
     {
       "id": "attachable-mines",
@@ -380,12 +403,16 @@
       "name": "Scope",
       "category": "weaponry",
       "size": [
-        2,
+        1,
         1
       ],
       "forceHorizontal": true,
-      "status": "lista do usuario, confere com Namu/Game8",
-      "description": "Mira telescópica com dois níveis de zoom, para média e longa distância."
+      "status": "ajustado ao ícone (menos espaço vazio)",
+      "description": "Mira telescópica com dois níveis de zoom, para média e longa distância.",
+      "tamanhoJogo": [
+        2,
+        1
+      ]
     },
     {
       "id": "high-power-scope",
@@ -478,12 +505,16 @@
       "name": "Shotgun Shells",
       "category": "weaponry",
       "size": [
-        2,
+        1,
         1
       ],
       "forceHorizontal": false,
-      "status": "lista do usuario (sem fonte do remake encontrada)",
-      "description": "Cartuchos de espingarda."
+      "status": "ajustado ao ícone (menos espaço vazio)",
+      "description": "Cartuchos de espingarda.",
+      "tamanhoJogo": [
+        2,
+        1
+      ]
     },
     {
       "id": "submachine-gun-ammo",
@@ -531,7 +562,8 @@
       ],
       "forceHorizontal": false,
       "status": "SUPOSICAO (nao estava na lista; assumido igual a municao)",
-      "description": "Virotes para a besta. Podem ser recolhidos depois do disparo."
+      "description": "Virotes para a besta. Podem ser recolhidos depois do disparo.",
+      "endireitar": true
     },
     {
       "id": "first-aid-spray",
@@ -592,7 +624,8 @@
       ],
       "forceHorizontal": false,
       "status": "lista do usuario (sem fonte do remake encontrada)",
-      "description": "Mistura de duas ervas verdes. Cura 2 dados de vida."
+      "description": "Mistura de duas ervas verdes. Cura 2 dados de vida.",
+      "endireitar": true
     },
     {
       "id": "mixed-herb-gr",
@@ -604,7 +637,8 @@
       ],
       "forceHorizontal": false,
       "status": "lista do usuario (sem fonte do remake encontrada)",
-      "description": "Mistura de verde e vermelha. Cura 1 dado de vida e meio e tira a dor."
+      "description": "Mistura de verde e vermelha. Cura 1 dado de vida e meio e tira a dor.",
+      "endireitar": true
     },
     {
       "id": "mixed-herb-gy",
@@ -616,7 +650,8 @@
       ],
       "forceHorizontal": false,
       "status": "lista do usuario (sem fonte do remake encontrada)",
-      "description": "Mistura de verde e amarela. Cura 1 dado de vida e meio e dá um pulso de adrenalina."
+      "description": "Mistura de verde e amarela. Cura 1 dado de vida e meio e dá um pulso de adrenalina.",
+      "endireitar": true
     },
     {
       "id": "mixed-herb-ry",
@@ -628,7 +663,8 @@
       ],
       "forceHorizontal": false,
       "status": "lista do usuario (sem fonte do remake encontrada)",
-      "description": "Mistura de vermelha e amarela. Cura 1 dado de vida, tira a dor e dá um pulso de adrenalina."
+      "description": "Mistura de vermelha e amarela. Cura 1 dado de vida, tira a dor e dá um pulso de adrenalina.",
+      "endireitar": true
     },
     {
       "id": "mixed-herb-ggg",
@@ -640,7 +676,8 @@
       ],
       "forceHorizontal": false,
       "status": "lista do usuario (sem fonte do remake encontrada)",
-      "description": "Mistura de três ervas verdes. Cura a vida toda."
+      "description": "Mistura de três ervas verdes. Cura a vida toda.",
+      "endireitar": true
     },
     {
       "id": "mixed-herb-ggy",
@@ -652,7 +689,8 @@
       ],
       "forceHorizontal": false,
       "status": "lista do usuario (sem fonte do remake encontrada)",
-      "description": "Mistura de duas verdes e uma amarela. Cura a vida toda e dá um pulso de adrenalina."
+      "description": "Mistura de duas verdes e uma amarela. Cura a vida toda e dá um pulso de adrenalina.",
+      "endireitar": true
     },
     {
       "id": "mixed-herb-gry",
@@ -664,7 +702,8 @@
       ],
       "forceHorizontal": false,
       "status": "lista do usuario (sem fonte do remake encontrada)",
-      "description": "Mistura das três cores. Cura a vida toda, tira a dor e dá um pulso de adrenalina."
+      "description": "Mistura das três cores. Cura a vida toda, tira a dor e dá um pulso de adrenalina.",
+      "endireitar": true
     }
   ],
   "recipes": [

@@ -42,6 +42,7 @@ O protótipo é HTML/JS puro; a stack do sistema final ainda não foi definida �
   da mesma cor nos dois. 1 mira + 1 coronha por arma. Modificador de acerto: a definir pelo mestre.
 - Ervas (proposta do mestre; "dado de vida" = o dado de cura do personagem, `dadoVida` por jogador no protótipo): verde 1 dado de vida, vermelha ½ + tira a dor, amarela ½ + pulso de adrenalina; misturas somam; 3 ervas = vida toda. **Ovos fora.** Spray de primeiros socorros é raro.
 - Facas **não quebram** (sem durabilidade).
+- 15/11: itens com muito espaço vazio foram diminuídos para o tamanho do desenho (SR M1903, CQBR, LE 5, Skull Shaker, Killer7, Scope, Shotgun Shells). O tamanho do jogo fica em `tamanhoJogo`. Ver `docs/verificacao-tamanhos.md`.
 
 ## Regras
 

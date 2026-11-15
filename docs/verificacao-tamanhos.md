@@ -39,3 +39,21 @@ O print `referencia-maleta-jogo.png` é consistente com erva e munição ocupand
 - GamertagMythras — RE4 Remake Best Knife: https://gamertagmythras.com/blog/resident-evil-4/resident-evil-4-remake-best-knife
 - Sportskeeda — Striker / Boot Knife: https://sportskeeda.com/esports/how-get-striker-resident-evil-4-remake
 - Imagens de origem: Evil Resource — https://www.evilresource.com/resident-evil-4-remake/weaponry e /items
+
+## Ajustes feitos para economizar espaço (15/11/2026)
+
+O desenho de alguns itens é bem mais curto que o retângulo que eles ocupavam no jogo, e sobrava muito espaço vazio na maleta.
+Esses itens foram diminuídos para o tamanho do desenho. O tamanho original fica guardado em `tamanhoJogo` no `data/item-sizes.json`,
+caso queiram voltar.
+
+| Item | Antes (jogo) | Agora |
+|---|---|---|
+| SR M1903 | 9×1 | 4×1 |
+| CQBR Assault Rifle | 7×2 | 5×2 |
+| LE 5 | 6×2 | 4×2 |
+| Skull Shaker | 5×1 | 3×1 |
+| Killer7 | 3×2 | 2×2 |
+| Scope | 2×1 | 1×1 |
+| Shotgun Shells | 2×1 | 1×1 |
+
+Também foram endireitados (estavam inclinados na foto): as três granadas, os virotes e os frascos de erva misturada.
