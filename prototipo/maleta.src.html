@@ -110,6 +110,15 @@
   .qtd-ctrl { display: flex; align-items: center; gap: 3px; }
   .qtd-ctrl b { min-width: 22px; text-align: center; font: 600 14px "Barlow Condensed", sans-serif; color: var(--ouro); }
   select:disabled { opacity: .5; }
+  .modal-fundo { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: flex; align-items: center; justify-content: center; z-index: 80; padding: 16px; }
+  .modal-fundo[hidden] { display: none; }
+  .modal { background: var(--painel); border: 1px solid var(--linha); border-radius: 12px; padding: 18px; width: min(380px, 100%); box-shadow: 0 20px 60px rgba(0,0,0,.6); }
+  .modal h3 { margin: 0 0 6px; font: 700 20px/1.2 "Barlow Condensed", sans-serif; }
+  .modal p { margin: 0 0 14px; color: var(--suave); font-size: 13px; }
+  .modal .foto { height: 90px; display: flex; align-items: center; justify-content: center; background: var(--celula); border-radius: 6px; margin-bottom: 12px; }
+  .modal .foto img { max-width: 90%; max-height: 90%; }
+  .modal .acoes { justify-content: flex-end; }
+  .btn.deletar { background: #8a2a20; border-color: #a83a2e; color: #fff; font-weight: 600; }
   .destino { padding: 8px 10px 0; }
   .destino select { padding: 3px 6px; margin-left: 4px; }
   .mais { display: inline-block; background: var(--ouro); color: #1d1600; border-radius: 4px; padding: 0 5px; }
@@ -148,7 +157,7 @@
     <div class="titulo-maleta" id="tituloMaleta"></div>
     <div class="estojo"><div class="grade" id="grade"></div></div>
     <div class="info-maleta" id="infoMaleta"></div>
-    <div class="dica"><b>Botão direito</b> num item mostra os detalhes. Arraste para mover. <kbd>R</kbd>, botão direito ou rodinha giram 90° enquanto arrasta. Solte uma erva em cima de outra para misturar, ou um anexo em cima da arma para equipar. Arraste para o baú ou para o armário para guardar ou devolver.</div>
+    <div class="dica"><b>Botão direito</b> num item mostra os detalhes. <kbd>Delete</kbd> tira o item selecionado. Arraste para mover. <kbd>R</kbd>, botão direito ou rodinha giram 90° enquanto arrasta. Solte uma erva em cima de outra para misturar, ou um anexo em cima da arma para equipar. Arraste para o baú ou para o armário para guardar ou devolver.</div>
   </section>
 
   <aside class="lado">
@@ -158,6 +167,7 @@
   </aside>
 </main>
 <div id="aviso" role="status"></div>
+<div id="modal" class="modal-fundo" hidden></div>
 
 <script>
 /* ======================= DADOS (gerados por tools/build_prototipo.py) ======================= */
@@ -774,6 +784,43 @@ $("esvaziar").addEventListener("click", e => {
   S.maleta = []; ui.sel = null; salvar(); render();
 });
 window.addEventListener("resize", () => renderGrade());
+
+/* ======================= DELETE: tirar o item selecionado ======================= */
+let modalUid = null;
+function abrirModalDelete(o) {
+  modalUid = o.uid;
+  const it = ITENS[o.id], eq = equipados(o);
+  $("modal").innerHTML = `<div class="modal" role="dialog" aria-label="Tirar item da maleta">
+    <div class="foto"><img src="${it.icon}" alt=""></div>
+    <h3>Tirar ${esc(it.name)} da maleta?</h3>
+    <p>${eq.length ? "Os anexos equipados vão junto para o baú; se deletar, eles ficam na maleta, desequipados." : "Escolha para onde vai."}</p>
+    <div class="acoes">
+      <button class="btn" data-modal="cancelar">Cancelar</button>
+      <button class="btn" data-modal="bau" ${podeBau() ? "" : "disabled title='Sem baú nesta cena'"}>Mover para o baú</button>
+      <button class="btn deletar" data-modal="deletar">Deletar</button>
+    </div></div>`;
+  $("modal").hidden = false;
+  $("modal").querySelector(podeBau() ? "[data-modal=bau]" : "[data-modal=deletar]").focus();
+}
+function fecharModal() { $("modal").hidden = true; $("modal").innerHTML = ""; modalUid = null; }
+$("modal").addEventListener("click", ev => {
+  const b = ev.target.closest("[data-modal]");
+  if (!b) { if (ev.target === $("modal")) fecharModal(); return; }
+  const o = S.maleta.find(x => x.uid === modalUid);
+  if (o && b.dataset.modal === "bau" && podeBau()) { paraBau(o); aviso(`${ITENS[o.id].name} movido para o baú.`); }
+  if (o && b.dataset.modal === "deletar") {
+    for (const a of equipados(o)) delete a.equipadoEm;
+    S.maleta = S.maleta.filter(x => x !== o); aviso(`${ITENS[o.id].name} deletado.`);
+  }
+  if (o && b.dataset.modal !== "cancelar") { if (ui.sel === o.uid) ui.sel = null; if (ui.det === o.uid) ui.det = null; salvar(); }
+  fecharModal(); render();
+});
+document.addEventListener("keydown", ev => {
+  if (!$("modal").hidden) { if (ev.key === "Escape") { ev.preventDefault(); fecharModal(); } return; }
+  if (ev.key !== "Delete" || drag || ev.target.closest("input,select,textarea")) return;
+  const o = S.maleta.find(x => x.uid === ui.sel);
+  if (o) { ev.preventDefault(); abrirModalDelete(o); }
+});
 
 /* ======================= ARRASTAR ======================= */
 let drag = null, fantasma = null, pegada = null;
