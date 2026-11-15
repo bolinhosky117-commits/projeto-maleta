@@ -262,6 +262,26 @@ function recarregar(S, arma) {
   const sobra = S.maleta.filter(o => o.id === r.municao).reduce((t, c) => t + c.balas, 0);
   return { ok: `Recarregou ${pegou} ${pegou === 1 ? "bala" : "balas"} (${arma.carregado}/${capArma(arma.id)}). Sobram ${sobra} na maleta.` };
 }
+// caixa que acabou de entrar na maleta: despeja as balas nas caixas incompletas do mesmo tipo (e some se esvaziar)
+function absorverCaixa(S, nova) {
+  if (!nova || !ehCaixa(nova.id)) return 0;
+  const max = ITENS[nova.id].rpg.balasPorCaixa; let total = 0;
+  for (const c of S.maleta.filter(x => x !== nova && x.id === nova.id && x.balas < max).sort((a, b) => b.balas - a.balas)) {
+    const n = Math.min(nova.balas, max - c.balas); c.balas += n; nova.balas -= n; total += n;
+    if (nova.balas <= 0) break;
+  }
+  if (nova.balas <= 0) S.maleta = S.maleta.filter(x => x !== nova);
+  return total;
+}
+// Organizar: junta todas as caixas do mesmo tipo no menor número de caixas possível
+function juntarTodasCaixas(S) {
+  for (const id of [...new Set(S.maleta.filter(o => ehCaixa(o.id)).map(o => o.id))]) {
+    const max = ITENS[id].rpg.balasPorCaixa, caixas = S.maleta.filter(o => o.id === id);
+    let total = caixas.reduce((t, c) => t + c.balas, 0);
+    for (const c of caixas) { c.balas = Math.min(max, total); total -= c.balas; }
+    S.maleta = S.maleta.filter(o => o.id !== id || o.balas > 0);
+  }
+}
 // solta uma caixa em cima de outra do mesmo tipo: junta até encher
 function juntarCaixas(origem, alvo) {
   const max = ITENS[alvo.id].rpg.balasPorCaixa, n = Math.min(origem.balas, max - alvo.balas);
@@ -680,6 +700,7 @@ function porNaMaleta(id, uid, anexos, estado) {
   if (!l) { aviso(`Não cabe: ${ITENS[id].name} precisa de ${ITENS[id].cols}×${ITENS[id].rows}. Tente "Organizar".`, "erro"); return false; }
   const o = prepararItem({ uid: uid || novoUid(), id, ...l, ...(estado || {}) });
   S.maleta.push(o); voltarAnexos(o, anexos); ui.sel = o.uid;
+  if (absorverCaixa(S, o) && !S.maleta.includes(o)) { ui.sel = null; aviso(`${ITENS[id].name}: balas juntadas na caixa que já estava na maleta.`, "mix"); }
   if (ui.selFonte || ui.det) ui.det = o.uid; // se os detalhes estavam abertos, passam a mostrar o item que entrou
   ui.selFonte = null; return true;
 }
@@ -778,6 +799,7 @@ $("tamanho").addEventListener("change", e => {
   salvar(); render();
 });
 $("organizar").addEventListener("click", () => {
+  juntarTodasCaixas(S);
   const sobrou = organizar(S);
   for (const o of sobrou) paraBau(o);
   aviso(sobrou.length ? `Organizado. ${sobrou.length} item(ns) não couberam e foram para o baú.` : "Maleta organizada.");
@@ -1035,6 +1057,7 @@ document.addEventListener("pointerup", ev => {
       const doBau = d.origem === "bau" ? S.bau.find(x => x.uid === d.uid) : null;
       const n = prepararItem({ uid: doBau ? d.uid : novoUid(), id: d.id, x: d.alvo.x, y: d.alvo.y, rot: d.rot, ...(doBau ? estadoDe(doBau) : {}) });
       S.maleta.push(n); consumir(d); if (doBau) voltarAnexos(n, doBau.anexos); ui.sel = n.uid; ui.selFonte = null;
+      if (absorverCaixa(S, n) && !S.maleta.includes(n)) { ui.sel = null; aviso(`${ITENS[d.id].name}: balas juntadas na caixa que já estava na maleta.`, "mix"); }
     }
   } else if (d.alvo && d.alvo.tipo === "erro") aviso("Não cabe aí.", "erro");
   salvar(); render();

@@ -39,7 +39,8 @@ Abra `prototipo/maleta.html` com dois cliques (não precisa de servidor). No top
 - **Enter** com uma cura selecionada usa o item (o botão Usar também fica nos detalhes do botão direito).
 - **Delete** no teclado com um item selecionado abre uma janela: "Mover para o baú" ou "Deletar" (Esc cancela).
 - Na maleta: arrastar, girar (R ou botão direito durante o arrasto; facas em 4 posições, o resto deitado ou em pé), misturar ervas, equipar anexos,
-  atirar e recarregar (munição contada em balas; juntar caixas soltando uma na outra), usar itens e organizar.
+  atirar e recarregar (munição contada em balas; caixas do mesmo tipo se juntam soltando uma na outra, sozinhas quando
+  uma caixa entra na maleta e ao clicar em Organizar), usar itens e organizar.
 
 O código fica em `prototipo/maleta.src.html`; depois de mexer nele ou nos itens, rode `python tools/build_prototipo.py`
 (ele embute o `items.json` e os ícones e gera o `maleta.html`).
