@@ -1028,14 +1028,14 @@ function girarArraste() {
   atualizarArraste();
 }
 document.addEventListener("keydown", ev => { if ((ev.key === "r" || ev.key === "R") && drag && drag.moveu) { ev.preventDefault(); girarArraste(); } });
-// Botão direito: enquanto arrasta, gira; fora disso, abre os detalhes do item clicado.
+// Botão direito: enquanto arrasta, gira; fora disso, seleciona o item e abre os detalhes.
 document.addEventListener("contextmenu", ev => {
   if (drag && drag.moveu) { ev.preventDefault(); girarArraste(); return; }
   const item = ev.target.closest(".item"), ent = ev.target.closest(".entrada");
   if (!item && !ent) return;
   ev.preventDefault();
   if (item) { ui.sel = ui.det = item.dataset.uid; ui.selFonte = null; }
-  else if (ent.dataset.origem === "bau") { ui.det = ent.dataset.uid; ui.selFonte = null; }
+  else if (ent.dataset.origem === "bau") { ui.sel = ui.det = ent.dataset.uid; ui.selFonte = null; }
   else { ui.det = null; ui.selFonte = { origem: ent.dataset.origem, id: ent.dataset.id, arm: ent.dataset.arm || null }; }
   render();
 });
