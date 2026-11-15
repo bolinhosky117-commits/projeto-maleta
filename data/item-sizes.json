@@ -437,7 +437,8 @@
       ],
       "forceHorizontal": false,
       "status": "lista do usuario, confere com Namu/Game8",
-      "description": "Mira especial que mostra os parasitas dentro dos inimigos e revela pontos fracos."
+      "description": "Mira especial que mostra os parasitas dentro dos inimigos e revela pontos fracos.",
+      "fundoLimite": 120
     },
     {
       "id": "laser-sight",

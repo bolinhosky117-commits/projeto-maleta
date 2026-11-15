@@ -52,6 +52,7 @@ O protótipo é HTML/JS puro; a stack do sistema final ainda não foi definida �
   (e depois `python tools/build_prototipo.py` para atualizar o protótipo).
 - `source-images/` são os originais — não sobrescrever.
   Exceção: `recovery/red-herb.png` é a erva verde recolorida de vermelho (mesmo modelo das três ervas); a foto original ficou em `source-images/recovery/_original/`.
+  `weaponry/biosensor-scope.png` foi trocada por uma foto melhor mandada pelo Ez (fundo branco, `fundoLimite` 120); a antiga ficou em `source-images/weaponry/_original/`.
 - Tamanhos incertos (ver `docs/verificacao-tamanhos.md`): Striker (2x5 vs 2x4), consumíveis sem fonte do remake, Bolts (suposição).
 - As imagens são da Capcom; uso só entre os amigos. Se o projeto for publicado, trocar por arte própria.
 
