@@ -9,7 +9,7 @@ Contexto para o Claude (extensão do VS Code). Responda em português do Brasil.
 ## Objetivo
 
 Sistema de inventário em grade inspirado na maleta do Resident Evil 4 Remake: itens ocupam retângulos de N×M
-quadradinhos, giram em 4 posições e encaixam como Tetris. Feito para o RPG de um grupo de amigos.
+quadradinhos, giram (facas em 4 posições, o resto deitado ou em pé) e encaixam como Tetris. Feito para o RPG de um grupo de amigos.
 O protótipo é HTML/JS puro; a stack do sistema final ainda não foi definida — pergunte antes de escolher uma.
 
 ## O que existe
