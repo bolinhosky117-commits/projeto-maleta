@@ -175,6 +175,7 @@
       </select>
     </label>
     <button class="btn" id="som" title="Liga ou desliga os sons das armas">Som: ligado</button>
+    <label class="rotulo" title="Volume dos sons">Volume <input type="range" id="volume" min="0" max="100" step="5" value="50" style="width:90px"></label>
     <button class="btn" id="organizar">Organizar</button>
     <button class="btn perigo" id="esvaziar">Esvaziar maleta</button>
   </div>
@@ -207,10 +208,17 @@ const DADOS = __DADOS__;
 /* ======================= SONS (data/sons.json + assets/sounds, embutidos pelo build) ======================= */
 const SONS = DADOS.sons || { mapa: { armas: {}, padrao: {} }, arquivos: {} };
 let somLigado = (() => { try { return localStorage.getItem("maleta-som") !== "0"; } catch (e) { return true; } })();
-let audioCtx = null;
+let volume = (() => { try { const v = localStorage.getItem("maleta-volume"); return v === null ? 50 : +v; } catch (e) { return 50; } })();
+let audioCtx = null, saida = null;
 const buffers = {};
 function ctxAudio() {
-  if (!audioCtx) { const C = window.AudioContext || window.webkitAudioContext; if (!C) return null; audioCtx = new C(); }
+  if (!audioCtx) {
+    const C = window.AudioContext || window.webkitAudioContext; if (!C) return null;
+    audioCtx = new C(); saida = audioCtx.createGain(); saida.gain.value = volume / 100;
+    // limitador: rajadas somam vários tiros, isto segura o pico para não estourar
+    const lim = audioCtx.createDynamicsCompressor(); lim.threshold.value = -12; lim.ratio.value = 12; lim.attack.value = 0.002; lim.release.value = 0.15;
+    saida.connect(lim).connect(audioCtx.destination);
+  }
   if (audioCtx.state === "suspended") audioCtx.resume();
   return audioCtx;
 }
@@ -227,8 +235,8 @@ async function tocar(id, acao, vezes = 1) {
   const c = audioCtx, passo = (SONS.mapa.armas[id] || {}).cadencia || 0.09, t0 = c.currentTime + 0.01;
   for (let i = 0; i < vezes; i++) {
     const src = c.createBufferSource(), g = c.createGain();
-    src.buffer = b; g.gain.value = i ? 0.8 : 1;
-    src.connect(g).connect(c.destination); src.start(t0 + i * passo);
+    src.buffer = b; g.gain.value = i ? 0.6 : 1;
+    src.connect(g).connect(saida); src.start(t0 + i * passo);
   }
 }
 // o navegador só libera o áudio depois do primeiro clique: aí já prepara todos os sons
@@ -978,6 +986,12 @@ $("som").addEventListener("click", () => {
   mostrarSom(); if (somLigado) Object.keys(SONS.arquivos).forEach(carregarSom);
 });
 mostrarSom();
+$("volume").value = volume;
+$("volume").addEventListener("input", ev => {
+  volume = +ev.target.value; if (saida) saida.gain.value = volume / 100;
+  try { localStorage.setItem("maleta-volume", String(volume)); } catch (e) {}
+});
+$("volume").addEventListener("change", () => { const o = S.maleta.find(x => x.uid === ui.sel); tocar(o && somDe(o.id, "atirar") ? o.id : "sg-09-r", "atirar"); });  // amostra ao soltar
 $("organizar").addEventListener("click", () => {
   juntarTodasCaixas(S);
   const sobrou = organizar(S);
