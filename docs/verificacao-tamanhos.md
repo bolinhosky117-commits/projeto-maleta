@@ -48,12 +48,15 @@ caso queiram voltar.
 
 | Item | Antes (jogo) | Agora |
 |---|---|---|
-| SR M1903 | 9×1 | 4×1 |
+| SR M1903 | 9×1 | 8×2 (era 4×1; ganhou 2 linhas para parecer arma longa) |
 | CQBR Assault Rifle | 7×2 | 5×2 |
 | LE 5 | 6×2 | 4×2 |
-| Skull Shaker | 5×1 | 3×1 |
+| Skull Shaker | 5×1 | 5×2 (era 3×1; ganhou 2 linhas para parecer espingarda) |
 | Killer7 | 3×2 | 2×2 |
 | Scope | 2×1 | 1×1 |
 | Shotgun Shells | 2×1 | 1×1 |
 
 Também foram endireitados (estavam inclinados na foto): as três granadas, os virotes e os frascos de erva misturada.
+
+Obs.: com 1 linha só, o desenho dessas armas ficava pequeno e elas não pareciam grandes. Com 2 linhas o desenho cabe inteiro
+e a arma ocupa um espaço coerente com o tamanho dela (perto das espingardas e do Stingray).

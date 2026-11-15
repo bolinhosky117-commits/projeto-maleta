@@ -256,11 +256,11 @@
       "name": "Skull Shaker",
       "category": "weaponry",
       "size": [
-        3,
-        1
+        5,
+        2
       ],
       "forceHorizontal": true,
-      "status": "ajustado ao ícone (menos espaço vazio)",
+      "status": "2 linhas para o desenho caber grande (espingarda)",
       "description": "Espingarda de cano serrado, minúscula (bônus da edição Deluxe). Ocupa pouquíssimo espaço.",
       "tamanhoJogo": [
         5,
@@ -272,11 +272,11 @@
       "name": "SR M1903",
       "category": "weaponry",
       "size": [
-        4,
-        1
+        8,
+        2
       ],
       "forceHorizontal": true,
-      "status": "ajustado ao ícone (menos espaço vazio)",
+      "status": "2 linhas para o desenho caber grande (arma longa)",
       "description": "Rifle de ferrolho. O maior dano por tiro entre os rifles, mas atira devagar. Aceita miras.",
       "tamanhoJogo": [
         9,
