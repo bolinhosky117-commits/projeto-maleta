@@ -50,6 +50,7 @@
   .vazio { color: var(--suave); text-align: center; padding: 18px 10px; font-size: 13px; }
   /* Maleta */
   .maleta-area { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .estojo.bau { background: linear-gradient(#22201c, #171512); border-color: #3b352b; }
   .estojo { padding: 14px; border-radius: 14px; background: linear-gradient(#2b2219, #1d1711); border: 1px solid #4a3a28; box-shadow: 0 20px 50px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.06); max-width: 100%; overflow: auto; }
   .grade { position: relative; touch-action: none;
     background-color: var(--celula);
@@ -157,13 +158,15 @@
     <div class="titulo-maleta" id="tituloMaleta"></div>
     <div class="estojo"><div class="grade" id="grade"></div></div>
     <div class="info-maleta" id="infoMaleta"></div>
-    <div class="dica"><b>Botão direito</b> num item mostra os detalhes. <kbd>Enter</kbd> usa a cura selecionada; <kbd>Delete</kbd> tira o item selecionado. Arraste para mover. <kbd>R</kbd>, botão direito ou rodinha giram 90° enquanto arrasta. Solte uma erva em cima de outra para misturar, ou um anexo em cima da arma para equipar. Arraste para o baú ou para o armário para guardar ou devolver.</div>
+    <div class="titulo-maleta" id="tituloBau" style="margin-top:14px"></div>
+    <div class="estojo bau" id="estojoBau"><div class="grade" id="gradeBau"></div></div>
+    <div class="vazio" id="bauTrancado" hidden>🔒 Sem baú nesta cena. Ele aparece quando o mestre colocar um.</div>
+    <div class="dica"><b>Botão direito</b> num item mostra os detalhes. <kbd>Enter</kbd> usa a cura selecionada; <kbd>Delete</kbd> tira o item selecionado. Arraste para mover. <kbd>R</kbd> ou o botão direito giram enquanto arrasta. Solte uma erva em cima de outra para misturar, ou um anexo em cima da arma para equipar. Arraste entre a maleta e o baú (logo abaixo), ou para o armário para devolver.</div>
   </section>
 
   <aside class="lado">
     <section class="painel" id="detalhe"></section>
     <section class="painel" id="cena"></section>
-    <section class="painel bau-alvo" id="bau"></section>
   </aside>
 </main>
 <div id="aviso" role="status"></div>
@@ -191,10 +194,25 @@ function podeEquipar(anexoId, arma, anexoUid) {
   return "ok";
 }
 // Guardar no baú: a arma leva junto os anexos equipados; um anexo sozinho perde o vínculo.
-function paraBau(o) {
+// O baú é uma segunda grade, com a mesma largura da maleta e altura que cresce conforme enche (sem limite).
+const bauVisivel = () => { let fundo = 0; for (const o of S.bau) if (o.x !== undefined) fundo = Math.max(fundo, o.y + medida(o.id, o.rot)[1]); return Math.max(5, fundo + 3); };
+const gradeBau = (linhas) => ({ cols: S.cols, rows: linhas || bauVisivel(), maleta: S.bau.filter(o => o.x !== undefined) });
+// dá lugar a quem entrou no baú sem posição (ou ficou fora depois de mudar o tamanho)
+function arrumarBau() {
+  for (const o of S.bau) {
+    const [w] = o.x === undefined ? [0] : medida(o.id, o.rot);
+    if (o.x === undefined || o.x + w > S.cols) {
+      delete o.x; const l = achaLugar(gradeBau(200), o.id);
+      Object.assign(o, l || { x: 0, y: bauVisivel(), rot: 0 }); o.rot = normalizarRot(o.id, o.rot);
+    }
+  }
+}
+// Guardar no baú: a arma leva junto os anexos equipados; um anexo sozinho perde o vínculo. pos opcional (soltou num lugar do baú).
+function paraBau(o, pos) {
   const levar = equipados(o);
   S.maleta = S.maleta.filter(x => x !== o && !levar.includes(x));
-  S.bau.push({ uid: o.uid, id: o.id, anexos: levar.map(a => a.id), ...estadoDe(o) });
+  S.bau.push({ uid: o.uid, id: o.id, anexos: levar.map(a => a.id), ...estadoDe(o), ...(pos || {}) });
+  arrumarBau();
 }
 // Arma que volta do baú: tenta pôr os anexos dela na grade, já equipados.
 function voltarAnexos(arma, ids) {
@@ -574,13 +592,19 @@ function renderCena() {
 }
 
 function renderBau() {
-  const titulo = `<h2>Baú ${ehMestre() ? "de " + esc(S.nome) : ""} <small>${S.bau.length ? S.bau.length + " itens" : ""}</small></h2>`;
-  if (!podeBau()) { $("bau").innerHTML = titulo + `<div class="vazio">🔒 Sem baú nesta cena. Ele aparece quando o mestre colocar um.</div>`; return; }
-  $("bau").innerHTML = titulo + `<ul class="lista">${S.bau.map(o => entradaHTML(o.id, { origem: "bau", uid: o.uid,
-    extra: ((o.anexos || []).length ? " · + " + o.anexos.map(a => esc(ITENS[a].name)).join(", ") : "")
-      + (o.balas !== undefined ? ` · ${o.balas} balas` : "") + (o.carregado !== undefined ? ` · ${o.carregado}/${capArma(o.id)} carregada` : ""),
-    botoes: `<button class="btn mini" data-acao="tirarBau" data-uid="${o.uid}" title="Levar para a maleta">→</button>` })).join("")
-    || `<li class="vazio">Baú vazio. Arraste itens da maleta para cá.</li>`}</ul>`;
+  arrumarBau();
+  const pode = podeBau();
+  $("tituloBau").textContent = ehMestre() ? `Baú de ${S.nome}` : "Seu baú";
+  $("estojoBau").hidden = !pode; $("bauTrancado").hidden = pode;
+  if (!pode) return;
+  const g = $("gradeBau"), linhas = bauVisivel();
+  g.style.width = S.cols * C + "px"; g.style.height = linhas * C + "px";
+  g.innerHTML = S.bau.map(o => {
+    const [w, h] = medida(o.id, o.rot);
+    const marca = (o.anexos || []).length ? `<span class="marca" style="background:var(--ouro);color:var(--ouro)" title="Guardada com ${o.anexos.map(a => esc(ITENS[a].name)).join(", ")}"></span>` : "";
+    return `<div class="item${ui.sel === o.uid ? " sel" : ""}${drag && drag.uid === o.uid && drag.moveu ? " arrastando" : ""}" data-uid="${o.uid}" title="${esc(ITENS[o.id].name)}"
+      style="left:${o.x * C}px;top:${o.y * C}px;width:${w * C}px;height:${h * C}px">${imgHTML(o.id, o.rot, C)}${marca}${contadorHTML(o)}</div>`;
+  }).join("");
 }
 
 function renderDetalhe() {
@@ -650,7 +674,7 @@ function renderDetalhe() {
 function render() {
   sync();
   const foco = document.activeElement && document.activeElement.id, pos = foco === "busca" ? document.activeElement.selectionStart : null;
-  renderTopo(); renderGrade(); renderEsquerda(); renderCena(); renderBau(); renderDetalhe();
+  renderTopo(); renderGrade(); renderBau(); renderEsquerda(); renderCena(); renderDetalhe();
   if (foco === "busca") { const b = $("busca"); if (b) { b.focus(); b.setSelectionRange(pos, pos); } }
 }
 
@@ -771,7 +795,7 @@ $("esvaziar").addEventListener("click", e => {
   for (const o of S.maleta.slice()) if (S.maleta.includes(o)) paraBau(o);
   S.maleta = []; ui.sel = null; salvar(); render();
 });
-window.addEventListener("resize", () => renderGrade());
+window.addEventListener("resize", () => { renderGrade(); renderBau(); });
 
 /* ======================= USAR (botão no detalhe ou Enter) ======================= */
 const usavel = id => ["cura", "arremessável", "munição especial"].includes((ITENS[id].rpg || {}).tipo);
@@ -793,28 +817,31 @@ function usarItem(o) {
 let modalUid = null;
 function abrirModalDelete(o) {
   modalUid = o.uid;
-  const it = ITENS[o.id], eq = equipados(o);
-  $("modal").innerHTML = `<div class="modal" role="dialog" aria-label="Tirar item da maleta">
+  const it = ITENS[o.id], noBau = S.bau.includes(o), eq = noBau ? [] : equipados(o);
+  $("modal").innerHTML = `<div class="modal" role="dialog" aria-label="Tirar item">
     <div class="foto"><img src="${it.icon}" alt=""></div>
-    <h3>Tirar ${esc(it.name)} da maleta?</h3>
+    <h3>Tirar ${esc(it.name)} ${noBau ? "do baú" : "da maleta"}?</h3>
     <p>${eq.length ? "Os anexos equipados vão junto para o baú; se deletar, eles ficam na maleta, desequipados." : "Escolha para onde vai."}</p>
     <div class="acoes">
       <button class="btn" data-modal="cancelar">Cancelar</button>
-      <button class="btn" data-modal="bau" ${podeBau() ? "" : "disabled title='Sem baú nesta cena'"}>Mover para o baú</button>
+      ${noBau ? `<button class="btn" data-modal="maleta">Mover para a maleta</button>`
+        : `<button class="btn" data-modal="bau" ${podeBau() ? "" : "disabled title='Sem baú nesta cena'"}>Mover para o baú</button>`}
       <button class="btn deletar" data-modal="deletar">Deletar</button>
     </div></div>`;
   $("modal").hidden = false;
-  $("modal").querySelector(podeBau() ? "[data-modal=bau]" : "[data-modal=deletar]").focus();
+  $("modal").querySelector(noBau ? "[data-modal=maleta]" : podeBau() ? "[data-modal=bau]" : "[data-modal=deletar]").focus();
 }
 function fecharModal() { $("modal").hidden = true; $("modal").innerHTML = ""; modalUid = null; }
 $("modal").addEventListener("click", ev => {
   const b = ev.target.closest("[data-modal]");
   if (!b) { if (ev.target === $("modal")) fecharModal(); return; }
-  const o = S.maleta.find(x => x.uid === modalUid);
+  const o = S.maleta.find(x => x.uid === modalUid) || S.bau.find(x => x.uid === modalUid);
+  const noBau = o && S.bau.includes(o);
   if (o && b.dataset.modal === "bau" && podeBau()) { paraBau(o); aviso(`${ITENS[o.id].name} movido para o baú.`); }
+  if (o && b.dataset.modal === "maleta" && porNaMaleta(o.id, o.uid, o.anexos, estadoDe(o))) { S.bau = S.bau.filter(x => x !== o); aviso(`${ITENS[o.id].name} movido para a maleta.`); }
   if (o && b.dataset.modal === "deletar") {
-    for (const a of equipados(o)) delete a.equipadoEm;
-    S.maleta = S.maleta.filter(x => x !== o); aviso(`${ITENS[o.id].name} deletado.`);
+    if (!noBau) for (const a of equipados(o)) delete a.equipadoEm;
+    S.maleta = S.maleta.filter(x => x !== o); S.bau = S.bau.filter(x => x !== o); aviso(`${ITENS[o.id].name} deletado.`);
   }
   if (o && b.dataset.modal !== "cancelar") { if (ui.sel === o.uid) ui.sel = null; if (ui.det === o.uid) ui.det = null; salvar(); }
   fecharModal(); render();
@@ -822,10 +849,10 @@ $("modal").addEventListener("click", ev => {
 document.addEventListener("keydown", ev => {
   if (!$("modal").hidden) { if (ev.key === "Escape") { ev.preventDefault(); fecharModal(); } return; }
   if (drag || ev.target.closest("input,select,textarea,button")) return;
-  const o = S.maleta.find(x => x.uid === ui.sel);
+  const o = S.maleta.find(x => x.uid === ui.sel) || (podeBau() && S.bau.find(x => x.uid === ui.sel));
   if (!o) return;
   if (ev.key === "Delete") { ev.preventDefault(); abrirModalDelete(o); }
-  else if (ev.key === "Enter" && ITENS[o.id].rpg.tipo === "cura") { ev.preventDefault(); usarItem(o); salvar(); render(); }
+  else if (ev.key === "Enter" && ITENS[o.id].rpg.tipo === "cura" && S.maleta.includes(o)) { ev.preventDefault(); usarItem(o); salvar(); render(); }
 });
 
 /* Clicar num item, numa linha de lista ou na grade tira o foco do botão/seletor clicado antes,
@@ -845,9 +872,10 @@ document.addEventListener("pointerdown", ev => {
   if (!item && !ent) return;
   ev.preventDefault();
   if (item) {
-    const o = S.maleta.find(x => x.uid === item.dataset.uid);
+    const doBau = !!item.closest("#gradeBau");
+    const o = (doBau ? S.bau : S.maleta).find(x => x.uid === item.dataset.uid);
     const r = item.getBoundingClientRect();
-    drag = { origem: "maleta", uid: o.uid, id: o.id, rot: o.rot, gx: Math.floor((ev.clientX - r.left) / C), gy: Math.floor((ev.clientY - r.top) / C) };
+    drag = { origem: doBau ? "bau" : "maleta", uid: o.uid, id: o.id, rot: o.rot || 0, gx: Math.floor((ev.clientX - r.left) / C), gy: Math.floor((ev.clientY - r.top) / C) };
   } else {
     const id = ent.dataset.id, it = ITENS[id];
     drag = { origem: ent.dataset.origem, uid: ent.dataset.uid || null, arm: ent.dataset.arm || null, id, rot: 0, gx: Math.floor((it.cols - 1) / 2), gy: Math.floor((it.rows - 1) / 2) };
@@ -859,9 +887,9 @@ document.addEventListener("pointermove", ev => {
   if (!drag) return;
   if (!drag.moveu) {
     if (Math.hypot(ev.clientX - drag.x0, ev.clientY - drag.y0) < 6) return;
-    drag.moveu = true; if (drag.origem === "maleta") ui.sel = drag.uid;
+    drag.moveu = true; if (drag.origem === "maleta" || drag.origem === "bau") ui.sel = drag.uid;
     fantasma = document.createElement("div"); fantasma.className = "fantasma"; document.body.appendChild(fantasma);
-    renderGrade();
+    renderGrade(); renderBau();
   }
   drag.cx = ev.clientX; drag.cy = ev.clientY;
   atualizarArraste();
@@ -877,13 +905,24 @@ function atualizarArraste() {
   // Baú ou armário embaixo do cursor?
   limparMarcasDrop();
   const sobEl = document.elementFromPoint(drag.cx, drag.cy);
-  const bauEl = sobEl && sobEl.closest("#bau"), armEl = sobEl && sobEl.closest("[data-drop-arm]");
-  drag.noBau = !!bauEl && podeBau() && drag.origem !== "bau";
+  const armEl = sobEl && sobEl.closest("[data-drop-arm]");
   drag.noArm = armEl && !(drag.origem === "armario" && drag.arm === armEl.dataset.dropArm) ? armEl.dataset.dropArm : null;
-  if (drag.noBau) bauEl.classList.add("sobre");
   if (drag.noArm) armEl.classList.add("sobre");
   if (pegada) { pegada.remove(); pegada = null; }
   drag.alvo = null;
+  // em cima da grade do baú: só posiciona (sem misturar nem equipar lá dentro)
+  if (podeBau()) {
+    const gb = $("gradeBau").getBoundingClientRect();
+    if (drag.cx >= gb.left && drag.cx < gb.right && drag.cy >= gb.top && drag.cy < gb.bottom) {
+      const x = Math.floor((drag.cx - gb.left) / C) - drag.gx, y = Math.floor((drag.cy - gb.top) / C) - drag.gy;
+      const ok = cabe(gradeBau(), drag.id, drag.rot, x, y, drag.origem === "bau" ? [drag.uid] : []);
+      pegada = document.createElement("div"); pegada.className = "pegada " + (ok ? "ok" : "erro");
+      Object.assign(pegada.style, { left: x * C + "px", top: y * C + "px", width: w * C + "px", height: h * C + "px" });
+      drag.alvo = ok ? { tipo: "porBau", x, y } : { tipo: "erro" };
+      $("gradeBau").appendChild(pegada);
+      return;
+    }
+  }
   const g = $("grade").getBoundingClientRect();
   const dentro = drag.cx >= g.left && drag.cx < g.right && drag.cy >= g.top && drag.cy < g.bottom;
   if (!dentro) return;
@@ -936,7 +975,6 @@ document.addEventListener("contextmenu", ev => {
   else { ui.det = null; ui.selFonte = { origem: ent.dataset.origem, id: ent.dataset.id, arm: ent.dataset.arm || null }; }
   render();
 });
-document.addEventListener("wheel", ev => { if (drag && drag.moveu) { ev.preventDefault(); girarArraste(); } }, { passive: false });
 
 document.addEventListener("pointerup", ev => {
   if (!drag) return;
@@ -946,7 +984,7 @@ document.addEventListener("pointerup", ev => {
   limparMarcasDrop();
   if (!d.moveu) { // foi um clique
     // clique esquerdo só seleciona; os detalhes abrem com o botão direito
-    if (d.origem === "maleta") { ui.sel = d.uid; if (ui.det && ui.det !== d.uid) ui.det = null; ui.selFonte = null; }
+    if (d.origem === "maleta" || (d.origem === "bau" && S.bau.some(x => x.uid === d.uid && x.x !== undefined))) { ui.sel = d.uid; if (ui.det && ui.det !== d.uid) ui.det = null; ui.selFonte = null; }
     return render();
   }
   const o = d.origem === "maleta" ? S.maleta.find(x => x.uid === d.uid) : null;
@@ -956,9 +994,12 @@ document.addEventListener("pointerup", ev => {
     else if (d.origem === "catalogo") { estoqueAdd(arm, d.id, 1); aviso(`+1 ${ITENS[d.id].name} no ${arm.nome}.`); }
     else if (d.origem === "bau") { consumir(d); estoqueAdd(arm, d.id, 1); aviso(`${ITENS[d.id].name} devolvido ao ${arm.nome}.`); }
     else if (d.origem === "armario") { consumir(d); estoqueAdd(arm, d.id, 1); }
-  } else if (d.noBau) {
-    if (o) { paraBau(o); aviso(`${ITENS[o.id].name} guardado no baú.`); }
-    else { consumir(d); S.bau.push(prepararItem({ uid: novoUid(), id: d.id, anexos: [] })); aviso(`${ITENS[d.id].name} guardado no baú.`); }
+  } else if (d.alvo && d.alvo.tipo === "porBau") {
+    const pos = { x: d.alvo.x, y: d.alvo.y, rot: d.rot };
+    if (d.origem === "bau") { const b = S.bau.find(x => x.uid === d.uid); if (b) Object.assign(b, pos); }
+    else if (o) { paraBau(o, pos); aviso(`${ITENS[o.id].name} guardado no baú.`); }
+    else { consumir(d); S.bau.push(prepararItem({ uid: novoUid(), id: d.id, anexos: [], ...pos })); aviso(`${ITENS[d.id].name} guardado no baú.`); }
+    ui.sel = d.origem === "bau" ? d.uid : (o ? o.uid : ui.sel);
   } else if (d.alvo && d.alvo.tipo === "equipar") {
     const arma = d.alvo.sob;
     let anexo = o; // da maleta: fica onde estava, só ganha o vínculo

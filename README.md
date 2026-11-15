@@ -30,12 +30,13 @@ Abra `prototipo/maleta.html` com dois cliques (não precisa de servidor). No top
   do jogador escolhido em "Maleta de". No painel **Cena**, coloca e tira objetos: **Armários** (com estoque que ele define: −, +, ∞, ✕)
   e o **Baú**. Também é o único que muda o tamanho da maleta.
 - **Jogador:** vê só a própria maleta e o que está **na cena**. Pega itens do armário (arrastando ou no +), devolve arrastando de volta.
-  O baú é de cada jogador (só os itens dele) e só abre se o mestre tiver posto um Baú na cena.
+  O baú é de cada jogador (só os itens dele) e só abre se o mestre tiver posto um Baú na cena. Ele aparece como uma
+  **segunda grade logo abaixo da maleta** (mesma largura, cresce conforme enche): arraste itens direto entre as duas.
 - **Dado de vida** (o dado de cura do personagem): o mestre escolhe por jogador no topo; as ervas rolam esse dado ao usar.
 - **Botão direito** num item (na maleta, no armário, no catálogo ou no baú) abre os detalhes; o clique esquerdo só seleciona.
 - **Enter** com uma cura selecionada usa o item (o botão Usar também fica nos detalhes do botão direito).
 - **Delete** no teclado com um item selecionado abre uma janela: "Mover para o baú" ou "Deletar" (Esc cancela).
-- Na maleta: arrastar, girar (R; facas em 4 posições, o resto deitado ou em pé), misturar ervas, equipar anexos,
+- Na maleta: arrastar, girar (R ou botão direito durante o arrasto; facas em 4 posições, o resto deitado ou em pé), misturar ervas, equipar anexos,
   atirar e recarregar (munição contada em balas; juntar caixas soltando uma na outra), usar itens e organizar.
 
 O código fica em `prototipo/maleta.src.html`; depois de mexer nele ou nos itens, rode `python tools/build_prototipo.py`
