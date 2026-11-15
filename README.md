@@ -38,7 +38,7 @@ Abra `prototipo/maleta.html` com dois cliques (não precisa de servidor). No top
 - **Botão direito** num item (na maleta, no armário, no catálogo ou no baú) abre os detalhes; o clique esquerdo só seleciona.
 - **Shift + clique** num item passa ele da maleta para o baú (ou do baú para a maleta). No armário (ou no catálogo, para o mestre), manda 1 direto para a maleta.
 - **Espaço** (ou Enter) com uma cura selecionada usa o item (o botão Usar também fica nos detalhes do botão direito).
-- **Delete** no teclado com um item selecionado abre uma janela: "Mover para o baú" ou "Deletar" (Esc cancela).
+- **Delete** no teclado com um item selecionado, ou arrastar o item e soltar fora da maleta, abre uma janela: "Mover para o baú" ou "Deletar" (Esc cancela).
 - Na maleta: arrastar, girar (R ou botão direito durante o arrasto; facas em 4 posições, o resto deitado ou em pé), misturar ervas, equipar anexos,
   atirar e recarregar (munição contada em balas; caixas do mesmo tipo se juntam soltando uma na outra, sozinhas quando
   uma caixa entra na maleta e ao clicar em Organizar), usar itens e organizar.

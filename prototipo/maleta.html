@@ -1120,6 +1120,11 @@ document.addEventListener("pointerup", ev => {
       if (absorverCaixa(S, n) && !S.maleta.includes(n)) { ui.sel = null; aviso(`${ITENS[d.id].name}: balas juntadas na caixa que já estava na maleta.`, "mix"); }
     }
   } else if (d.alvo && d.alvo.tipo === "erro") aviso("Não cabe aí.", "erro");
+  else if (!d.alvo && (o || d.origem === "bau")) {
+    // soltou fora da maleta (sem alvo): pergunta se move ou deleta
+    const b = o || S.bau.find(x => x.uid === d.uid);
+    if (b) { salvar(); render(); return abrirModalDelete(b); }
+  }
   salvar(); render();
 });
 
