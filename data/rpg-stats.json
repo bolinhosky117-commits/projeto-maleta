@@ -1,5 +1,5 @@
 {
-  "_comment": "Proposta de números para o RPG (Ez, com ajustes do mestre em 14/11/2026). Escala: humano tem até 12 PV; a pistola inicial (SG-09 R) causa 1d8. Ervas curam em 'dados de vida' (do sistema do mestre): verde 1, vermelha ½ + tira a dor, amarela ½ + pulso de adrenalina; misturas somam; 3 ervas curam a vida toda. O acerto e o modificador dos anexos ficam com o mestre. Explicação em docs/conversao-rpg.md.",
+  "_comment": "Proposta de números para o RPG (Ez, com ajustes do mestre em 14/11/2026). Escala: humano tem até 12 PV; a pistola inicial (SG-09 R) causa 1d8. Ervas curam em 'dados de vida' (do sistema do mestre): verde 1, vermelha ½ + tira a dor, amarela ½ + pulso de adrenalina; misturas somam; 3 ervas curam a vida toda. O acerto e o modificador dos anexos ficam com o mestre. Explicação em docs/conversao-rpg.md. 'tirosPorSegundo' = cadência de tiro (Rate of Fire do RE4 Remake, aproximada; nas armas de rajada conta rajadas por segundo): o protótipo bloqueia Atirar até passar 1/tirosPorSegundo segundos.",
   "items": {
     "kitchen-knife": {
       "tipo": "faca",
@@ -47,7 +47,8 @@
       "tags": [
         "crítico ampliado",
         "aceita mira laser"
-      ]
+      ],
+      "tirosPorSegundo": 1.52
     },
     "punisher": {
       "tipo": "pistola",
@@ -60,7 +61,8 @@
       "tags": [
         "perfurante",
         "aceita mira laser"
-      ]
+      ],
+      "tirosPorSegundo": 1.52
     },
     "sentinel-nine": {
       "tipo": "pistola",
@@ -73,7 +75,8 @@
       "tags": [
         "crítico ampliado",
         "aceita mira laser"
-      ]
+      ],
+      "tirosPorSegundo": 2.0
     },
     "blacktail": {
       "tipo": "pistola",
@@ -83,7 +86,8 @@
       "alcance": "médio",
       "precisaoJogo": 4.2,
       "municao": "handgun-ammo",
-      "tags": []
+      "tags": [],
+      "tirosPorSegundo": 2.2
     },
     "red9": {
       "tipo": "pistola",
@@ -96,7 +100,8 @@
       "tags": [
         "recuo forte",
         "aceita coronha"
-      ]
+      ],
+      "tirosPorSegundo": 1.26
     },
     "matilda": {
       "tipo": "pistola",
@@ -110,7 +115,8 @@
       "municao": "handgun-ammo",
       "tags": [
         "aceita coronha"
-      ]
+      ],
+      "tirosPorSegundo": 1.2
     },
     "tmp": {
       "tipo": "submetralhadora",
@@ -124,7 +130,8 @@
       "municao": "submachine-gun-ammo",
       "tags": [
         "aceita coronha"
-      ]
+      ],
+      "tirosPorSegundo": 1.5
     },
     "le-5": {
       "tipo": "submetralhadora",
@@ -139,7 +146,8 @@
       "tags": [
         "perfurante",
         "aceita mira"
-      ]
+      ],
+      "tirosPorSegundo": 1.4
     },
     "chicago-sweeper": {
       "tipo": "submetralhadora",
@@ -151,7 +159,8 @@
       "alcance": "médio",
       "precisaoJogo": 3.0,
       "municao": "submachine-gun-ammo",
-      "tags": []
+      "tags": [],
+      "tirosPorSegundo": 1.2
     },
     "cqbr-assault-rifle": {
       "tipo": "rifle",
@@ -166,7 +175,8 @@
       "tags": [
         "perfurante",
         "aceita mira"
-      ]
+      ],
+      "tirosPorSegundo": 1.3
     },
     "stingray": {
       "tipo": "rifle",
@@ -179,7 +189,8 @@
       "tags": [
         "perfurante",
         "aceita mira"
-      ]
+      ],
+      "tirosPorSegundo": 1.6
     },
     "sr-m1903": {
       "tipo": "rifle",
@@ -193,7 +204,8 @@
         "perfurante",
         "ferrolho (atira devagar)",
         "aceita mira"
-      ]
+      ],
+      "tirosPorSegundo": 0.6
     },
     "skull-shaker": {
       "tipo": "espingarda",
@@ -205,7 +217,8 @@
       "municao": "shotgun-shells",
       "tags": [
         "espalha"
-      ]
+      ],
+      "tirosPorSegundo": 0.8
     },
     "w-870": {
       "tipo": "espingarda",
@@ -217,7 +230,8 @@
       "municao": "shotgun-shells",
       "tags": [
         "espalha"
-      ]
+      ],
+      "tirosPorSegundo": 0.85
     },
     "striker": {
       "tipo": "espingarda",
@@ -230,7 +244,8 @@
       "tags": [
         "espalha",
         "atira rápido"
-      ]
+      ],
+      "tirosPorSegundo": 2.0
     },
     "riot-gun": {
       "tipo": "espingarda",
@@ -242,7 +257,8 @@
       "municao": "shotgun-shells",
       "tags": [
         "espalha"
-      ]
+      ],
+      "tirosPorSegundo": 1.2
     },
     "broken-butterfly": {
       "tipo": "magnum",
@@ -255,7 +271,8 @@
       "tags": [
         "perfurante",
         "recuo forte"
-      ]
+      ],
+      "tirosPorSegundo": 0.7
     },
     "killer7": {
       "tipo": "magnum",
@@ -269,7 +286,8 @@
         "perfurante",
         "crítico ampliado",
         "mira laser embutida"
-      ]
+      ],
+      "tirosPorSegundo": 1.1
     },
     "handcannon": {
       "tipo": "magnum",
@@ -282,7 +300,8 @@
       "tags": [
         "perfurante",
         "recuo forte"
-      ]
+      ],
+      "tirosPorSegundo": 0.6
     },
     "bolt-thrower": {
       "tipo": "especial",
@@ -296,7 +315,8 @@
         "silenciosa",
         "virotes recuperáveis",
         "aceita minas"
-      ]
+      ],
+      "tirosPorSegundo": 0.7
     },
     "rocket-launcher": {
       "tipo": "especial",

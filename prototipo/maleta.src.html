@@ -329,6 +329,13 @@ const ehCaixa = id => !!(ITENS[id].rpg || {}).balasPorCaixa;
 const ehArmaDeFogo = id => !!(ITENS[id].rpg || {}).municao;
 const capArma = id => { const r = ITENS[id].rpg; return r.pente * (r.balasPorRajada || 1); };
 const porDisparo = id => ITENS[id].rpg.balasPorRajada || 1;
+// Cadência: depois de atirar, a arma fica um tempo sem poder atirar de novo (1 / tirosPorSegundo; na rajada, no mínimo o tempo da rajada)
+const prontaEm = {};   // uid da arma → hora (ms) em que pode atirar de novo
+function esperaTiro(id) {
+  const r = ITENS[id].rpg, rajada = (porDisparo(id) - 1) * (((SONS.mapa.armas || {})[id] || {}).cadencia || 0.09) + 0.12;
+  return Math.max(r.tirosPorSegundo ? 1 / r.tirosPorSegundo : 0.5, rajada) * 1000;
+}
+const falta = uid => Math.max(0, (prontaEm[uid] || 0) - performance.now());
 // item novo (do armário, catálogo ou baú antigo) chega cheio
 function prepararItem(o) {
   if (ehCaixa(o.id) && o.balas === undefined) o.balas = ITENS[o.id].rpg.balasPorCaixa;
@@ -758,7 +765,7 @@ function acoesDe(o, fonte) {
   const add = (acao, rotulo, extra = {}) => L.push({ acao, rotulo, ...extra });
   const naMaleta = o && S.maleta.includes(o), noBau = o && S.bau.includes(o);
   if (naMaleta && ehArmaDeFogo(id)) {
-    add("atirar", r.rajada ? "Disparar rajada" : "Atirar", { cls: "ouro", title: o.carregado >= porDisparo(id) ? "" : "Sem bala: recarregue" });
+    add("atirar", r.rajada ? "Disparar rajada" : "Atirar", { cls: "ouro", off: falta(o.uid) ? "Recuperando…" : "", title: o.carregado >= porDisparo(id) ? "" : "Sem bala: recarregue" });
     add("recarregar", "Recarregar", { tecla: "R", off: o.carregado < capArma(id) ? "" : "Já está cheia" });
   } else if (r.dano && r.dano !== "0" && /d/.test(r.dano)) add("rolarDano", "Rolar dano", { cls: "ouro", data: { id } });
   if (naMaleta && usavel(id)) add("usar", "Usar", { cls: "ouro", tecla: "Espaço", title: "Atalho: Espaço com o item selecionado" });
@@ -844,6 +851,7 @@ function renderDetalhe() {
   add("Dano", r.dano && (r.rajada ? r.dano + " por rajada" : r.dano));
   add("Área", r.area);
   add("Pente", r.pente && (r.pente + (r.rajada ? ` rajadas (${r.balasPorRajada} balas cada)` : "")));
+  add("Cadência", r.tirosPorSegundo && `${String(r.tirosPorSegundo).replace(".", ",")} ${r.rajada ? "rajadas" : "tiros"} por segundo`);
   add("Recarga", r.recarga && { rapida: "rápida", normal: "normal", lenta: "lenta" }[r.recarga]);
   add("Alcance", r.alcance);
   add("Munição", r.municao && ITENS[r.municao] && ITENS[r.municao].name);
@@ -971,9 +979,12 @@ function acao(nome, el) {
       break;
     }
     case "atirar":
+      if (o && falta(o.uid)) break;   // ainda em cadência: não atira nem faz som
       if (o && o.carregado < porDisparo(o.id)) { tocar(o.id, "vazio"); aviso(`${ITENS[o.id].name}: sem bala. Recarregue.`, "erro"); }
       else if (o) {
         tocar(o.id, "atirar", porDisparo(o.id));
+        const ms = esperaTiro(o.id); prontaEm[o.uid] = performance.now() + ms;
+        setTimeout(() => { if (!drag && !menuAberto()) render(); }, ms + 20);   // religa o botão quando a arma estiver pronta
         o.carregado -= porDisparo(o.id); const r = ITENS[o.id].rpg, x = rolar(r.dano);
         aviso(`${ITENS[o.id].name}: ${x.total} de dano [${x.dados.join(" + ")}${x.bonus ? " + " + x.bonus : ""}]. Restam ${o.carregado}/${capArma(o.id)}.`, "mix");
       }

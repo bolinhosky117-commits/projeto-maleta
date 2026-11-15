@@ -40,6 +40,7 @@ O protótipo é HTML/JS puro; a stack do sistema final ainda não foi definida �
 - Rotação: **facas** giram em 4 posições; **o resto** fica deitado ou em pé apontando para baixo (2 posições); itens quadrados não giram.
 - Ícones esticados para preencher o retângulo do item, no máximo 20% (`ESTICA_MAX` no `make_icons.py`) para não distorcer demais. `endireitar` no `data/` endireita um item que veio inclinado.
 - Munição em balas: caixas com `balas`, armas com `carregado`; Atirar, Recarregar (pega só o que falta) e juntar caixas.
+- Cadência: `tirosPorSegundo` no rpg-stats (Rate of Fire do RE4 Remake, aproximado). Depois de atirar, Atirar fica desligado ("Recuperando…") por 1/tirosPorSegundo (na rajada, no mínimo a duração da rajada); nada de tiro nem som nesse tempo.
 - Organizar testa vários jeitos e fica com o que deixa a área livre com menos cantos (e menos itens em pé).
 - **Catálogo** (todos os itens) é só do mestre. **Armário** e **Baú** são objetos que o mestre põe na cena. O mestre define
   quais itens e quantos ficam em cada armário (quantidade ou ∞). O baú é por jogador (cada um só vê os próprios itens) e só

@@ -118,7 +118,8 @@
         "tags": [
           "crítico ampliado",
           "aceita mira laser"
-        ]
+        ],
+        "tirosPorSegundo": 1.52
       }
     },
     {
@@ -143,7 +144,8 @@
         "tags": [
           "perfurante",
           "aceita mira laser"
-        ]
+        ],
+        "tirosPorSegundo": 1.52
       }
     },
     {
@@ -168,7 +170,8 @@
         "tags": [
           "recuo forte",
           "aceita coronha"
-        ]
+        ],
+        "tirosPorSegundo": 1.26
       }
     },
     {
@@ -190,7 +193,8 @@
         "alcance": "médio",
         "precisaoJogo": 4.2,
         "municao": "handgun-ammo",
-        "tags": []
+        "tags": [],
+        "tirosPorSegundo": 2.2
       }
     },
     {
@@ -216,7 +220,8 @@
         "municao": "handgun-ammo",
         "tags": [
           "aceita coronha"
-        ]
+        ],
+        "tirosPorSegundo": 1.2
       }
     },
     {
@@ -241,7 +246,8 @@
         "tags": [
           "crítico ampliado",
           "aceita mira laser"
-        ]
+        ],
+        "tirosPorSegundo": 2.0
       }
     },
     {
@@ -266,7 +272,8 @@
         "tags": [
           "perfurante",
           "recuo forte"
-        ]
+        ],
+        "tirosPorSegundo": 0.7
       }
     },
     {
@@ -292,7 +299,8 @@
           "perfurante",
           "crítico ampliado",
           "mira laser embutida"
-        ]
+        ],
+        "tirosPorSegundo": 1.1
       }
     },
     {
@@ -317,7 +325,8 @@
         "tags": [
           "perfurante",
           "recuo forte"
-        ]
+        ],
+        "tirosPorSegundo": 0.6
       }
     },
     {
@@ -343,7 +352,8 @@
         "municao": "submachine-gun-ammo",
         "tags": [
           "aceita coronha"
-        ]
+        ],
+        "tirosPorSegundo": 1.5
       }
     },
     {
@@ -370,7 +380,8 @@
         "tags": [
           "perfurante",
           "aceita mira"
-        ]
+        ],
+        "tirosPorSegundo": 1.4
       }
     },
     {
@@ -394,7 +405,8 @@
         "alcance": "médio",
         "precisaoJogo": 3.0,
         "municao": "submachine-gun-ammo",
-        "tags": []
+        "tags": [],
+        "tirosPorSegundo": 1.2
       }
     },
     {
@@ -418,7 +430,8 @@
         "municao": "shotgun-shells",
         "tags": [
           "espalha"
-        ]
+        ],
+        "tirosPorSegundo": 0.85
       }
     },
     {
@@ -442,7 +455,8 @@
         "municao": "shotgun-shells",
         "tags": [
           "espalha"
-        ]
+        ],
+        "tirosPorSegundo": 1.2
       }
     },
     {
@@ -467,7 +481,8 @@
         "tags": [
           "espalha",
           "atira rápido"
-        ]
+        ],
+        "tirosPorSegundo": 2.0
       }
     },
     {
@@ -491,7 +506,8 @@
         "municao": "shotgun-shells",
         "tags": [
           "espalha"
-        ]
+        ],
+        "tirosPorSegundo": 0.8
       }
     },
     {
@@ -517,7 +533,8 @@
           "perfurante",
           "ferrolho (atira devagar)",
           "aceita mira"
-        ]
+        ],
+        "tirosPorSegundo": 0.6
       }
     },
     {
@@ -542,7 +559,8 @@
         "tags": [
           "perfurante",
           "aceita mira"
-        ]
+        ],
+        "tirosPorSegundo": 1.6
       }
     },
     {
@@ -569,7 +587,8 @@
         "tags": [
           "perfurante",
           "aceita mira"
-        ]
+        ],
+        "tirosPorSegundo": 1.3
       }
     },
     {
@@ -595,7 +614,8 @@
           "silenciosa",
           "virotes recuperáveis",
           "aceita minas"
-        ]
+        ],
+        "tirosPorSegundo": 0.7
       }
     },
     {
