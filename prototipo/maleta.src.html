@@ -50,6 +50,7 @@
   .vazio { color: var(--suave); text-align: center; padding: 18px 10px; font-size: 13px; }
   /* Maleta */
   .maleta-area { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .entrada.sel { outline: 2px solid var(--ouro); outline-offset: -2px; background: var(--painel2); }
   .estojo.bau { background: linear-gradient(#22201c, #171512); border-color: #3b352b; }
   .estojo { padding: 14px; border-radius: 14px; background: linear-gradient(#2b2219, #1d1711); border: 1px solid #4a3a28; box-shadow: 0 20px 50px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.06); max-width: 100%; overflow: auto; }
   .grade { position: relative; touch-action: none;
@@ -160,15 +161,13 @@
     <div class="titulo-maleta" id="tituloMaleta"></div>
     <div class="estojo"><div class="grade" id="grade"></div></div>
     <div class="info-maleta" id="infoMaleta"></div>
-    <div class="titulo-maleta" id="tituloBau" style="margin-top:14px"></div>
-    <div class="estojo bau" id="estojoBau"><div class="grade" id="gradeBau"></div></div>
-    <div class="vazio" id="bauTrancado" hidden>🔒 Sem baú nesta cena. Ele aparece quando o mestre colocar um.</div>
-    <div class="dica"><b>Botão direito</b> num item mostra os detalhes. <kbd>Enter</kbd> usa a cura selecionada; <kbd>Delete</kbd> tira o item selecionado. <kbd>Shift</kbd>+clique passa o item entre maleta e baú. Arraste para mover. <kbd>R</kbd> ou o botão direito giram enquanto arrasta. Solte uma erva em cima de outra para misturar, ou um anexo em cima da arma para equipar. Arraste entre a maleta e o baú (logo abaixo), ou para o armário para devolver.</div>
+    <div class="dica"><b>Botão direito</b> num item mostra os detalhes. <kbd>Enter</kbd> usa a cura selecionada; <kbd>Delete</kbd> tira o item selecionado. <kbd>Shift</kbd>+clique passa o item entre maleta e baú. Arraste para mover. <kbd>R</kbd> ou o botão direito giram enquanto arrasta. Solte uma erva em cima de outra para misturar, ou um anexo em cima da arma para equipar. Arraste para o baú (à direita) para guardar, ou para o armário para devolver.</div>
   </section>
 
   <aside class="lado">
     <section class="painel" id="detalhe"></section>
     <section class="painel" id="cena"></section>
+    <section class="painel bau-alvo" id="bau"></section>
   </aside>
 </main>
 <div id="aviso" role="status"></div>
@@ -594,19 +593,14 @@ function renderCena() {
 }
 
 function renderBau() {
-  arrumarBau();
-  const pode = podeBau();
-  $("tituloBau").textContent = ehMestre() ? `Baú de ${S.nome}` : "Seu baú";
-  $("estojoBau").hidden = !pode; $("bauTrancado").hidden = pode;
-  if (!pode) return;
-  const g = $("gradeBau"), linhas = bauVisivel();
-  g.style.width = S.cols * C + "px"; g.style.height = linhas * C + "px";
-  g.innerHTML = S.bau.map(o => {
-    const [w, h] = medida(o.id, o.rot);
-    const marca = (o.anexos || []).length ? `<span class="marca" style="background:var(--ouro);color:var(--ouro)" title="Guardada com ${o.anexos.map(a => esc(ITENS[a].name)).join(", ")}"></span>` : "";
-    return `<div class="item${ui.sel === o.uid ? " sel" : ""}${drag && drag.uid === o.uid && drag.moveu ? " arrastando" : ""}" data-uid="${o.uid}" title="${esc(ITENS[o.id].name)}"
-      style="left:${o.x * C}px;top:${o.y * C}px;width:${w * C}px;height:${h * C}px">${imgHTML(o.id, o.rot, C)}${marca}${contadorHTML(o)}</div>`;
-  }).join("");
+  const titulo = `<h2>Baú ${ehMestre() ? "de " + esc(S.nome) : ""} <small>${S.bau.length ? S.bau.length + " itens" : ""}</small></h2>`;
+  if (!podeBau()) { $("bau").innerHTML = titulo + `<div class="vazio">🔒 Sem baú nesta cena. Ele aparece quando o mestre colocar um.</div>`; return; }
+  $("bau").innerHTML = titulo + `<ul class="lista">${S.bau.map(o => entradaHTML(o.id, { origem: "bau", uid: o.uid,
+    extra: ((o.anexos || []).length ? " · + " + o.anexos.map(a => esc(ITENS[a].name)).join(", ") : "")
+      + (o.balas !== undefined ? ` · ${o.balas} balas` : "") + (o.carregado !== undefined ? ` · ${o.carregado}/${capArma(o.id)} carregada` : ""),
+    botoes: `<button class="btn mini" data-acao="tirarBau" data-uid="${o.uid}" title="Levar para a maleta">→</button>` })).join("")
+    || `<li class="vazio">Baú vazio. Arraste itens da maleta para cá.</li>`}</ul>`;
+  if (ui.sel) { const el = $("bau").querySelector(`.entrada[data-uid="${ui.sel}"]`); if (el) el.classList.add("sel"); }
 }
 
 function renderDetalhe() {
@@ -797,7 +791,7 @@ $("esvaziar").addEventListener("click", e => {
   for (const o of S.maleta.slice()) if (S.maleta.includes(o)) paraBau(o);
   S.maleta = []; ui.sel = null; salvar(); render();
 });
-window.addEventListener("resize", () => { renderGrade(); renderBau(); });
+window.addEventListener("resize", () => renderGrade());
 
 /* ======================= USAR (botão no detalhe ou Enter) ======================= */
 const usavel = id => ["cura", "arremessável", "munição especial"].includes((ITENS[id].rpg || {}).tipo);
@@ -874,8 +868,8 @@ document.addEventListener("pointerdown", ev => {
   if (!item && !ent) return;
   ev.preventDefault();
   if (item) {
-    const doBau = !!item.closest("#gradeBau");
-    const o = (doBau ? S.bau : S.maleta).find(x => x.uid === item.dataset.uid);
+    const doBau = false;
+    const o = S.maleta.find(x => x.uid === item.dataset.uid);
     const r = item.getBoundingClientRect();
     drag = { origem: doBau ? "bau" : "maleta", uid: o.uid, id: o.id, rot: o.rot || 0, gx: Math.floor((ev.clientX - r.left) / C), gy: Math.floor((ev.clientY - r.top) / C) };
   } else {
@@ -915,19 +909,10 @@ function atualizarArraste() {
   if (drag.noArm) armEl.classList.add("sobre");
   if (pegada) { pegada.remove(); pegada = null; }
   drag.alvo = null;
-  // em cima da grade do baú: só posiciona (sem misturar nem equipar lá dentro)
-  if (podeBau()) {
-    const gb = $("gradeBau").getBoundingClientRect();
-    if (drag.cx >= gb.left && drag.cx < gb.right && drag.cy >= gb.top && drag.cy < gb.bottom) {
-      const x = Math.floor((drag.cx - gb.left) / C) - drag.gx, y = Math.floor((drag.cy - gb.top) / C) - drag.gy;
-      const ok = cabe(gradeBau(), drag.id, drag.rot, x, y, drag.origem === "bau" ? [drag.uid] : []);
-      pegada = document.createElement("div"); pegada.className = "pegada " + (ok ? "ok" : "erro");
-      Object.assign(pegada.style, { left: x * C + "px", top: y * C + "px", width: w * C + "px", height: h * C + "px" });
-      drag.alvo = ok ? { tipo: "porBau", x, y } : { tipo: "erro" };
-      $("gradeBau").appendChild(pegada);
-      return;
-    }
-  }
+  // em cima do painel do baú: guarda
+  const bauEl = sobEl && sobEl.closest("#bau");
+  drag.noBau = !!bauEl && podeBau() && drag.origem !== "bau";
+  if (drag.noBau) { bauEl.classList.add("sobre"); return; }
   const g = $("grade").getBoundingClientRect();
   const dentro = drag.cx >= g.left && drag.cx < g.right && drag.cy >= g.top && drag.cy < g.bottom;
   if (!dentro) return;
@@ -1001,7 +986,7 @@ document.addEventListener("pointerup", ev => {
   }
   if (!d.moveu) { // foi um clique
     // clique esquerdo só seleciona; os detalhes abrem com o botão direito
-    if (d.origem === "maleta" || (d.origem === "bau" && S.bau.some(x => x.uid === d.uid && x.x !== undefined))) { ui.sel = d.uid; if (ui.det && ui.det !== d.uid) ui.det = null; ui.selFonte = null; }
+    if (d.origem === "maleta" || d.origem === "bau") { ui.sel = d.uid; if (ui.det && ui.det !== d.uid) ui.det = null; ui.selFonte = null; }
     return render();
   }
   const o = d.origem === "maleta" ? S.maleta.find(x => x.uid === d.uid) : null;
@@ -1016,12 +1001,9 @@ document.addEventListener("pointerup", ev => {
     else if (d.origem === "catalogo") { estoqueAdd(arm, d.id, 1); aviso(`+1 ${ITENS[d.id].name} no ${arm.nome}.`); }
     else if (d.origem === "bau") { consumir(d); estoqueAdd(arm, d.id, 1); aviso(`${ITENS[d.id].name} devolvido ao ${arm.nome}.`); }
     else if (d.origem === "armario") { consumir(d); estoqueAdd(arm, d.id, 1); }
-  } else if (d.alvo && d.alvo.tipo === "porBau") {
-    const pos = { x: d.alvo.x, y: d.alvo.y, rot: d.rot };
-    if (d.origem === "bau") { const b = S.bau.find(x => x.uid === d.uid); if (b) Object.assign(b, pos); }
-    else if (o) { paraBau(o, pos); aviso(`${ITENS[o.id].name} guardado no baú.`); }
-    else { consumir(d); S.bau.push(prepararItem({ uid: novoUid(), id: d.id, anexos: [], ...pos })); aviso(`${ITENS[d.id].name} guardado no baú.`); }
-    ui.sel = d.origem === "bau" ? d.uid : (o ? o.uid : ui.sel);
+  } else if (d.noBau) {
+    if (o) { paraBau(o); aviso(`${ITENS[o.id].name} guardado no baú.`); }
+    else { consumir(d); S.bau.push(prepararItem({ uid: novoUid(), id: d.id, anexos: [] })); aviso(`${ITENS[d.id].name} guardado no baú.`); }
   } else if (d.alvo && d.alvo.tipo === "equipar") {
     const arma = d.alvo.sob;
     let anexo = o; // da maleta: fica onde estava, só ganha o vínculo

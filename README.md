@@ -31,8 +31,8 @@ Abra `prototipo/maleta.html` com dois cliques (não precisa de servidor). No top
   e o **Baú**. Também é o único que muda o tamanho da maleta. Arrastar um item da maleta ou do baú para cima do
   **Catálogo** apaga o item (o painel fica vermelho para avisar).
 - **Jogador:** vê só a própria maleta e o que está **na cena**. Pega itens do armário (arrastando ou no +), devolve arrastando de volta.
-  O baú é de cada jogador (só os itens dele) e só abre se o mestre tiver posto um Baú na cena. Ele aparece como uma
-  **segunda grade logo abaixo da maleta** (mesma largura, cresce conforme enche): arraste itens direto entre as duas.
+  O baú é de cada jogador (só os itens dele) e só abre se o mestre tiver posto um Baú na cena. Ele é uma **lista à direita**:
+  arraste itens da maleta para lá e de lá para a maleta.
 - **Dado de vida** (o dado de cura do personagem): o mestre escolhe por jogador no topo; as ervas rolam esse dado ao usar.
 - **Botão direito** num item (na maleta, no armário, no catálogo ou no baú) abre os detalhes; o clique esquerdo só seleciona.
 - **Shift + clique** num item passa ele da maleta para o baú (ou do baú para a maleta).
